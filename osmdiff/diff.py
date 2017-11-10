@@ -2,7 +2,7 @@ import requests
 import os
 import gzip
 from xml.etree import cElementTree
-from osmdiff import OSMObject
+from osmdiff.osm import OSMObject
 
 
 class AugmentedDiff(object):

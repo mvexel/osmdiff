@@ -1,2 +1,1 @@
-from .osmobject import OSMObject, Node, Way, Relation
-from .replication import OSMChange, AugmentedDiff
+from .diff import OSMChange, AugmentedDiff
