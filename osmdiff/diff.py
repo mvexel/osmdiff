@@ -1,7 +1,7 @@
-import requests
 import os
 import gzip
 from xml.etree import cElementTree
+import requests
 from osmdiff.osm import OSMObject
 
 
@@ -27,8 +27,8 @@ class AugmentedDiff(object):
         self.modify = []
         self.delete = []
         if file:
-            with open(file, 'r') as fh:
-                self._parse_stream(fh)
+            with open(file, 'r') as file_handle:
+                self._parse_stream(file_handle)
         else:
             self.sequence_number = sequence_number
             if minlon and minlat and maxlon and maxlat:
@@ -41,13 +41,17 @@ class AugmentedDiff(object):
                     raise Exception("invalid bbox.")
 
     def get_state(self):
+        """Get the current state from the OSM API"""
         state_url = os.path.join(
             self.base_url,
             "augmented_diff_status")
         if self.debug:
             print("getting state from", state_url)
         response = requests.get(state_url, timeout=5)
+        if response.status_code != 200:
+            return False
         self.sequence_number = int(response.text)
+        return True
 
     def _build_adiff_url(self):
         url = "{base}/augmented_diff?id={sequence_number}".format(
@@ -73,16 +77,23 @@ class AugmentedDiff(object):
         else:
             new = elem.find("new")
             old = elem.find("old")
-            o = None
-            n = None
+            osm_obj_old = None
+            osm_obj_new = None
             for child in old:
-                o = OSMObject.from_xml(child)
+                osm_obj_old = OSMObject.from_xml(child)
             for child in new:
-                n = OSMObject.from_xml(child)
+                osm_obj_new = OSMObject.from_xml(child)
             if self.debug:
-                print(elem.attrib["type"], ": old", o, ", new", n)
+                print(
+                    elem.attrib["type"],
+                    ": old",
+                    osm_obj_old,
+                    ", new",
+                    osm_obj_new)
             self.__getattribute__(
-                elem.attrib["type"]).append({"old": o, "new": n})
+                elem.attrib["type"]).append({
+                    "old": osm_obj_old,
+                    "new": osm_obj_new})
 
     def _parse_stream(self, stream):
         for event, elem in cElementTree.iterparse(stream):
@@ -138,13 +149,17 @@ class OSMChange(object):
             self.sequence_number = sequence_number
 
     def get_state(self):
+        """Get the current state from the OSM API"""
         state_url = os.path.join(self.base_url, self.frequency, "state.txt")
-        response = requests.get(state_url, timeout=5).text
-        for line in response.split("\n"):
+        response = requests.get(state_url, timeout=5)
+        if response.status_code != 200:
+            return False
+        for line in response.text.split("\n"):
             if self.debug:
                 print(line)
             if line.startswith("sequenceNumber"):
                 self.sequence_number = int(line[15:])
+        return True
 
     def _build_sequence_url(self):
         seqno = str(self.sequence_number).zfill(9)

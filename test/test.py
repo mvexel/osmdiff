@@ -1,43 +1,34 @@
-#!/usr/bin/env python
+"osmdiff test classes"
+import unittest
+from osmdiff import OSMChange
 
-from osmdiff import OSMChange, AugmentedDiff
-from osmdiff.osm import Node, Way, Relation
 
-debug = True
+class OSMChangeTestCase(unittest.TestCase):
+    "tests for OSMChange object"
 
-r = OSMChange(debug=debug)
-r.get_state()
-r.retrieve()
-print(r)
+    def test_1_initialization(self):
+        "Test successful initiaization"
+        osm_change = OSMChange()
+        self.assertIsInstance(osm_change, OSMChange)
 
-r = OSMChange(file="test_osmchange.xml", debug=debug)
-print(r)
+    def test_2_sequencenumber(self):
+        "Sequence number is not defined by default but can be set manually"
+        osm_change = OSMChange()
+        self.assertIsNone(osm_change.sequence_number)
+        osm_change.sequence_number = 12345
+        self.assertEqual(osm_change.sequence_number, 12345)
+        # osm_change.sequence_number = "12345"
+        # self.assertEqual(osm_change.sequence_number, 12345)
 
-a = AugmentedDiff(
-    file="test_adiff.xml",
-    debug=debug)
-print(a)
+    def test_3_readfromfile(self):
+        "Test initializing from file"
+        pass
 
-a = AugmentedDiff(
-    # minlon=-160.0,
-    # minlat=20.0,
-    # maxlon=-80.0,
-    # maxlat=60.0,
-    debug=debug)
-a.get_state()
-a.retrieve()
-print(a)
+    def test_4_state(self):
+        "Test getting state (requires internet)"
+        osm_change = OSMChange()
+        self.assertTrue(osm_change.get_state())
+        self.assertIsInstance(osm_change.sequence_number, int)
 
-# n = Node()
-# w = Way()
-# r = Relation()
-
-# r = replication.OSMChange(frequency="hour")
-
-# print(r.sequence_number)
-# r.get(r.sequence_number)
-
-# r = replication.OSMChange(frequency="day")
-
-# print(r.sequence_number)
-# r.get(r.sequence_number)
+if __name__ == '__main__':
+    unittest.main()
