@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-from osmdiff import OSMChange, AugmentedDiff, Node, Way, Relation
+from osmdiff import OSMChange, AugmentedDiff
+from osmdiff.osm import Node, Way, Relation
 
 debug = True
 
