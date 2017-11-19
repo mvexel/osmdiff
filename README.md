@@ -2,6 +2,10 @@
 
 A read-only interface to OpenStreetMap change APIs and files.
 
+## Installing
+
+`pip install osmdiff`
+
 ## Usage
 
 ### Reading
