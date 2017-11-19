@@ -8,7 +8,7 @@ except(IOError, ImportError):
 
 setup(
     name='osmdiff',
-    url='https://github.com/osmlab/osmdiff',
+    url='https://github.com/osmlab/osmdiff/archive/0.1.2.tar.gz',
     version='0.1.2',
     packages=['osmdiff'],
     description="Interact with OpenStreetMap (Augmented) Diff files.",
