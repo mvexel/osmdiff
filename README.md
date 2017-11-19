@@ -1,6 +1,6 @@
 # osmdiff
 
-A read-only interface to OpenStreetMap change APIs and files.
+A read-only interface to OpenStreetMap change APIs and files. See also [pyosm](https://github.com/iandees/pyosm) which can do similar things. 
 
 ## Installing
 
