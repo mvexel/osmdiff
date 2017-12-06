@@ -4,7 +4,7 @@ setup(
     name='osmdiff',
     url='https://github.com/osmlab/osmdiff',
     version='0.1.5',
-    packages=['osmdiff'],
+    packages=['osmdiff', 'osmdiff.osm'],
     description="Interact with OpenStreetMap (Augmented) Diff files.",
     long_description="Read the README.md",
     license='Apache 2.0',
