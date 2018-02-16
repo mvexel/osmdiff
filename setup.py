@@ -3,7 +3,7 @@ from distutils.core import setup
 setup(
     name='osmdiff',
     url='https://github.com/osmlab/osmdiff',
-    version='0.1.6',
+    version='0.1.8',
     packages=['osmdiff', 'osmdiff.osm'],
     description="Interact with OpenStreetMap (Augmented) Diff files.",
     long_description="Read the README.md",
