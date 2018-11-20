@@ -106,9 +106,11 @@ class AugmentedDiff(object):
             if elem.tag == "action":
                 self._build_action(elem)
 
-    def retrieve(self):
+    def retrieve(self, clear_cache=False):
         if not self.sequence_number:
             raise Exception("invalid sequence number")
+        if clear_cache:
+            self.create, self.modify, self.delete = ([], [], [])
         url = self._build_adiff_url()
         if self.debug:
             print("retrieving...")
@@ -193,9 +195,11 @@ class OSMChange(object):
                 print(o.tags)
                 print(o.bounds)
 
-    def retrieve(self):
+    def retrieve(self, clear_cache=False):
         if not self.sequence_number:
             raise Exception("invalid sequence number")
+        if clear_cache:
+            self.create, self.modify, self.delete = ([], [], [])
         r = requests.get(self._build_sequence_url(), stream=True, timeout=30)
         gzfile = gzip.GzipFile(fileobj=r.raw)
         self._parse_stream(gzfile)
