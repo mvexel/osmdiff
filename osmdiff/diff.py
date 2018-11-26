@@ -127,7 +127,6 @@ class AugmentedDiff(object):
             modify=len(self.modify),
             delete=len(self.delete))
 
-
 class OSMChange(object):
     base_url = "https://planet.openstreetmap.org/replication"
     sequence_number = None
@@ -184,7 +183,7 @@ class OSMChange(object):
                 if self.debug:
                     print("======={action}========".format(
                         action=elem.tag))
-
+                    
     def _build_action(self, elem):
         for thing in elem:
             o = OSMObject.from_xml(thing)
