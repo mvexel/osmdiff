@@ -128,16 +128,17 @@ class AugmentedDiff(object):
             delete=len(self.delete))
 
 class OSMChange(object):
-    base_url = "https://planet.openstreetmap.org/replication"
     sequence_number = None
     debug = False
 
     def __init__(
             self,
+            url="https://planet.openstreetmap.org/replication"
             frequency="minute",
             file=None,
             sequence_number=None,
             debug=False):
+        self.base_url = url
         self.debug = debug
         self.create = []
         self.modify = []
