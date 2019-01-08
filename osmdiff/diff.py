@@ -133,7 +133,7 @@ class OSMChange(object):
 
     def __init__(
             self,
-            url="https://planet.openstreetmap.org/replication"
+            url="https://planet.openstreetmap.org/replication",
             frequency="minute",
             file=None,
             sequence_number=None,
