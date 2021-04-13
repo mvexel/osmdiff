@@ -13,6 +13,7 @@ setup(
     download_url="",
     keywords=["osm", "openstreetmap", "diff", "augmented diff"],
     classifiers=[],
+    python_requires=">=3.7",
     install_requires=[
         'requests',
     ],
