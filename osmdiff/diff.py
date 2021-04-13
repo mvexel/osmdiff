@@ -106,9 +106,11 @@ class AugmentedDiff(object):
             if elem.tag == "action":
                 self._build_action(elem)
 
-    def retrieve(self):
+    def retrieve(self, clear_cache=False):
         if not self.sequence_number:
             raise Exception("invalid sequence number")
+        if clear_cache:
+            self.create, self.modify, self.delete = ([], [], [])
         url = self._build_adiff_url()
         if self.debug:
             print("retrieving...")
@@ -125,18 +127,18 @@ class AugmentedDiff(object):
             modify=len(self.modify),
             delete=len(self.delete))
 
-
 class OSMChange(object):
-    base_url = "https://planet.openstreetmap.org/replication"
     sequence_number = None
     debug = False
 
     def __init__(
             self,
+            url="https://planet.openstreetmap.org/replication",
             frequency="minute",
             file=None,
             sequence_number=None,
             debug=False):
+        self.base_url = url
         self.debug = debug
         self.create = []
         self.modify = []
@@ -182,7 +184,7 @@ class OSMChange(object):
                 if self.debug:
                     print("======={action}========".format(
                         action=elem.tag))
-
+                    
     def _build_action(self, elem):
         for thing in elem:
             o = OSMObject.from_xml(thing)
@@ -193,9 +195,11 @@ class OSMChange(object):
                 print(o.tags)
                 print(o.bounds)
 
-    def retrieve(self):
+    def retrieve(self, clear_cache=False):
         if not self.sequence_number:
             raise Exception("invalid sequence number")
+        if clear_cache:
+            self.create, self.modify, self.delete = ([], [], [])
         r = requests.get(self._build_sequence_url(), stream=True, timeout=30)
         gzfile = gzip.GzipFile(fileobj=r.raw)
         self._parse_stream(gzfile)

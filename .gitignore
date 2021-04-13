@@ -3,3 +3,4 @@
 **/*.egg-info
 dist/
 Pipfile.lock
+.ipynb_checkpoints
