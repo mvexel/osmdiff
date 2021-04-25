@@ -1,5 +1,6 @@
 import os
 import gzip
+import dateutil.parser
 from xml.etree import cElementTree
 import requests
 from .osm import OSMObject
@@ -11,6 +12,7 @@ class AugmentedDiff(object):
     minlat = None
     maxlon = None
     maxlat = None
+    timestamp = None
     debug = False
 
     def __init__(
@@ -21,7 +23,8 @@ class AugmentedDiff(object):
             maxlat=None,
             debug=False,
             file=None,
-            sequence_number=None):
+            sequence_number=None,
+            timestamp=None):
         self.debug = debug
         self.create = []
         self.modify = []
@@ -103,6 +106,9 @@ class AugmentedDiff(object):
                 raise Exception(
                     "Augmented Diff API returned an error:",
                     elem.text)
+            if elem.tag == "meta":
+                timestamp = dateutil.parser.parse(elem.attrib.get("osm_base"))
+                self.timestamp = timestamp
             if elem.tag == "action":
                 self._build_action(elem)
 
