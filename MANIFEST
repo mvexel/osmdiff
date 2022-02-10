@@ -2,5 +2,8 @@
 setup.cfg
 setup.py
 osmdiff/__init__.py
+osmdiff/config.py
 osmdiff/diff.py
+osmdiff/osm/__init__.py
+osmdiff/osm/osm.py
 test/test.py
