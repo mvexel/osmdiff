@@ -4,10 +4,10 @@ import dateutil.parser
 from xml.etree import cElementTree
 import requests
 from .osm import OSMObject
-
+import config
 
 class AugmentedDiff(object):
-    base_url = "http://overpass-api.de/api"
+    base_url = config.OVERPASS_URL
     minlon = None
     minlat = None
     maxlon = None
