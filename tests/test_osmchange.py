@@ -1,5 +1,6 @@
 from platform import node
 import unittest
+from xml.etree import ElementTree
 from osmdiff import OSMChange, Node, Way, Relation
 
 class OSMChangeTests(unittest.TestCase):
@@ -34,7 +35,8 @@ class OSMChangeTests(unittest.TestCase):
 
     def test_3_readfromfile(self):
         "Test initializing from file"
-        osmchange = OSMChange.from_xml(self.osmchange_file_path)
+        root_elem = ElementTree.parse(self.osmchange_file_path).getroot()
+        osmchange = OSMChange.from_xml(root_elem)
         self.assertEqual(len(osmchange.create), 831)
         self.assertEqual(len(osmchange.modify), 368)
         self.assertEqual(len(osmchange.delete), 3552)
