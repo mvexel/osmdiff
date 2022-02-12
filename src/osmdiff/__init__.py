@@ -1,2 +1,3 @@
-from .diff import OSMChange, AugmentedDiff
+from .augmenteddiff import AugmentedDiff
+from .osmchange import OSMChange
 from .osm import Node, Way, Relation

@@ -58,6 +58,29 @@ class Node(OSMObject):
     def __init__(self):
         super().__init__()
 
+    def _lon(self):
+        return float(self.attribs.get('lon', 0))
+
+    lon = property(_lon)
+
+    def _lat(self):
+        return float(self.attribs.get('lat', 0))        
+
+    lat = property(_lat)
+
+    def _geo_interface(self):
+        return {
+            'type': 'Point',
+            'coordinates': [self.lon, self.lat]
+        }
+
+    __geo_interface__ = property(_geo_interface)
+
+    def __eq__(self, other):
+        if not isinstance(other, Node):
+            return False
+        return self.lon == other.lon and self.lat == other.lat
+
 
 class Way(OSMObject):
 
@@ -69,6 +92,17 @@ class Way(OSMObject):
         for node in elem.findall("nd"):
             self.nodes.append(OSMObject.from_xml(node))
 
+    def _geo_interface(self):
+        geom_type = 'LineString' if self.nodes[0] == self.nodes[-1] else 'Polygon'
+        return {
+            'type': geom_type,
+            'coordinates': [
+                [[n.lon, n.lat] for n in self.nodes]
+            ]
+        }
+
+    __geo_interface__ = property(_geo_interface)
+
 
 class Relation(OSMObject):
 
@@ -79,3 +113,14 @@ class Relation(OSMObject):
     def _parse_members(self, elem):
         for member in elem.findall("member"):
             self.members.append(OSMObject.from_xml(member))
+
+    def _geo_interface(self):
+        return {
+            'type': 'FeatureCollection',
+            'Features': [
+                [f.__geo_interface__ for f in self.members]
+            ]
+        }
+
+    __geo_interface__ = property(_geo_interface)
+    
