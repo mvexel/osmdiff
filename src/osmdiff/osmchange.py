@@ -13,16 +13,14 @@ class OSMChange(object):
             url=REPLICATION_URL,
             frequency="minute",
             file=None,
-            sequence_number=None,
-            debug=False):
+            sequence_number=None):
         self.base_url = url
-        self.debug = debug
         self.create = []
         self.modify = []
         self.delete = []
         if file:
             with open(file, 'r') as fh:
-                self._parse_stream(fh)
+                self._parse_xml(fh)
         else:
             self._frequency = frequency
             self._sequence_number = sequence_number
@@ -34,8 +32,6 @@ class OSMChange(object):
         if response.status_code != 200:
             return False
         for line in response.text.split("\n"):
-            if self.debug:
-                print(line)
             if line.startswith("sequenceNumber"):
                 self._sequence_number = int(line[15:])
         return True
@@ -48,29 +44,17 @@ class OSMChange(object):
             seqno[:3],
             seqno[3:6],
             "{}{}".format(seqno[6:], ".osc.gz"))
-        if self.debug:
-            print(url)
         return url
 
-    def _parse_stream(self, stream):
-        for event, elem in ElementTree.iterparse(stream):
-            # if self.debug:
-            #     print(event, elem)
-            if elem.tag in ("create", "modify", "delete"):
-                self._build_action(elem)
-                if self.debug:
-                    print("======={action}========".format(
-                        action=elem.tag))
+    def _parse_xml(self, elem):
+        for child in elem:
+            if child.tag in ("create", "modify", "delete"):
+                self._build_action(child)
                     
     def _build_action(self, elem):
         for thing in elem:
             o = OSMObject.from_xml(thing)
             self.__getattribute__(elem.tag).append(o)
-            if self.debug:
-                print(o)
-                print(o.attribs)
-                print(o.tags)
-                print(o.bounds)
 
     def retrieve(self, clear_cache=False):
         if not self._sequence_number:
@@ -79,13 +63,13 @@ class OSMChange(object):
             self.create, self.modify, self.delete = ([], [], [])
         r = requests.get(self._build_sequence_url(), stream=True, timeout=30)
         gzfile = GzipFile.GzipFile(fileobj=r.raw)
-        self._parse_stream(gzfile)
+        self._parse_xml(gzfile)
 
     @classmethod
-    def from_xml(cls, path):
-        new_osmchange_obj = cls()
-        new_osmchange_obj._parse_stream(path)
-        return new_osmchange_obj
+    def from_xml(cls, elem):
+        o = cls()
+        o._parse_xml(elem)
+        return o
 
     def sequence_number(self):
         return self._sequence_number
