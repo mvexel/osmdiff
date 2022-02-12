@@ -31,8 +31,12 @@ class OSMObject(object):
                 be.attrib["maxlat"]]
 
     @classmethod
-    def from_xml(cls, elem):
+    def from_xml(cls, root):
         osmtype = ""
+        if root.tag == "osm":
+            elem = root[0]
+        else:
+            elem = root
         if elem.tag == "member":
             osmtype = elem.attrib["type"]
         else:
@@ -79,7 +83,7 @@ class Node(OSMObject):
     def __eq__(self, other):
         if not isinstance(other, Node):
             return False
-        return self.lon == other.lon and self.lat == other.lat
+        return self.attribs["id"] == other.attribs["id"]
 
 
 class Way(OSMObject):
@@ -90,7 +94,9 @@ class Way(OSMObject):
 
     def _parse_nodes(self, elem):
         for node in elem.findall("nd"):
-            self.nodes.append(OSMObject.from_xml(node))
+            way_node = Node()
+            way_node.attribs["id"] = node.attrib["ref"]
+            self.nodes.append(way_node)
 
     def _geo_interface(self):
         geom_type = 'LineString' if self.nodes[0] == self.nodes[-1] else 'Polygon'
@@ -100,6 +106,11 @@ class Way(OSMObject):
                 [[n.lon, n.lat] for n in self.nodes]
             ]
         }
+    
+    def _closed(self):
+        return self.nodes[0] == self.nodes[-1]
+
+    closed = property(_closed)
 
     __geo_interface__ = property(_geo_interface)
 
