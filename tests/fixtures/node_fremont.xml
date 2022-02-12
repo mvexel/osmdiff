@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osm version="0.6" generator="CGImap 0.8.6 (1423193 spike-06.openstreetmap.org)" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/">
+ <node id="1636210984" visible="true" version="2" changeset="36561302" timestamp="2016-01-13T22:43:39Z" user="Dilys" uid="2475974" lat="38.5774661" lon="-112.3348209">
+  <tag k="name" v="Fremont Indian Museum"/>
+  <tag k="tourism" v="museum"/>
+ </node>
+</osm>

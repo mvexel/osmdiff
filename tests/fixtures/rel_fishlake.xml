@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osm version="0.6" generator="CGImap 0.8.6 (904736 spike-06.openstreetmap.org)" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/">
+ <relation id="4716643" visible="true" version="16" changeset="116728394" timestamp="2022-01-29T01:15:11Z" user="NFZANMNIM" uid="1980310">
+  <member type="way" ref="394649566" role="outer"/>
+  <member type="way" ref="392689731" role="outer"/>
+  <member type="way" ref="334190398" role="outer"/>
+  <member type="way" ref="334190392" role="outer"/>
+  <member type="way" ref="386504593" role="outer"/>
+  <member type="way" ref="334190391" role="outer"/>
+  <member type="way" ref="334190394" role="outer"/>
+  <member type="way" ref="1025705971" role="outer"/>
+  <member type="way" ref="1025705975" role="outer"/>
+  <member type="way" ref="1025705976" role="outer"/>
+  <member type="way" ref="1025705979" role="outer"/>
+  <member type="way" ref="1025705980" role="outer"/>
+  <member type="way" ref="334191869" role="outer"/>
+  <member type="way" ref="1025705970" role="outer"/>
+  <member type="way" ref="334191866" role="outer"/>
+  <member type="way" ref="1025705987" role="outer"/>
+  <member type="way" ref="1025705988" role="outer"/>
+  <member type="way" ref="334191871" role="outer"/>
+  <member type="way" ref="365544438" role="outer"/>
+  <member type="way" ref="365544435" role="outer"/>
+  <member type="way" ref="334192579" role="outer"/>
+  <member type="way" ref="334191867" role="inner"/>
+  <member type="way" ref="334191870" role="inner"/>
+  <member type="way" ref="334191868" role="inner"/>
+  <member type="way" ref="299712112" role="inner"/>
+  <tag k="boundary" v="national_park"/>
+  <tag k="boundary:type" v="protected_area"/>
+  <tag k="leisure" v="nature_reserve"/>
+  <tag k="name" v="Fishlake National Forest"/>
+  <tag k="operator" v="United States Forest Service"/>
+  <tag k="ownership" v="national"/>
+  <tag k="protect_class" v="6"/>
+  <tag k="protected" v="perpetuity"/>
+  <tag k="protection_title" v="National Forest"/>
+  <tag k="type" v="multipolygon"/>
+  <tag k="wikidata" v="Q2642417"/>
+ </relation>
+</osm>
