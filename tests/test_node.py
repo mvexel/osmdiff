@@ -1,7 +1,7 @@
 from pathlib import Path
 import unittest
 from osmdiff import Node
-from osmdiff.osm import OSMObject
+from osmdiff.osm.osmobject import OSMObject
 
 class NodeTests(unittest.TestCase):
     "tests for Node object"
@@ -15,9 +15,9 @@ class NodeTests(unittest.TestCase):
         node = Node()
         self.assertIsInstance(node, Node)
         self.assertIsInstance(node, OSMObject)
-        self.assertIsInstance(node.attribs, dict)
+        self.assertIsInstance(node._attrib, dict)
         self.assertIsInstance(node.tags, dict)
-        self.assertEqual(len(node.attribs), 0)
+        self.assertEqual(len(node._attrib), 0)
         self.assertEqual(len(node.tags), 0)
         self.assertIsNone(node.lat)
         self.assertIsNone(node.lon)

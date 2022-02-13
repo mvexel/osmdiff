@@ -1,7 +1,7 @@
 from gzip import GzipFile
 import os
 import requests
-from osmdiff.osm import OSMObject
+from osmdiff.osm.osmobject import OSMObject
 import xml.etree.ElementTree as ET
 
 REPLICATION_URL = "https://planet.openstreetmap.org/replication"

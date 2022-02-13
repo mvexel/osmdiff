@@ -1,10 +1,11 @@
 import unittest
-from osmdiff.osm import API, Node, Way, Relation
+from osmdiff.osm.api import OSMAPI, OverpassAPI
+from osmdiff.osm import Node, Way, Relation
 
-class ApiTests(unittest.TestCase):
+class OSMAPITests(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.api = API()
+        self.api = OSMAPI()
         return super().setUp()
 
     def tearDown(self) -> None:
@@ -25,3 +26,15 @@ class ApiTests(unittest.TestCase):
         r_xml = self.api.fetch('relation', 10000)
         relation = Relation.from_xml(r_xml)
         self.assertTrue(relation.id == 10000)
+
+
+class OverpassAPITests(unittest.TestCase):
+
+    def setUp(self) -> None:
+        self.api = OverpassAPI()
+        return super().setUp()
+
+    def tearDown(self) -> None:
+        del self.api
+        return super().tearDown()
+

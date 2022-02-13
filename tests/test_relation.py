@@ -1,6 +1,6 @@
 import unittest
-from osmdiff import Relation
-from osmdiff.osm import OSMObject
+from osmdiff.osm import OSMObject, Relation
+
 
 class RelationTests(unittest.TestCase):
     "tests for Relation object"
@@ -10,10 +10,10 @@ class RelationTests(unittest.TestCase):
         relation = Relation()
         self.assertIsInstance(relation, Relation)
         self.assertIsInstance(relation, OSMObject)
-        self.assertIsInstance(relation.attribs, dict)
+        self.assertIsInstance(relation._attrib, dict)
         self.assertIsInstance(relation.tags, dict)
         self.assertEqual(len(relation.tags), 0)
-        self.assertEqual(len(relation.attribs), 0)
+        self.assertEqual(len(relation._attrib), 0)
         self.assertIsInstance(relation.members, list)
         self.assertEqual(len(relation.members), 0)
 
