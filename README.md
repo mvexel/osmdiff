@@ -97,3 +97,18 @@ Way 452218081 (10 nodes)
 >>> w[0].bounds
 ['12.8932677', '43.3575917', '12.8948117', '43.3585947']
 ```
+
+### Python Geo Interface
+
+`osmdiff` implements the Python Geo Interface, so you can do things like:
+
+```=python
+>>> import osmdiff
+>>> import geojson
+>>> api = osmdiff.osm.api.OSMAPI()
+>>> node = osmdiff.Node.from_xml(api.fetch('node', 1636210984))
+>>> geojson.dumps(node)
+'{"type": "Point", "coordinates": [-112.3348209, 38.5774661]}'
+```
+
+This feature needs more testing. 
