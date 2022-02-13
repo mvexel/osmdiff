@@ -83,7 +83,7 @@ Get all ways that were changed to `residential` from something else:
 Inspect details:
 
 ```python
->>> w = [n["new"] for n in a.modify if n["new"].attribs["id"] == "452218081"]
+>>> w = [n["new"] for n in a.modify if n["new"].id == "452218081"]
 >>> w
 [Way 452218081 (10 nodes)]
 >>> w[0]
