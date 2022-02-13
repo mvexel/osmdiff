@@ -1,8 +1,8 @@
 from gzip import GzipFile
 import os
-from xml.etree import ElementTree
 import requests
 from osmdiff.osm import OSMObject
+import xml.etree.ElementTree as ET
 
 REPLICATION_URL = "https://planet.openstreetmap.org/replication"
 
@@ -46,8 +46,9 @@ class OSMChange(object):
             "{}{}".format(seqno[6:], ".osc.gz"))
         return url
 
-    def _parse_xml(self, elem):
-        for child in elem:
+    def _parse_xml(self, xml_str):
+        root = ET.ElementTree(ET.fromstring(xml_str)).getroot()
+        for child in root:
             if child.tag in ("create", "modify", "delete"):
                 self._build_action(child)
                     
@@ -66,9 +67,9 @@ class OSMChange(object):
         self._parse_xml(gzfile)
 
     @classmethod
-    def from_xml(cls, elem):
+    def from_xml(cls, xml_str):
         o = cls()
-        o._parse_xml(elem)
+        o._parse_xml(xml_str)
         return o
 
     def sequence_number(self):

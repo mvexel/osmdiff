@@ -1,6 +1,5 @@
 from pathlib import Path
 import unittest
-from xml.etree import ElementTree
 from osmdiff import Node
 from osmdiff.osm import OSMObject
 
@@ -20,13 +19,13 @@ class NodeTests(unittest.TestCase):
         self.assertIsInstance(node.tags, dict)
         self.assertEqual(len(node.attribs), 0)
         self.assertEqual(len(node.tags), 0)
-        self.assertEqual(node.lat, 0.0)
-        self.assertEqual(node.lon, 0.0)
+        self.assertIsNone(node.lat)
+        self.assertIsNone(node.lon)
 
     def test_node_from_xml(self):
         "Test read node from XML file"
-        root_elem = ElementTree.parse(self.node_xml_file).getroot()
-        node = Node.from_xml(root_elem)
+        xml_str = open(self.node_xml_file).read()
+        node = Node.from_xml(xml_str)
         self.assertIn('name', node.tags)
         self.assertIn('tourism', node.tags)
         self.assertEqual(node.tags['name'], 'Fremont Indian Museum')

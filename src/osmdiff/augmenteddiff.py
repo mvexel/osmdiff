@@ -2,7 +2,7 @@ import os
 import dateutil.parser
 from xml.etree import cElementTree
 import requests
-from .osm import OSMObject
+from osmdiff.osm import OSMObject
 
 OVERPASS_URL = "http://overpass-api.de/api"
 

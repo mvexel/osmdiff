@@ -1,6 +1,5 @@
 from pathlib import Path
 import unittest
-from xml.etree import ElementTree
 from osmdiff import Way
 from osmdiff.osm import OSMObject
 
@@ -25,11 +24,12 @@ class WayTests(unittest.TestCase):
 
     def test_way_from_xml(self):
         "Test read way from XML file"
-        root_elem = ElementTree.parse(self.way_xml_file).getroot()
-        way = Way.from_xml(root_elem)
+        xml_str = open(self.way_xml_file).read()
+        way = Way.from_xml(xml_str)
         self.assertIn('highway', way.tags)
         self.assertEqual(len(way.nodes), 440)
         self.assertFalse(way.closed)
+        self.assertFalse(way.has_geometry)
 
 if __name__ == '__main__':
     unittest.main()

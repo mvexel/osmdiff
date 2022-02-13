@@ -1,3 +1,7 @@
+from xml.etree import ElementPath
+import xml.etree.ElementTree as ET
+
+
 class OSMObject(object):
 
     def __init__(self):
@@ -8,7 +12,7 @@ class OSMObject(object):
     def __repr__(self):
         out = "{type} {id}".format(
             type=type(self).__name__,
-            id=self.attribs.get("id"))
+            id=self.id)
         if type(self) == Way:
             out += " ({ways} nodes)".format(
                 ways=len(self.nodes))
@@ -31,30 +35,39 @@ class OSMObject(object):
                 be.attrib["maxlat"]]
 
     @classmethod
-    def from_xml(cls, root):
+    def from_xml(cls, xml):
         osmtype = ""
+        if isinstance(xml, ET.Element):
+            root = xml
+        else:
+            root = ET.ElementTree(ET.fromstring(xml)).getroot()
         if root.tag == "osm":
             elem = root[0]
         else:
             elem = root
-        if elem.tag == "member":
-            osmtype = elem.attrib["type"]
-        else:
-            osmtype = elem.tag
-        if osmtype in ("node", "nd"):
+        if elem.tag in ("node", "nd"):
             o = Node()
-        elif osmtype == "way":
+        elif elem.tag == "way":
             o = Way()
             o._parse_nodes(elem)
-        elif osmtype == "relation":
+        elif elem.tag == "relation":
             o = Relation()
             o._parse_members(elem)
+        elif elem.tag == "member":
+            o = Member()
         else:
             pass
         o.attribs = elem.attrib
         o._parse_tags(elem)
         o._parse_bounds(elem)
         return o
+
+    def get_id(self):
+        if isinstance(self, Member):
+            return int(self.attribs['ref'])
+        return int(self.attribs['id'])
+
+    id = property(get_id)
 
 
 class Node(OSMObject):
@@ -63,12 +76,18 @@ class Node(OSMObject):
         super().__init__()
 
     def _lon(self):
-        return float(self.attribs.get('lon', 0))
+        _lon = self.attribs.get('lon')
+        if _lon is not None:
+            return float(_lon)
+        return None
 
     lon = property(_lon)
 
     def _lat(self):
-        return float(self.attribs.get('lat', 0))        
+        _lat = self.attribs.get('lat')
+        if _lat is not None:    
+            return float(_lat)
+        return None        
 
     lat = property(_lat)
 
@@ -83,7 +102,7 @@ class Node(OSMObject):
     def __eq__(self, other):
         if not isinstance(other, Node):
             return False
-        return self.attribs["id"] == other.attribs["id"]
+        return self.id == other.id
 
 
 class Way(OSMObject):
@@ -112,6 +131,11 @@ class Way(OSMObject):
 
     closed = property(_closed)
 
+    def _has_geometry(self):
+        return all([nd.lon and nd.lat for nd in self.nodes])
+
+    has_geometry = property(_has_geometry)
+
     __geo_interface__ = property(_geo_interface)
 
 
@@ -135,3 +159,13 @@ class Relation(OSMObject):
 
     __geo_interface__ = property(_geo_interface)
     
+
+class Member(OSMObject):
+
+    def __init__(self):
+        super().__init__()
+
+    def get_type(self):
+        return self.attribs["type"]
+    
+    type = property(get_type)
