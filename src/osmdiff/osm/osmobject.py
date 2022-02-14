@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 import osmdiff
 
-class OSMObject(object):
+class OSMElement(object):
 
     def __init__(self, id=None):
         self.tags = {}
@@ -61,8 +61,9 @@ class OSMObject(object):
                 id=int(elem.attrib['id']))
             o._parse_members(elem)
         elif elem.tag == "member":
-            o = osmdiff.osm.Member(
-                id=int(elem.attrib['ref']))
+            o = osmdiff.osm.ElementReference(
+                id=int(elem.attrib['ref']),
+                osmtype=elem.attrib['type'])
         else:
             pass
         o._attrib = elem.attrib
@@ -71,8 +72,6 @@ class OSMObject(object):
         return o
 
     def get_id(self):
-        if isinstance(self, osmdiff.osm.Member):
-            return int(self._attrib['ref'])
         return self._id
 
     id = property(get_id)

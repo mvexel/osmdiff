@@ -1,7 +1,7 @@
 from gzip import GzipFile
 import os
 import requests
-from osmdiff.osm.osmobject import OSMObject
+from osmdiff.osm.osmobject import OSMElement
 import xml.etree.ElementTree as ET
 
 REPLICATION_URL = "https://planet.openstreetmap.org/replication"
@@ -54,7 +54,7 @@ class OSMChange(object):
                     
     def _build_action(self, elem):
         for thing in elem:
-            o = OSMObject.from_xml(thing)
+            o = OSMElement.from_xml(thing)
             self.__getattribute__(elem.tag).append(o)
 
     def retrieve(self, clear_cache=False):

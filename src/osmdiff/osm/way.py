@@ -1,9 +1,9 @@
 from osmdiff.osm.api.api import OverpassAPI
 from osmdiff.osm.node import Node
-from osmdiff.osm.osmobject import OSMObject
+from osmdiff.osm.osmobject import OSMElement
 
 
-class Way(OSMObject):
+class Way(OSMElement):
 
     def __init__(self, id=None):
         self._nodes = []
@@ -13,7 +13,7 @@ class Way(OSMObject):
     def retrieve_geometry(self):
         if self.has_geometry:
             return
-        OverpassAPI.geometry_for(self)
+        OverpassAPI.geometry_for_way(self)
 
     def _parse_waynodes(self, elem):
         for nd in elem.findall("nd"):
@@ -55,7 +55,7 @@ class Way(OSMObject):
     nodes = property(get_nodes)
 
 
-class WayNode(OSMObject):
+class WayNode(OSMElement):
 
     def __init__(self, id=None):
         self._ref = None

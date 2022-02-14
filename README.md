@@ -105,8 +105,7 @@ Way 452218081 (10 nodes)
 ```=python
 >>> import osmdiff
 >>> import geojson
->>> api = osmdiff.osm.api.OSMAPI()
->>> node = osmdiff.Node.from_xml(api.fetch('node', 1636210984))
+>>> node = osmdiff.Node.from_xml(OSMAPI.fetch('node', 1636210984))
 >>> geojson.dumps(node)
 '{"type": "Point", "coordinates": [-112.3348209, 38.5774661]}'
 ```

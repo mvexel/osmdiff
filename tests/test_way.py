@@ -1,6 +1,6 @@
 from pathlib import Path
 import unittest
-from osmdiff.osm.way import Way, OSMObject
+from osmdiff.osm.way import Way, OSMElement
 
 class WayTests(unittest.TestCase):
     "tests for Way object"
@@ -13,7 +13,7 @@ class WayTests(unittest.TestCase):
         "Test Way init"
         way = Way()
         self.assertIsInstance(way, Way)
-        self.assertIsInstance(way, OSMObject)
+        self.assertIsInstance(way, OSMElement)
         self.assertIsInstance(way.attrib, dict)
         self.assertIsInstance(way.tags, dict)
         self.assertEqual(len(way.tags), 0)

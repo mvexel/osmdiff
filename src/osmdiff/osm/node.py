@@ -1,7 +1,7 @@
-from .osmobject import OSMObject
+from .osmobject import OSMElement
 
 
-class Node(OSMObject):
+class Node(OSMElement):
 
     def __init__(self, lon=None, lat=None, id=None):
         self._lon = lon
