@@ -50,12 +50,12 @@ class OSMElement(object):
                 lat=float(elem.attrib['lat']),
                 id=int(elem.attrib['id']))
         elif elem.tag == "nd":
-            o = osmdiff.osm.WayNode(
+            o = osmdiff.osm.member.ElementReference(
                 id=int(elem.attrib['ref']))
         elif elem.tag == "way":
             o = osmdiff.osm.Way(
                 id=int(elem.attrib['id']))
-            o._parse_waynodes(elem)
+            o._parse_elementreferences(elem)
         elif elem.tag == "relation":
             o = osmdiff.osm.Relation(
                 id=int(elem.attrib['id']))

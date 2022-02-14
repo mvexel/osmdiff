@@ -27,14 +27,14 @@ class WayTests(unittest.TestCase):
 
         way = Way.from_xml(xml_str)
         self.assertIn('highway', way.tags)
-        self.assertEqual(len(way.waynodes), 440)
+        self.assertEqual(len(way.element_references), 440)
         self.assertEqual(len(way.nodes), 0)
         self.assertFalse(way.closed)
         self.assertFalse(way.has_geometry)
 
         way.retrieve_geometry()
         self.assertTrue(way.has_geometry)
-        self.assertEqual(len(way.waynodes), 440)
+        self.assertEqual(len(way.element_references), 440)
         self.assertEqual(len(way.nodes), 440)
         self.assertFalse(way.closed)
 

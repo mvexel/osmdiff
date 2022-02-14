@@ -1,4 +1,5 @@
 from osmdiff.osm.api.api import OverpassAPI
+from osmdiff.osm.member import ElementReference
 from osmdiff.osm.node import Node
 from osmdiff.osm.osmobject import OSMElement
 
@@ -7,7 +8,7 @@ class Way(OSMElement):
 
     def __init__(self, id=None):
         self._nodes = []
-        self._waynodes = []
+        self._elementreferences = []
         super().__init__(id=id)
 
     def retrieve_geometry(self):
@@ -15,11 +16,10 @@ class Way(OSMElement):
             return
         OverpassAPI.geometry_for_way(self)
 
-    def _parse_waynodes(self, elem):
+    def _parse_elementreferences(self, elem):
         for nd in elem.findall("nd"):
-            way_node = WayNode()
-            way_node.ref = nd.attrib["ref"]
-            self._waynodes.append(way_node)
+            ref = ElementReference(id=nd.attrib['ref'])
+            self._elementreferences.append(ref)
 
     def _geo_interface(self):
         if not self.has_geometry:
@@ -35,39 +35,21 @@ class Way(OSMElement):
     __geo_interface__ = property(_geo_interface)
 
     def _closed(self):
-        return self._waynodes[0] == self._waynodes[-1]
+        return self._elementreferences[0] == self._elementreferences[-1]
 
     closed = property(_closed)
 
     def _has_geometry(self):
-        return len(self._nodes) == len(self._waynodes) and all ([n.lat and n.lon for n in self._nodes])
+        return len(self._nodes) == len(self._elementreferences) and all ([n.lat and n.lon for n in self._nodes])
 
     has_geometry = property(_has_geometry)
 
-    def get_waynodes(self):
-        return self._waynodes
+    def get_elementreferences(self):
+        return self._elementreferences
 
-    waynodes = property(get_waynodes)
+    element_references = property(get_elementreferences)
 
     def get_nodes(self):
         return self._nodes
 
     nodes = property(get_nodes)
-
-
-class WayNode(OSMElement):
-
-    def __init__(self, id=None):
-        self._ref = None
-        super().__init__(id=id)
-
-    def set_ref(self, ref):
-        self._ref = ref
-
-    def get_ref(self):
-        return int(self._ref)
-
-    ref = property(get_ref, set_ref)
-    
-    def __eq__(self, __o: object) -> bool:
-        return isinstance(__o, WayNode) and self.ref == __o.ref
