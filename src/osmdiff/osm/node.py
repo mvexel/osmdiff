@@ -12,7 +12,7 @@ class Node(OSMElement):
         return self._lon
 
     def set_lon(self, lon):
-        self._lon = lon
+        self._lon = float(lon)
 
     lon = property(get_lon, set_lon)
 
@@ -20,7 +20,7 @@ class Node(OSMElement):
         return self._lat
 
     def set_lat(self, lat):
-        self._lat = lat 
+        self._lat = float(lat) 
     
     lat = property(get_lat, set_lat)
 
