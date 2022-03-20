@@ -21,6 +21,7 @@ class NodeTests(unittest.TestCase):
         self.assertEqual(len(node.tags), 0)
         self.assertIsNone(node.lat)
         self.assertIsNone(node.lon)
+        self.assertFalse(node.is_on_earth)
 
     def test_node_from_xml(self):
         "Test read node from XML file"
@@ -31,6 +32,12 @@ class NodeTests(unittest.TestCase):
         self.assertEqual(node.tags['name'], 'Fremont Indian Museum')
         self.assertEqual(node.tags['tourism'], 'museum')
 
+    def test_node_geointerface(self):
+        from shapely.geometry import shape
+        node = Node(lon=0.0, lat=0.0, id=1)
+        shp = shape(node)
+        self.assertTrue(shp.geom_type == 'Point')
+        self.assertTrue(list(shp.coords) == [(node.lon, node.lat)])
 
 if __name__ == '__main__':
     unittest.main()

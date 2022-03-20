@@ -1,3 +1,4 @@
+from operator import is_
 from .osmobject import OSMElement
 
 
@@ -23,6 +24,11 @@ class Node(OSMElement):
         self._lat = float(lat) 
     
     lat = property(get_lat, set_lat)
+
+    def get_is_on_earth(self):
+        return self.lat and self.lon and self.lat < 90.0 and self.lat > -90.0 and self.lon < 180.0 and self.lon > -180.0
+
+    is_on_earth = property(get_is_on_earth)
 
     def get_geo_interface(self):
         return {

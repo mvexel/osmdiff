@@ -14,7 +14,13 @@ class Way(OSMElement):
             ref = ElementReference(id=nd.attrib['ref'])
             self.members.append(ref)
 
+    def get_is_on_earth(self):
+        return all([n.is_on_earth for n in self.nodes])
+
+    is_on_earth = property(get_is_on_earth)
+
     def _geo_interface(self):
+        # do not allow geo_interface when way has no geometry
         if not self.has_geometry:
             return None
         geom_type = 'LineString' if self.nodes[0] == self.nodes[-1] else 'Polygon'
