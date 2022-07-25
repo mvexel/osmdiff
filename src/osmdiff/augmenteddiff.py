@@ -1,10 +1,13 @@
 import os
-import dateutil.parser
 from xml.etree import cElementTree
+
+import dateutil.parser
 import requests
-from osmdiff.osm.osmobject import OSMElement
+
+from osmdiff.osm import OSMAPI
 
 OVERPASS_URL = "http://overpass-api.de/api"
+
 
 class AugmentedDiff(object):
     base_url = OVERPASS_URL
@@ -73,7 +76,7 @@ class AugmentedDiff(object):
     def _build_action(self, elem):
         if elem.attrib["type"] == "create":
             for child in elem:
-                e = OSMElement.from_xml(child)
+                e = OSMAPI.from_xml(child)
                 self.__getattribute__("create").append(e)
                 if self.debug:
                     print(elem.attrib["type"], e)
@@ -83,9 +86,9 @@ class AugmentedDiff(object):
             osm_obj_old = None
             osm_obj_new = None
             for child in old:
-                osm_obj_old = OSMElement.from_xml(child)
+                osm_obj_old = OSMAPI.from_xml(child)
             for child in new:
-                osm_obj_new = OSMElement.from_xml(child)
+                osm_obj_new = OSMAPI.from_xml(child)
             if self.debug:
                 print(
                     elem.attrib["type"],
@@ -95,8 +98,8 @@ class AugmentedDiff(object):
                     osm_obj_new)
             self.__getattribute__(
                 elem.attrib["type"]).append({
-                    "old": osm_obj_old,
-                    "new": osm_obj_new})
+                "old": osm_obj_old,
+                "new": osm_obj_new})
 
     def _parse_stream(self, stream):
         for event, elem in cElementTree.iterparse(stream):
@@ -132,4 +135,3 @@ class AugmentedDiff(object):
             create=len(self.create),
             modify=len(self.modify),
             delete=len(self.delete))
-

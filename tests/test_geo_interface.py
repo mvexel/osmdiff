@@ -1,5 +1,5 @@
 import unittest
-from osmdiff import Node, Way, Relation
+from osmdiff.osm import Node, Way, Relation
 
 class GeoInterfaceTests(unittest.TestCase):
 

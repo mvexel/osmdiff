@@ -1,10 +1,13 @@
-from gzip import GzipFile
 import os
-import requests
-from osmdiff.osm.osmobject import OSMElement
 import xml.etree.ElementTree as ET
+from gzip import GzipFile
+
+import requests
+
+from osmdiff.osm import OSMElement
 
 REPLICATION_URL = "https://planet.openstreetmap.org/replication"
+
 
 class OSMChange(object):
 
@@ -51,7 +54,7 @@ class OSMChange(object):
         for child in root:
             if child.tag in ("create", "modify", "delete"):
                 self._build_action(child)
-                    
+
     def _build_action(self, elem):
         for thing in elem:
             o = OSMElement.from_xml(thing)
@@ -74,10 +77,10 @@ class OSMChange(object):
 
     def sequence_number(self):
         return self._sequence_number
-    
+
     def set_sequence_number(self, sn):
         self._sequence_number = int(sn)
-    
+
     sequence_number = property(sequence_number, set_sequence_number)
 
     def __repr__(self):

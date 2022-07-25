@@ -1,0 +1,5 @@
+python-dateutil~=2.8.2
+setuptools~=49.2.1
+osmdiff~=0.2.1
+requests~=2.27.1
+shapely~=1.8.1

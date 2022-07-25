@@ -1,0 +1,528 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osmChange version="0.6" generator="CGImap 0.8.6 (966595 spike-07.openstreetmap.org)" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/">
+ <create>
+  <node id="9906572158" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4102964" lon="-82.6672417"/>
+ </create>
+ <create>
+  <node id="9906572159" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4096707" lon="-82.6685125"/>
+ </create>
+ <create>
+  <node id="9906572160" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4106856" lon="-82.6693490"/>
+ </create>
+ <create>
+  <node id="9906572161" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4113381" lon="-82.6684005"/>
+ </create>
+ <create>
+  <node id="9906572162" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4113284" lon="-82.6683064"/>
+ </create>
+ <create>
+  <node id="9906572163" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4112275" lon="-82.6683845"/>
+ </create>
+ <create>
+  <node id="9906572164" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4111855" lon="-82.6683457"/>
+ </create>
+ <create>
+  <node id="9906572165" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4110558" lon="-82.6682039"/>
+ </create>
+ <create>
+  <node id="9906572166" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4109184" lon="-82.6680348"/>
+ </create>
+ <create>
+  <node id="9906572167" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4107505" lon="-82.6679183"/>
+ </create>
+ <create>
+  <node id="9906572168" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4104547" lon="-82.6676672"/>
+ </create>
+ <create>
+  <node id="9906572169" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4096073" lon="-82.6684134"/>
+ </create>
+ <create>
+  <node id="9906572170" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4097165" lon="-82.6684348"/>
+ </create>
+ <create>
+  <node id="9906572171" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4098557" lon="-82.6684005"/>
+ </create>
+ <create>
+  <node id="9906572172" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4100064" lon="-82.6682839"/>
+ </create>
+ <create>
+  <node id="9906572173" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4101400" lon="-82.6681308"/>
+ </create>
+ <create>
+  <node id="9906572174" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4105887" lon="-82.6674697"/>
+ </create>
+ <create>
+  <node id="9906572175" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4106856" lon="-82.6675800"/>
+ </create>
+ <create>
+  <node id="9906572176" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4114946" lon="-82.6684942"/>
+ </create>
+ <create>
+  <node id="9906572177" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4093816" lon="-82.6662555"/>
+ </create>
+ <create>
+  <node id="9906572178" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4091822" lon="-82.6660407"/>
+ </create>
+ <create>
+  <node id="9906572179" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4157565" lon="-82.6588401"/>
+ </create>
+ <create>
+  <node id="9906572180" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4155905" lon="-82.6603280"/>
+ </create>
+ <create>
+  <node id="9906572181" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4151231" lon="-82.6601360"/>
+ </create>
+ <create>
+  <node id="9906572182" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4146615" lon="-82.6597223"/>
+ </create>
+ <create>
+  <node id="9906572183" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4141063" lon="-82.6591738"/>
+ </create>
+ <create>
+  <node id="9906572184" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4145947" lon="-82.6588836"/>
+ </create>
+ <create>
+  <node id="9906572185" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4151251" lon="-82.6592470"/>
+ </create>
+ <create>
+  <node id="9906572186" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4153807" lon="-82.6587190"/>
+ </create>
+ <create>
+  <node id="9906572187" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4160026" lon="-82.6590093"/>
+ </create>
+ <create>
+  <node id="9906572188" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4162201" lon="-82.6593818"/>
+ </create>
+ <create>
+  <node id="9906572189" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4162106" lon="-82.6604194"/>
+ </create>
+ <create>
+  <node id="9906572190" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4143295" lon="-82.6591532"/>
+ </create>
+ <create>
+  <node id="9906572191" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4144554" lon="-82.6590801"/>
+ </create>
+ <create>
+  <node id="9906572192" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4157909" lon="-82.6598663"/>
+ </create>
+ <create>
+  <node id="9906572193" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4161781" lon="-82.6601223"/>
+ </create>
+ <create>
+  <node id="9906572194" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4124889" lon="-82.6578234"/>
+ </create>
+ <create>
+  <node id="9906572195" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4126354" lon="-82.6578234"/>
+ </create>
+ <create>
+  <node id="9906572196" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4140656" lon="-82.6552378"/>
+ </create>
+ <create>
+  <node id="9906572197" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4148582" lon="-82.6541265"/>
+ </create>
+ <create>
+  <node id="9906572198" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4109859" lon="-82.6600851"/>
+ </create>
+ <create>
+  <node id="9906572199" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4129152" lon="-82.6606648"/>
+ </create>
+ <create>
+  <node id="9906572200" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4130353" lon="-82.6617757"/>
+ </create>
+ <create>
+  <way id="1080830983" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909">
+   <nd ref="9906572161"/>
+   <nd ref="9906572160"/>
+   <nd ref="9906572159"/>
+   <nd ref="9906572158"/>
+   <nd ref="9906572161"/>
+   <tag k="amenity" v="school"/>
+   <tag k="landuse" v="education"/>
+   <tag k="name" v="Mildred E Freeman Elementary School"/>
+  </way>
+ </create>
+ <create>
+  <way id="1080830984" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909">
+   <nd ref="9906572168"/>
+   <nd ref="9906572167"/>
+   <nd ref="9906572166"/>
+   <nd ref="9906572165"/>
+   <nd ref="9906572164"/>
+   <nd ref="9906572163"/>
+   <nd ref="9906572162"/>
+   <tag k="highway" v="service"/>
+  </way>
+ </create>
+ <create>
+  <way id="1080830985" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909">
+   <nd ref="9906572174"/>
+   <nd ref="9906572168"/>
+   <nd ref="9906572173"/>
+   <nd ref="9906572172"/>
+   <nd ref="9906572171"/>
+   <nd ref="9906572170"/>
+   <nd ref="9906572169"/>
+   <tag k="highway" v="service"/>
+  </way>
+ </create>
+ <create>
+  <way id="1080830986" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909">
+   <nd ref="73481327"/>
+   <nd ref="9906572178"/>
+   <nd ref="9906572177"/>
+   <nd ref="73482470"/>
+   <tag k="highway" v="service"/>
+   <tag k="service" v="alley"/>
+  </way>
+ </create>
+ <create>
+  <way id="1080830987" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909">
+   <nd ref="9906572189"/>
+   <nd ref="9906572188"/>
+   <nd ref="9906572187"/>
+   <nd ref="9906572179"/>
+   <nd ref="9906572186"/>
+   <nd ref="9906572185"/>
+   <nd ref="9906572184"/>
+   <nd ref="9906572183"/>
+   <nd ref="9906572182"/>
+   <nd ref="9906572181"/>
+   <nd ref="9906572180"/>
+   <nd ref="9906572189"/>
+   <tag k="amenity" v="grave_yard"/>
+   <tag k="ele" v="154"/>
+   <tag k="gnis:county_id" v="301"/>
+   <tag k="gnis:created" v="09/25/1979"/>
+   <tag k="gnis:feature_id" v="322374"/>
+   <tag k="gnis:state_id" v="13"/>
+   <tag k="name" v="Sallie Hill Cemetery"/>
+  </way>
+ </create>
+ <create>
+  <way id="1080830988" visible="true" version="1" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909">
+   <nd ref="73491269"/>
+   <nd ref="73493920"/>
+   <nd ref="73493921"/>
+   <nd ref="73493916"/>
+   <tag k="highway" v="residential"/>
+   <tag k="name" v="Taylor Street"/>
+  </way>
+ </create>
+ <delete>
+  <node id="358702753" visible="false" version="2" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909"/>
+ </delete>
+ <delete>
+  <node id="358756159" visible="false" version="2" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909"/>
+ </delete>
+ <modify>
+  <node id="73482478" visible="true" version="3" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4102716" lon="-82.6671092"/>
+ </modify>
+ <modify>
+  <node id="73491289" visible="true" version="3" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4127964" lon="-82.6596830"/>
+ </modify>
+ <modify>
+  <node id="73494363" visible="true" version="3" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4141788" lon="-82.6592881"/>
+ </modify>
+ <modify>
+  <node id="73494364" visible="true" version="3" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4150983" lon="-82.6594184"/>
+ </modify>
+ <modify>
+  <node id="73494365" visible="true" version="3" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4154475" lon="-82.6596241"/>
+ </modify>
+ <modify>
+  <node id="73494366" visible="true" version="3" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4160484" lon="-82.6600012"/>
+ </modify>
+ <modify>
+  <node id="73494657" visible="true" version="3" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4132227" lon="-82.6648795"/>
+ </modify>
+ <modify>
+  <node id="73494665" visible="true" version="3" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4133293" lon="-82.6641208"/>
+ </modify>
+ <modify>
+  <node id="73494668" visible="true" version="3" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4132411" lon="-82.6636218"/>
+ </modify>
+ <modify>
+  <node id="73494670" visible="true" version="3" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4132092" lon="-82.6632432"/>
+ </modify>
+ <modify>
+  <node id="73498774" visible="true" version="3" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4108397" lon="-82.6605353"/>
+ </modify>
+ <modify>
+  <node id="73498776" visible="true" version="3" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4108683" lon="-82.6603201"/>
+ </modify>
+ <delete>
+  <node id="73498782" visible="false" version="3" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909"/>
+ </delete>
+ <modify>
+  <node id="73498785" visible="true" version="3" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4121270" lon="-82.6580831"/>
+ </modify>
+ <modify>
+  <node id="73498788" visible="true" version="3" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4124763" lon="-82.6575098"/>
+ </modify>
+ <modify>
+  <node id="73498789" visible="true" version="3" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4132022" lon="-82.6564459"/>
+ </modify>
+ <modify>
+  <node id="73498790" visible="true" version="3" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4136176" lon="-82.6558502"/>
+ </modify>
+ <modify>
+  <node id="73498791" visible="true" version="3" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4139191" lon="-82.6554356"/>
+ </modify>
+ <modify>
+  <node id="73498792" visible="true" version="3" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4148887" lon="-82.6540631"/>
+ </modify>
+ <modify>
+  <node id="73507230" visible="true" version="3" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4123467" lon="-82.6579163"/>
+ </modify>
+ <modify>
+  <node id="73507232" visible="true" version="3" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4125722" lon="-82.6578027"/>
+ </modify>
+ <delete>
+  <node id="73507235" visible="false" version="3" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909"/>
+ </delete>
+ <modify>
+  <node id="73507237" visible="true" version="3" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4127531" lon="-82.6578664"/>
+ </modify>
+ <modify>
+  <node id="73507258" visible="true" version="3" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909" lat="33.4126075" lon="-82.6577601"/>
+ </modify>
+ <modify>
+  <way id="9523781" visible="true" version="3" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909">
+   <nd ref="73484066"/>
+   <nd ref="73484068"/>
+   <tag k="highway" v="residential"/>
+   <tag k="name" v="Dye Street"/>
+  </way>
+ </modify>
+ <modify>
+  <way id="9523877" visible="true" version="3" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909">
+   <nd ref="73486061"/>
+   <nd ref="73486066"/>
+   <tag k="highway" v="residential"/>
+   <tag k="name" v="Maywood Street"/>
+  </way>
+ </modify>
+ <modify>
+  <way id="9524415" visible="true" version="3" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909">
+   <nd ref="73493916"/>
+   <nd ref="73493923"/>
+   <nd ref="73493925"/>
+   <nd ref="73493927"/>
+   <nd ref="73493930"/>
+   <nd ref="73493931"/>
+   <nd ref="73493932"/>
+   <nd ref="73504147"/>
+   <tag k="highway" v="residential"/>
+   <tag k="name" v="Gordon Street"/>
+  </way>
+ </modify>
+ <modify>
+  <way id="9524444" visible="true" version="3" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909">
+   <nd ref="73494363"/>
+   <nd ref="9906572190"/>
+   <nd ref="9906572191"/>
+   <nd ref="73468740"/>
+   <nd ref="73494364"/>
+   <nd ref="73494365"/>
+   <nd ref="9906572192"/>
+   <nd ref="73494366"/>
+   <nd ref="9906572193"/>
+   <nd ref="73494368"/>
+   <nd ref="73494129"/>
+   <tag k="alt_name" v="Lazenby Street"/>
+   <tag k="highway" v="service"/>
+   <tag k="name" v="Old Camak Road"/>
+  </way>
+ </modify>
+ <modify>
+  <way id="9524461" visible="true" version="3" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909">
+   <nd ref="73493920"/>
+   <nd ref="73494657"/>
+   <nd ref="73494659"/>
+   <nd ref="73494660"/>
+   <nd ref="73494663"/>
+   <nd ref="73494665"/>
+   <nd ref="73494668"/>
+   <nd ref="73494670"/>
+   <nd ref="73494672"/>
+   <nd ref="9906572200"/>
+   <nd ref="9906572199"/>
+   <nd ref="73491289"/>
+   <tag k="highway" v="residential"/>
+   <tag k="name" v="Newton Street"/>
+  </way>
+ </modify>
+ <modify>
+  <way id="9524706" visible="true" version="3" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909">
+   <nd ref="73498419"/>
+   <nd ref="73491291"/>
+   <tag k="highway" v="residential"/>
+   <tag k="name" v="Bond Street"/>
+  </way>
+ </modify>
+ <modify>
+  <way id="9524746" visible="true" version="3" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909">
+   <nd ref="73498677"/>
+   <nd ref="73498760"/>
+   <nd ref="73498762"/>
+   <nd ref="73498764"/>
+   <nd ref="73498766"/>
+   <nd ref="73498768"/>
+   <nd ref="73484066"/>
+   <nd ref="73498771"/>
+   <nd ref="73498774"/>
+   <nd ref="73498776"/>
+   <nd ref="9906572198"/>
+   <nd ref="73498780"/>
+   <nd ref="73486061"/>
+   <nd ref="73498419"/>
+   <nd ref="73498785"/>
+   <nd ref="73498788"/>
+   <nd ref="73498789"/>
+   <nd ref="73498790"/>
+   <nd ref="73498791"/>
+   <nd ref="9906572196"/>
+   <nd ref="73481210"/>
+   <nd ref="9906572197"/>
+   <nd ref="73498792"/>
+   <nd ref="73498794"/>
+   <nd ref="73487990"/>
+   <tag k="highway" v="residential"/>
+   <tag k="name" v="Hall Street"/>
+  </way>
+ </modify>
+ <modify>
+  <way id="9524755" visible="true" version="3" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909">
+   <nd ref="73485420"/>
+   <nd ref="73498816"/>
+   <nd ref="73498818"/>
+   <nd ref="73498819"/>
+   <nd ref="73498822"/>
+   <nd ref="9906572169"/>
+   <nd ref="73482478"/>
+   <tag k="highway" v="residential"/>
+   <tag k="name" v="Dawson Street"/>
+  </way>
+ </modify>
+ <delete>
+  <way id="9525397" visible="false" version="3" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909"/>
+ </delete>
+ <modify>
+  <way id="9525735" visible="true" version="3" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909">
+   <nd ref="73507237"/>
+   <nd ref="73507258"/>
+   <nd ref="73507261"/>
+   <nd ref="73498788"/>
+   <tag k="highway" v="residential"/>
+   <tag k="name" v="Cedar Street"/>
+  </way>
+ </modify>
+ <modify>
+  <way id="9525849" visible="true" version="3" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909">
+   <nd ref="73498766"/>
+   <nd ref="73491275"/>
+   <nd ref="73494672"/>
+   <tag k="highway" v="residential"/>
+   <tag k="name" v="Depot Street"/>
+  </way>
+ </modify>
+ <modify>
+  <way id="9523671" visible="true" version="4" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909">
+   <nd ref="73481323"/>
+   <nd ref="4256833730"/>
+   <nd ref="73481325"/>
+   <nd ref="73481327"/>
+   <tag k="highway" v="residential"/>
+   <tag k="name" v="Willow Street"/>
+  </way>
+ </modify>
+ <modify>
+  <way id="9523704" visible="true" version="4" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909">
+   <nd ref="73482373"/>
+   <nd ref="73482375"/>
+   <nd ref="73482380"/>
+   <nd ref="4256833736"/>
+   <nd ref="4256833734"/>
+   <nd ref="4256833735"/>
+   <nd ref="73482383"/>
+   <nd ref="4256833738"/>
+   <nd ref="4256833737"/>
+   <nd ref="4256833739"/>
+   <nd ref="4256833740"/>
+   <nd ref="4256833741"/>
+   <nd ref="73482384"/>
+   <nd ref="4256833742"/>
+   <nd ref="73482390"/>
+   <nd ref="4256833743"/>
+   <nd ref="73482392"/>
+   <nd ref="73482394"/>
+   <nd ref="73482399"/>
+   <tag k="highway" v="residential"/>
+   <tag k="name" v="Meadow Circle"/>
+  </way>
+ </modify>
+ <modify>
+  <way id="9523708" visible="true" version="4" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909">
+   <nd ref="73482470"/>
+   <nd ref="73482473"/>
+   <nd ref="73482475"/>
+   <nd ref="73482478"/>
+   <nd ref="9906572174"/>
+   <nd ref="9906572175"/>
+   <nd ref="9906572162"/>
+   <nd ref="9906572176"/>
+   <nd ref="73469092"/>
+   <nd ref="73482482"/>
+   <tag k="highway" v="residential"/>
+   <tag k="name" v="Hopgood Street"/>
+  </way>
+ </modify>
+ <modify>
+  <way id="9523845" visible="true" version="4" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909">
+   <nd ref="73485407"/>
+   <nd ref="4256833744"/>
+   <nd ref="73485409"/>
+   <nd ref="4256833745"/>
+   <nd ref="73485410"/>
+   <nd ref="73485412"/>
+   <nd ref="73485414"/>
+   <nd ref="73485417"/>
+   <nd ref="4256833733"/>
+   <nd ref="73485420"/>
+   <nd ref="73482373"/>
+   <nd ref="73485422"/>
+   <nd ref="73482399"/>
+   <nd ref="73482470"/>
+   <nd ref="73485429"/>
+   <nd ref="73485431"/>
+   <nd ref="73485433"/>
+   <nd ref="73485436"/>
+   <nd ref="73485439"/>
+   <nd ref="4256833731"/>
+   <tag k="highway" v="residential"/>
+   <tag k="name" v="Meadow Road"/>
+  </way>
+ </modify>
+ <modify>
+  <way id="9525733" visible="true" version="4" changeset="123990719" timestamp="2022-07-23T21:19:15Z" user="mvexel" uid="8909">
+   <nd ref="73498785"/>
+   <nd ref="73507230"/>
+   <nd ref="9906572194"/>
+   <nd ref="73507232"/>
+   <nd ref="9906572195"/>
+   <nd ref="73507237"/>
+   <nd ref="73507239"/>
+   <nd ref="73491295"/>
+   <nd ref="73494363"/>
+   <nd ref="73507242"/>
+   <nd ref="73507244"/>
+   <nd ref="73507247"/>
+   <nd ref="73507249"/>
+   <nd ref="384698557"/>
+   <nd ref="73507252"/>
+   <nd ref="73494129"/>
+   <tag k="highway" v="residential"/>
+   <tag k="name" v="Cedar Street"/>
+  </way>
+ </modify>
+</osmChange>

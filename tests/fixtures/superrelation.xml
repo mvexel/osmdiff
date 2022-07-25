@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osm version="0.6" generator="CGImap 0.8.6 (2607459 spike-07.openstreetmap.org)" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/">
+ <relation id="274454" visible="true" version="20" changeset="71508064" timestamp="2019-06-22T11:57:43Z" user="Kozuch" uid="324205">
+  <member type="relation" ref="2211488" role="north"/>
+  <member type="relation" ref="2211489" role="south"/>
+  <member type="relation" ref="2317122" role="north"/>
+  <member type="relation" ref="2317123" role="south"/>
+  <member type="relation" ref="2334045" role="north"/>
+  <member type="relation" ref="2334046" role="south"/>
+  <member type="relation" ref="2334099" role="north"/>
+  <member type="relation" ref="2334100" role="south"/>
+  <member type="relation" ref="1319527" role="north"/>
+  <member type="relation" ref="1319529" role="south"/>
+  <member type="relation" ref="1296113" role="north"/>
+  <member type="relation" ref="1296090" role="south"/>
+  <tag k="name" v="I 15 (super)"/>
+  <tag k="network" v="US:I"/>
+  <tag k="ref" v="15"/>
+  <tag k="route" v="road"/>
+  <tag k="type" v="route"/>
+  <tag k="wikidata" v="Q93472"/>
+  <tag k="wikipedia" v="en:Interstate 15"/>
+ </relation>
+</osm>
