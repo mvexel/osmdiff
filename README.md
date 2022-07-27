@@ -1,3 +1,5 @@
+> I am considering moving my open source repos to sourcehut. For now, I mirror this repo at sourcehut, and issues are still on here. The plan is to move the issue tracker to sourcehut next, and then archive this repo. No, I don't have a timeline.
+
 # osmdiff
 
 A read-only interface to OpenStreetMap change APIs and files. See also [pyosm](https://github.com/iandees/pyosm) which can do similar things. 
