@@ -1,7 +1,7 @@
 import unittest
 from pathlib import Path
 
-from osmdiff.osm import OSMElement, Relation, OSMAPI
+from osmdiff.osm import OSMElement, Relation
 
 
 class RelationTests(unittest.TestCase):
@@ -30,7 +30,7 @@ class RelationTests(unittest.TestCase):
         "Test read relation from XML file"
         with open(self.rel_xml_file, "r") as fh:
             xml_str = fh.read()
-            relation = OSMAPI.from_xml(xml_str)
+            relation = OSMElement.from_xml(xml_str)
             self.assertIn('name', relation.tags)
             self.assertIn('leisure', relation.tags)
             self.assertEqual(relation.tags['name'], 'Fishlake National Forest')

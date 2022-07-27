@@ -3,7 +3,6 @@ import xml.etree.ElementTree as ET
 from gzip import GzipFile
 
 import requests
-
 from osmdiff.osm import OSMElement
 
 REPLICATION_URL = "https://planet.openstreetmap.org/replication"
@@ -66,8 +65,8 @@ class OSMChange(object):
         if clear_cache:
             self.create, self.modify, self.delete = ([], [], [])
         r = requests.get(self._build_sequence_url(), stream=True, timeout=30)
-        gzfile = GzipFile.GzipFile(fileobj=r.raw)
-        self._parse_xml(gzfile)
+        gzfile = GzipFile(fileobj=r.raw)
+        self._parse_xml(gzfile.read())
 
     @classmethod
     def from_xml(cls, xml_str):

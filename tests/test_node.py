@@ -1,7 +1,6 @@
 import unittest
 from pathlib import Path
 
-from osmdiff.osm import OSMAPI
 from osmdiff.osm.base import OSMElement
 from osmdiff.osm.node import Node
 
@@ -34,7 +33,7 @@ class NodeTests(unittest.TestCase):
         """Test read node from XML file"""
         with open(self.node_xml_file, "r") as fh:
             xml_str = fh.read()
-            node = OSMAPI.from_xml(xml_str)
+            node = OSMElement.from_xml(xml_str)
             self.assertIn('name', node.tags)
             self.assertIn('tourism', node.tags)
             self.assertEqual(node.tags['name'], 'Fremont Indian Museum')

@@ -1,20 +1,20 @@
 #!/usr/bin/env python
 
 from osmdiff import OSMChange, AugmentedDiff
-from osmdiff.osm import Node, Way, Relation
 
 debug = True
 
-r = OSMChange(debug=debug)
-r.get_state()
-r.retrieve()
-print(r)
+# r = OSMChange()
+# r.get_state()
+# r.retrieve()
+# print(r)
 
-r = OSMChange(file="test_osmchange.xml", debug=debug)
-print(r)
+with open("fixtures/test_osmchange.xml", "r") as fh:
+    r = OSMChange.from_xml(fh.read())
+    print(r)
 
 a = AugmentedDiff(
-    file="test_adiff.xml",
+    file="fixtures/test_adiff.xml",
     debug=debug)
 print(a)
 

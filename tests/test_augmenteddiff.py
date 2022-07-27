@@ -1,23 +1,23 @@
 import unittest
 from pathlib import Path
 
-from osmdiff import OSMChange
+from osmdiff import AugmentedDiff
 
 
 class OsmChangeTests(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.way_xml_file = Path(__file__).parent.joinpath(
-            "fixtures/test_osmchange.xml"
+        self.augmented_diff_file = Path(__file__).parent.joinpath(
+            "fixtures/test_adiff.xml"
         )
         return super().setUp()
 
     def tearDown(self) -> None:
         return super().tearDown()
 
-    def test_init_osmchange_from_file(self) -> None:
-        with open(self.way_xml_file, "r") as fh:
-            o = OSMChange.from_xml(fh.read())
+    def test_init_augmented_diff_from_file(self) -> None:
+        with open(self.augmented_diff_file, "r") as fh:
+            o = AugmentedDiff.from_xml(fh.read())
             self.assertEqual(len(o.create), 831)
             self.assertEqual(len(o.modify), 368)
             self.assertEqual(len(o.delete), 3552)

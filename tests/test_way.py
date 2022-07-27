@@ -1,7 +1,7 @@
 import unittest
 from pathlib import Path
 
-from osmdiff.osm import Way, OSMElement, OSMAPI
+from osmdiff.osm import Way, OSMElement
 
 
 class WayTests(unittest.TestCase):
@@ -32,7 +32,7 @@ class WayTests(unittest.TestCase):
         """Test read way from XML file"""
         with open(self.way_xml_file, "r") as fh:
             xml_str = fh.read()
-            way = OSMAPI.from_xml(xml_str)
+            way = OSMElement.from_xml(xml_str)
             self.assertIn("highway", way.tags)
             self.assertEqual(len(way.nodes), 440)
             self.assertFalse(way.is_closed)

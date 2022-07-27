@@ -4,19 +4,18 @@ from xml.etree import cElementTree
 import dateutil.parser
 import requests
 
-from osmdiff.osm import OSMAPI
+from osmdiff.osm import OSMElement
 
 OVERPASS_URL = "http://overpass-api.de/api"
 
 
 class AugmentedDiff(object):
     base_url = OVERPASS_URL
-    minlon = None
-    minlat = None
-    maxlon = None
-    maxlat = None
+    min_lon = None
+    min_lat = None
+    max_lon = None
+    max_lat = None
     timestamp = None
-    debug = False
 
     def __init__(
             self,
@@ -34,15 +33,15 @@ class AugmentedDiff(object):
         self.delete = []
         if file:
             with open(file, 'r') as file_handle:
-                self._parse_stream(file_handle)
+                self._parse_xml(file_handle)
         else:
             self.sequence_number = sequence_number
             if minlon and minlat and maxlon and maxlat:
                 if maxlon > minlon and maxlat > minlat:
-                    self.minlon = minlon
-                    self.minlat = minlat
-                    self.maxlon = maxlon
-                    self.maxlat = maxlat
+                    self.min_lon = minlon
+                    self.min_lat = minlat
+                    self.max_lon = maxlon
+                    self.max_lat = maxlat
                 else:
                     raise Exception("invalid bbox.")
 
@@ -51,8 +50,6 @@ class AugmentedDiff(object):
         state_url = os.path.join(
             self.base_url,
             "augmented_diff_status")
-        if self.debug:
-            print("getting state from", state_url)
         response = requests.get(state_url, timeout=5)
         if response.status_code != 200:
             return False
@@ -63,48 +60,35 @@ class AugmentedDiff(object):
         url = "{base}/augmented_diff?id={sequence_number}".format(
             base=self.base_url,
             sequence_number=self.sequence_number)
-        if self.minlon and self.minlat and self.maxlon and self.maxlat:
+        if self.min_lon and self.min_lat and self.max_lon and self.max_lat:
             url += "&bbox={minlon},{minlat},{maxlon},{maxlat}".format(
-                minlon=self.minlon,
-                minlat=self.minlat,
-                maxlon=self.maxlon,
-                maxlat=self.maxlat)
-        if self.debug:
-            print(url)
+                minlon=self.min_lon,
+                minlat=self.min_lat,
+                maxlon=self.max_lon,
+                maxlat=self.max_lat)
         return url
 
     def _build_action(self, elem):
         if elem.attrib["type"] == "create":
             for child in elem:
-                e = OSMAPI.from_xml(child)
+                e = OSMElement.from_xml(child)
                 self.__getattribute__("create").append(e)
-                if self.debug:
-                    print(elem.attrib["type"], e)
         else:
             new = elem.find("new")
             old = elem.find("old")
             osm_obj_old = None
             osm_obj_new = None
             for child in old:
-                osm_obj_old = OSMAPI.from_xml(child)
+                osm_obj_old = OSMElement.from_xml(child)
             for child in new:
-                osm_obj_new = OSMAPI.from_xml(child)
-            if self.debug:
-                print(
-                    elem.attrib["type"],
-                    ": old",
-                    osm_obj_old,
-                    ", new",
-                    osm_obj_new)
+                osm_obj_new = OSMElement.from_xml(child)
             self.__getattribute__(
                 elem.attrib["type"]).append({
                 "old": osm_obj_old,
                 "new": osm_obj_new})
 
-    def _parse_stream(self, stream):
-        for event, elem in cElementTree.iterparse(stream):
-            # if self.debug:
-            #     print(event, elem)
+    def _parse_xml(self, xml_str):
+        for event, elem in cElementTree.iterparse(xml_str):
             if elem.tag == "remark":
                 raise Exception(
                     "Augmented Diff API returned an error:",
@@ -121,13 +105,15 @@ class AugmentedDiff(object):
         if clear_cache:
             self.create, self.modify, self.delete = ([], [], [])
         url = self._build_adiff_url()
-        if self.debug:
-            print("retrieving...")
         r = requests.get(url, stream=True, timeout=30)
         r.raw.decode_content = True
-        if self.debug:
-            print("parsing...")
-        self._parse_stream(r.raw)
+        self._parse_xml(r.raw)
+
+    @classmethod
+    def from_xml(cls, xml_str):
+        o = cls()
+        o._parse_xml(xml_str)
+        return o
 
     def __repr__(self):
         return "AugmentedDiff ({create} created, {modify} modified, \
