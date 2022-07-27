@@ -1,61 +1,34 @@
 import unittest
+from pathlib import Path
 
-from osmdiff.osm import Node, Way, Relation, OSMChange
-
-
-class OSMChangeTests(unittest.TestCase):
-    """tests for OSMChange object"""
-
-    def setUp(self):
-        import os
-        cur_dir = os.path.dirname(__file__)
-        self.osmchange_file_path = 'fixtures/test_osmchange.xml'
-
-    def tearDown(self):
-        pass
-
-    def test_init_osmchange(self):
-        """Test OSMChange init"""
-        osmchange = OSMChange()
-        self.assertIsInstance(osmchange, OSMChange)
-        self.assertIsInstance(osmchange.create, list)
-        self.assertIsInstance(osmchange.modify, list)
-        self.assertIsInstance(osmchange.delete, list)
-        self.assertEqual(len(osmchange.create), 0)
-        self.assertEqual(len(osmchange.modify), 0)
-        self.assertEqual(len(osmchange.delete), 0)
-
-    def test_set_sequencenumber(self):
-        """Sequence number is not defined by default but can be set manually"""
-        osm_change = OSMChange()
-        self.assertIsNone(osm_change.sequence_number)
-        osm_change.sequence_number = 12345
-        self.assertEqual(osm_change.sequence_number, 12345)
-        osm_change.sequence_number = "12345"
-        self.assertEqual(osm_change.sequence_number, 12345)
-
-    def test_3_readfromfile(self):
-        """Test initializing from file"""
-        with open(self.osmchange_file_path, "r") as fh:
-            xml_str = fh.read()
-            osmchange = OSMChange.from_xml(xml_str)
-            self.assertEqual(len(osmchange.create), 831)
-            self.assertEqual(len(osmchange.modify), 368)
-            self.assertEqual(len(osmchange.delete), 3552)
-            nodes_created = [o for o in osmchange.create if isinstance(o, Node)]
-            ways_created = [o for o in osmchange.create if isinstance(o, Way)]
-            rels_created = [o for o in osmchange.create if isinstance(o, Relation)]
-            self.assertEqual(len(nodes_created), 699)
-            self.assertEqual(len(ways_created), 132)
-            self.assertEqual(len(rels_created), 0)
-            self.assertEqual(len(nodes_created + ways_created + rels_created), len(osmchange.create))
-
-    def test_4_state(self):
-        "Test getting state (requires internet)"
-        osm_change = OSMChange()
-        self.assertTrue(osm_change.get_state())
-        self.assertIsInstance(osm_change._sequence_number, int)
+from osmdiff import OSMChange
 
 
-if __name__ == '__main__':
-    unittest.main()
+class AugmentedDiffTests(unittest.TestCase):
+
+    def setUp(self) -> None:
+        self.way_xml_file = Path(__file__).parent.joinpath(
+            "fixtures/test_osmchange.xml"
+        )
+        return super().setUp()
+
+    def tearDown(self) -> None:
+        return super().tearDown()
+
+    def test_init_osmchange_from_file(self) -> None:
+        with open(self.way_xml_file, "r") as fh:
+            o = OSMChange.from_xml(fh.read())
+            self.assertEqual(len(o.create), 831)
+            self.assertEqual(len(o.modify), 368)
+            self.assertEqual(len(o.delete), 3552)
+
+    def test_osmchange_from_overpass_api(self) -> None:
+        o = OSMChange()
+        self.assertEqual(len(o.create), 0)
+        self.assertEqual(len(o.modify), 0)
+        self.assertEqual(len(o.delete), 0)
+        o.get_state()
+        self.assertGreater(o.sequence_number, 0)
+        o.retrieve()
+        self.assertGreaterEqual(len(o.create), 1)
+        self.assertGreaterEqual(len(o.modify), 1)
