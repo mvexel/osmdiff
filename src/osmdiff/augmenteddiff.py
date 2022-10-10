@@ -112,7 +112,7 @@ class AugmentedDiff(object):
             if elem.tag == "action":
                 self._build_action(elem)
 
-    def retrieve(self, clear_cache=False):
+    def retrieve(self, clear_cache=False, timeout=30):
         if not self.sequence_number:
             raise Exception("invalid sequence number")
         if clear_cache:
@@ -120,7 +120,7 @@ class AugmentedDiff(object):
         url = self._build_adiff_url()
         if self.debug:
             print("retrieving...")
-        r = requests.get(url, stream=True, timeout=30)
+        r = requests.get(url, stream=True, timeout=timeout)
         r.raw.decode_content = True
         if self.debug:
             print("parsing...")
