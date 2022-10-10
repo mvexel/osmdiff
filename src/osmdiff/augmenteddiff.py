@@ -107,7 +107,10 @@ class AugmentedDiff(object):
             if elem.tag == "action":
                 self._build_action(elem)
 
-    def retrieve(self, clear_cache=False):
+    def retrieve(self, clear_cache=False) -> int:
+        """
+        Retrieve the Augmented diff corresponding to the sequence_number.
+        """
         if not self.sequence_number:
             raise Exception("invalid sequence number")
         if clear_cache:
@@ -115,11 +118,18 @@ class AugmentedDiff(object):
         url = self._build_adiff_url()
         if self.debug:
             print("retrieving...")
-        r = requests.get(url, stream=True, timeout=30)
-        r.raw.decode_content = True
-        if self.debug:
-            print("parsing...")
-        self._parse_stream(r.raw)
+        try:
+            r = requests.get(url, stream=True, timeout=30)
+            if r.status_code != 200:
+                return r.status_code
+            r.raw.decode_content = True
+            if self.debug:
+                print("parsing...")
+            self._parse_stream(r.raw)
+            return r.status_code
+        except ConnectionError:
+            # FIXME should we catch instead?
+            return 0
 
     def __repr__(self):
         return "AugmentedDiff ({create} created, {modify} modified, \

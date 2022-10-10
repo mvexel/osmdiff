@@ -75,14 +75,24 @@ class OSMChange(object):
                 print(o.tags)
                 print(o.bounds)
 
-    def retrieve(self, clear_cache=False):
+    def retrieve(self, clear_cache=False) -> int:
+        """
+        Retrieve the OSM diff corresponding to the OSMChange sequence_number.
+        """
         if not self._sequence_number:
             raise Exception("invalid sequence number")
         if clear_cache:
             self.create, self.modify, self.delete = ([], [], [])
-        r = requests.get(self._build_sequence_url(), stream=True, timeout=30)
-        gzfile = GzipFile.GzipFile(fileobj=r.raw)
-        self._parse_stream(gzfile)
+        try:
+            r = requests.get(self._build_sequence_url(), stream=True, timeout=30)
+            if r.status_code != 200:
+                return r.status_code
+            gzfile = GzipFile(fileobj=r.raw)
+            self._parse_stream(gzfile)
+            return r.status_code
+        except ConnectionError:
+            # FIXME catch this?
+            return 0
 
     @classmethod
     def from_xml(cls, path):
