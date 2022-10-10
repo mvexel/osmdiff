@@ -1,62 +1,46 @@
-import unittest
 from pathlib import Path
 
 from osmdiff import Node, OSMChange, Relation, Way
+from typing_extensions import assert_type
 
 
-class OSMChangeTests(unittest.TestCase):
+class TestOSMChange:
     "tests for OSMChange object"
 
-    def setUp(self):
-        self.osmchange_file_path = (
-            Path(__file__).parent / "fixtures/test_osmchange.xml"
-        ).resolve()
-
-    def tearDown(self):
-        pass
+    osmchange_file_path = (
+        Path(__file__).parent / "fixtures/test_osmchange.xml"
+    ).resolve()
 
     def test_init_osmchange(self):
         "Test OSMChange init"
         osmchange = OSMChange()
-        self.assertIsInstance(osmchange, OSMChange)
-        self.assertIsInstance(osmchange.create, list)
-        self.assertIsInstance(osmchange.modify, list)
-        self.assertIsInstance(osmchange.delete, list)
-        self.assertEqual(len(osmchange.create), 0)
-        self.assertEqual(len(osmchange.modify), 0)
-        self.assertEqual(len(osmchange.delete), 0)
+        assert_type(osmchange, OSMChange)
+        assert_type(osmchange.create, list)
+        assert_type(osmchange.modify, list)
+        assert_type(osmchange.delete, list)
+        assert len(osmchange.create) == 0
+        assert len(osmchange.modify) == 0
+        assert len(osmchange.delete) == 0
 
     def test_set_sequencenumber(self):
         "Sequence number is not defined by default but can be set manually"
         osm_change = OSMChange()
-        self.assertIsNone(osm_change.sequence_number)
+        assert not osm_change.sequence_number
         osm_change.sequence_number = 12345
-        self.assertEqual(osm_change.sequence_number, 12345)
+        assert osm_change.sequence_number == 12345
         osm_change.sequence_number = "12345"
-        self.assertEqual(osm_change.sequence_number, 12345)
+        assert osm_change.sequence_number == 12345
 
     def test_3_readfromfile(self):
         "Test initializing from file"
         osmchange = OSMChange.from_xml(self.osmchange_file_path)
-        self.assertEqual(len(osmchange.create), 831)
-        self.assertEqual(len(osmchange.modify), 368)
-        self.assertEqual(len(osmchange.delete), 3552)
+        assert len(osmchange.create) == 831
+        assert len(osmchange.modify) == 368
+        assert len(osmchange.delete) == 3552
         nodes_created = [o for o in osmchange.create if isinstance(o, Node)]
         ways_created = [o for o in osmchange.create if isinstance(o, Way)]
         rels_created = [o for o in osmchange.create if isinstance(o, Relation)]
-        self.assertEqual(len(nodes_created), 699)
-        self.assertEqual(len(ways_created), 132)
-        self.assertEqual(len(rels_created), 0)
-        self.assertEqual(
-            len(nodes_created + ways_created + rels_created), len(osmchange.create)
-        )
-
-    def test_4_state(self):
-        "Test getting state (requires internet)"
-        osm_change = OSMChange()
-        self.assertTrue(osm_change.get_state())
-        self.assertIsInstance(osm_change._sequence_number, int)
-
-
-if __name__ == "__main__":
-    unittest.main()
+        assert len(nodes_created) == 699
+        assert len(ways_created) == 132
+        assert len(rels_created) == 0
+        assert len(nodes_created + ways_created + rels_created) == len(osmchange.create)

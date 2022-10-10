@@ -1,24 +1,19 @@
-import unittest
-
 from osmdiff import Relation
 from osmdiff.osm import OSMObject
+from typing_extensions import assert_type
 
 
-class RelationTests(unittest.TestCase):
+class TestRelation:
     "tests for Relation object"
 
     def test_init_relation(self):
         "Test Relation init"
         relation = Relation()
-        self.assertIsInstance(relation, Relation)
-        self.assertIsInstance(relation, OSMObject)
-        self.assertIsInstance(relation.attribs, dict)
-        self.assertIsInstance(relation.tags, dict)
-        self.assertEqual(len(relation.tags), 0)
-        self.assertEqual(len(relation.attribs), 0)
-        self.assertIsInstance(relation.members, list)
-        self.assertEqual(len(relation.members), 0)
-
-
-if __name__ == "__main__":
-    unittest.main()
+        assert_type(relation, Relation)
+        assert_type(relation, OSMObject)
+        assert_type(relation.attribs, dict)
+        assert_type(relation.tags, dict)
+        assert len(relation.tags) == 0
+        assert len(relation.attribs) == 0
+        assert_type(relation.members, list)
+        assert len(relation.members) == 0

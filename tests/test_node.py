@@ -1,24 +1,19 @@
-import unittest
-
 from osmdiff import Node
 from osmdiff.osm import OSMObject
+from typing_extensions import assert_type
 
 
-class NodeTests(unittest.TestCase):
+class TestNode:
     "tests for Node object"
 
     def test_init_node(self):
         "Test Node init"
         node = Node()
-        self.assertIsInstance(node, Node)
-        self.assertIsInstance(node, OSMObject)
-        self.assertIsInstance(node.attribs, dict)
-        self.assertIsInstance(node.tags, dict)
-        self.assertEqual(len(node.attribs), 0)
-        self.assertEqual(len(node.tags), 0)
-        self.assertEqual(node.lat, 0.0)
-        self.assertEqual(node.lon, 0.0)
-
-
-if __name__ == "__main__":
-    unittest.main()
+        assert_type(node, Node)
+        assert_type(node, OSMObject)
+        assert_type(node.attribs, dict)
+        assert_type(node.tags, dict)
+        assert len(node.attribs) == 0
+        assert len(node.tags) == 0
+        assert node.lat == 0.0
+        assert node.lon == 0.0
