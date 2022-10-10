@@ -1,6 +1,8 @@
 import unittest
+
 from osmdiff import Relation
 from osmdiff.osm import OSMObject
+
 
 class RelationTests(unittest.TestCase):
     "tests for Relation object"
@@ -18,5 +20,5 @@ class RelationTests(unittest.TestCase):
         self.assertEqual(len(relation.members), 0)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

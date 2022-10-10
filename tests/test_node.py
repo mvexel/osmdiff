@@ -1,6 +1,8 @@
 import unittest
+
 from osmdiff import Node
 from osmdiff.osm import OSMObject
+
 
 class NodeTests(unittest.TestCase):
     "tests for Node object"
@@ -18,5 +20,5 @@ class NodeTests(unittest.TestCase):
         self.assertEqual(node.lon, 0.0)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

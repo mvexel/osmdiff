@@ -1,10 +1,13 @@
 import os
-import dateutil.parser
 from xml.etree import cElementTree
+
+import dateutil.parser
 import requests
+
 from .osm import OSMObject
 
 OVERPASS_URL = "http://overpass-api.de/api"
+
 
 class AugmentedDiff(object):
     base_url = OVERPASS_URL
@@ -16,21 +19,22 @@ class AugmentedDiff(object):
     debug = False
 
     def __init__(
-            self,
-            minlon=None,
-            minlat=None,
-            maxlon=None,
-            maxlat=None,
-            debug=False,
-            file=None,
-            sequence_number=None,
-            timestamp=None):
+        self,
+        minlon=None,
+        minlat=None,
+        maxlon=None,
+        maxlat=None,
+        debug=False,
+        file=None,
+        sequence_number=None,
+        timestamp=None,
+    ):
         self.debug = debug
         self.create = []
         self.modify = []
         self.delete = []
         if file:
-            with open(file, 'r') as file_handle:
+            with open(file, "r") as file_handle:
                 self._parse_stream(file_handle)
         else:
             self.sequence_number = sequence_number
@@ -45,9 +49,7 @@ class AugmentedDiff(object):
 
     def get_state(self):
         """Get the current state from the OSM API"""
-        state_url = os.path.join(
-            self.base_url,
-            "augmented_diff_status")
+        state_url = os.path.join(self.base_url, "augmented_diff_status")
         if self.debug:
             print("getting state from", state_url)
         response = requests.get(state_url, timeout=5)
@@ -58,14 +60,15 @@ class AugmentedDiff(object):
 
     def _build_adiff_url(self):
         url = "{base}/augmented_diff?id={sequence_number}".format(
-            base=self.base_url,
-            sequence_number=self.sequence_number)
+            base=self.base_url, sequence_number=self.sequence_number
+        )
         if self.minlon and self.minlat and self.maxlon and self.maxlat:
             url += "&bbox={minlon},{minlat},{maxlon},{maxlat}".format(
                 minlon=self.minlon,
                 minlat=self.minlat,
                 maxlon=self.maxlon,
-                maxlat=self.maxlat)
+                maxlat=self.maxlat,
+            )
         if self.debug:
             print(url)
         return url
@@ -87,25 +90,17 @@ class AugmentedDiff(object):
             for child in new:
                 osm_obj_new = OSMObject.from_xml(child)
             if self.debug:
-                print(
-                    elem.attrib["type"],
-                    ": old",
-                    osm_obj_old,
-                    ", new",
-                    osm_obj_new)
-            self.__getattribute__(
-                elem.attrib["type"]).append({
-                    "old": osm_obj_old,
-                    "new": osm_obj_new})
+                print(elem.attrib["type"], ": old", osm_obj_old, ", new", osm_obj_new)
+            self.__getattribute__(elem.attrib["type"]).append(
+                {"old": osm_obj_old, "new": osm_obj_new}
+            )
 
     def _parse_stream(self, stream):
         for event, elem in cElementTree.iterparse(stream):
             # if self.debug:
             #     print(event, elem)
             if elem.tag == "remark":
-                raise Exception(
-                    "Augmented Diff API returned an error:",
-                    elem.text)
+                raise Exception("Augmented Diff API returned an error:", elem.text)
             if elem.tag == "meta":
                 timestamp = dateutil.parser.parse(elem.attrib.get("osm_base"))
                 self.timestamp = timestamp
@@ -129,7 +124,5 @@ class AugmentedDiff(object):
     def __repr__(self):
         return "AugmentedDiff ({create} created, {modify} modified, \
 {delete} deleted)".format(
-            create=len(self.create),
-            modify=len(self.modify),
-            delete=len(self.delete))
-
+            create=len(self.create), modify=len(self.modify), delete=len(self.delete)
+        )

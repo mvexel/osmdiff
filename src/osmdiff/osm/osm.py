@@ -1,34 +1,30 @@
 class OSMObject(object):
-
-    def __init__(self):
+    def __init__(self) -> None:
         self.tags = {}
         self.attribs = {}
         self.bounds = None
 
-    def __repr__(self):
-        out = "{type} {id}".format(
-            type=type(self).__name__,
-            id=self.attribs.get("id"))
+    def __repr__(self) -> str:
+        out = "{type} {id}".format(type=type(self).__name__, id=self.attribs.get("id"))
         if type(self) == Way:
-            out += " ({ways} nodes)".format(
-                ways=len(self.nodes))
+            out += " ({ways} nodes)".format(ways=len(self.nodes))
         if type(self) == Relation:
-            out += " ({mem} members)".format(
-                mem=len(self.members))
+            out += " ({mem} members)".format(mem=len(self.members))
         return out
 
-    def _parse_tags(self, elem):
+    def _parse_tags(self, elem) -> None:
         for tagelem in elem.findall("tag"):
             self.tags[tagelem.attrib["k"]] = tagelem.attrib["v"]
 
-    def _parse_bounds(self, elem):
+    def _parse_bounds(self, elem) -> None:
         be = elem.find("bounds")
         if be is not None:
             self.bounds = [
                 be.attrib["minlon"],
                 be.attrib["minlat"],
                 be.attrib["maxlon"],
-                be.attrib["maxlat"]]
+                be.attrib["maxlat"],
+            ]
 
     @classmethod
     def from_xml(cls, elem):
@@ -54,25 +50,21 @@ class OSMObject(object):
 
 
 class Node(OSMObject):
-
     def __init__(self):
         super().__init__()
 
     def _lon(self):
-        return float(self.attribs.get('lon', 0))
+        return float(self.attribs.get("lon", 0))
 
     lon = property(_lon)
 
     def _lat(self):
-        return float(self.attribs.get('lat', 0))        
+        return float(self.attribs.get("lat", 0))
 
     lat = property(_lat)
 
     def _geo_interface(self):
-        return {
-            'type': 'Point',
-            'coordinates': [self.lon, self.lat]
-        }
+        return {"type": "Point", "coordinates": [self.lon, self.lat]}
 
     __geo_interface__ = property(_geo_interface)
 
@@ -83,7 +75,6 @@ class Node(OSMObject):
 
 
 class Way(OSMObject):
-
     def __init__(self):
         self.nodes = []
         super().__init__()
@@ -93,19 +84,16 @@ class Way(OSMObject):
             self.nodes.append(OSMObject.from_xml(node))
 
     def _geo_interface(self):
-        geom_type = 'LineString' if self.nodes[0] == self.nodes[-1] else 'Polygon'
+        geom_type = "LineString" if self.nodes[0] == self.nodes[-1] else "Polygon"
         return {
-            'type': geom_type,
-            'coordinates': [
-                [[n.lon, n.lat] for n in self.nodes]
-            ]
+            "type": geom_type,
+            "coordinates": [[[n.lon, n.lat] for n in self.nodes]],
         }
 
     __geo_interface__ = property(_geo_interface)
 
 
 class Relation(OSMObject):
-
     def __init__(self):
         self.members = []
         super().__init__()
@@ -116,11 +104,8 @@ class Relation(OSMObject):
 
     def _geo_interface(self):
         return {
-            'type': 'FeatureCollection',
-            'Features': [
-                [f.__geo_interface__ for f in self.members]
-            ]
+            "type": "FeatureCollection",
+            "Features": [[f.__geo_interface__ for f in self.members]],
         }
 
     __geo_interface__ = property(_geo_interface)
-    

@@ -1,6 +1,8 @@
 import unittest
+
 from osmdiff import Way
 from osmdiff.osm import OSMObject
+
 
 class WayTests(unittest.TestCase):
     "tests for Way object"
@@ -18,5 +20,5 @@ class WayTests(unittest.TestCase):
         self.assertEqual(len(way.nodes), 0)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

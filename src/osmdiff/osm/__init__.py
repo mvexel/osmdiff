@@ -1,1 +1,1 @@
-from .osm import OSMObject, Node, Way, Relation
+from .osm import Node, OSMObject, Relation, Way

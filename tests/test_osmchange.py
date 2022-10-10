@@ -1,12 +1,16 @@
-from platform import node
 import unittest
-from osmdiff import OSMChange, Node, Way, Relation
+from pathlib import Path
+
+from osmdiff import Node, OSMChange, Relation, Way
+
 
 class OSMChangeTests(unittest.TestCase):
     "tests for OSMChange object"
 
     def setUp(self):
-        self.osmchange_file_path = '/home/mvexel/dev/osmdiff/tests/fixtures/test_osmchange.xml'
+        self.osmchange_file_path = (
+            Path(__file__).parent / "fixtures/test_osmchange.xml"
+        ).resolve()
 
     def tearDown(self):
         pass
@@ -21,7 +25,6 @@ class OSMChangeTests(unittest.TestCase):
         self.assertEqual(len(osmchange.create), 0)
         self.assertEqual(len(osmchange.modify), 0)
         self.assertEqual(len(osmchange.delete), 0)
-
 
     def test_set_sequencenumber(self):
         "Sequence number is not defined by default but can be set manually"
@@ -44,7 +47,9 @@ class OSMChangeTests(unittest.TestCase):
         self.assertEqual(len(nodes_created), 699)
         self.assertEqual(len(ways_created), 132)
         self.assertEqual(len(rels_created), 0)
-        self.assertEqual(len(nodes_created + ways_created + rels_created), len(osmchange.create))
+        self.assertEqual(
+            len(nodes_created + ways_created + rels_created), len(osmchange.create)
+        )
 
     def test_4_state(self):
         "Test getting state (requires internet)"
@@ -52,5 +57,6 @@ class OSMChangeTests(unittest.TestCase):
         self.assertTrue(osm_change.get_state())
         self.assertIsInstance(osm_change._sequence_number, int)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

@@ -1,27 +1,30 @@
-from gzip import GzipFile
 import os
+from gzip import GzipFile
 from xml.etree import ElementTree
+
 import requests
+
 from osmdiff.osm import OSMObject
 
 REPLICATION_URL = "https://planet.openstreetmap.org/replication"
 
-class OSMChange(object):
 
+class OSMChange(object):
     def __init__(
-            self,
-            url=REPLICATION_URL,
-            frequency="minute",
-            file=None,
-            sequence_number=None,
-            debug=False):
+        self,
+        url=REPLICATION_URL,
+        frequency="minute",
+        file=None,
+        sequence_number=None,
+        debug=False,
+    ):
         self.base_url = url
         self.debug = debug
         self.create = []
         self.modify = []
         self.delete = []
         if file:
-            with open(file, 'r') as fh:
+            with open(file, "r") as fh:
                 self._parse_stream(fh)
         else:
             self._frequency = frequency
@@ -47,7 +50,8 @@ class OSMChange(object):
             self._frequency,
             seqno[:3],
             seqno[3:6],
-            "{}{}".format(seqno[6:], ".osc.gz"))
+            "{}{}".format(seqno[6:], ".osc.gz"),
+        )
         if self.debug:
             print(url)
         return url
@@ -59,9 +63,8 @@ class OSMChange(object):
             if elem.tag in ("create", "modify", "delete"):
                 self._build_action(elem)
                 if self.debug:
-                    print("======={action}========".format(
-                        action=elem.tag))
-                    
+                    print("======={action}========".format(action=elem.tag))
+
     def _build_action(self, elem):
         for thing in elem:
             o = OSMObject.from_xml(thing)
@@ -89,15 +92,14 @@ class OSMChange(object):
 
     def sequence_number(self):
         return self._sequence_number
-    
+
     def set_sequence_number(self, sn):
         self._sequence_number = int(sn)
-    
+
     sequence_number = property(sequence_number, set_sequence_number)
 
     def __repr__(self):
         return "OSMChange ({create} created, {modify} modified, \
 {delete} deleted)".format(
-            create=len(self.create),
-            modify=len(self.modify),
-            delete=len(self.delete))
+            create=len(self.create), modify=len(self.modify), delete=len(self.delete)
+        )
