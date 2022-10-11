@@ -1,5 +1,3 @@
-> I am considering moving my open source repos to sourcehut. For now, I mirror this repo at sourcehut, and issues are still on here. The plan is to move the issue tracker to sourcehut next, and then archive this repo. No, I don't have a timeline.
-
 # osmdiff
 
 A read-only interface to OpenStreetMap change APIs and files. See also [pyosm](https://github.com/iandees/pyosm) which can do similar things. 
@@ -99,3 +97,11 @@ Way 452218081 (10 nodes)
 >>> w[0].bounds
 ['12.8932677', '43.3575917', '12.8948117', '43.3585947']
 ```
+
+## Contributing
+
+I welcome your contributions in code, documentation and suggestions for enhancements.
+
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
+If you find `osmdiff` useful, or you use it in commercial software, please consider sponsoring this project.
