@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osm version="0.6" generator="CGImap 0.8.8 (3715065 spike-06.openstreetmap.org)" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/">
+ <way id="471196815" visible="true" version="5" changeset="111500334" timestamp="2021-09-21T14:41:11Z" user="dongin" uid="11518918">
+  <nd ref="4653620788"/>
+  <nd ref="4653620889"/>
+  <nd ref="4653620890"/>
+  <nd ref="4653620891"/>
+  <nd ref="4653620892"/>
+  <nd ref="4653620893"/>
+  <nd ref="4653620894"/>
+  <nd ref="4653620895"/>
+  <nd ref="4653620896"/>
+  <nd ref="4653620897"/>
+  <nd ref="4653620898"/>
+  <nd ref="4653620899"/>
+  <nd ref="4653620900"/>
+  <nd ref="4653620901"/>
+  <nd ref="4653620902"/>
+  <nd ref="4653620903"/>
+  <nd ref="9111218633"/>
+  <nd ref="4653620904"/>
+  <nd ref="4653620905"/>
+  <nd ref="4653620906"/>
+  <nd ref="4653620907"/>
+  <nd ref="4653620908"/>
+  <nd ref="4653620909"/>
+  <nd ref="4653632018"/>
+  <nd ref="4653632019"/>
+  <nd ref="4654867360"/>
+  <nd ref="4653620910"/>
+  <nd ref="4653620911"/>
+  <nd ref="4653620912"/>
+  <nd ref="4653620913"/>
+  <nd ref="4653671479"/>
+  <nd ref="4653620788"/>
+  <tag k="landuse" v="farmland"/>
+ </way>
+</osm>

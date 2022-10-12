@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osm version="0.6" generator="CGImap 0.8.8 (2469816 spike-06.openstreetmap.org)" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/">
+ <way id="1103039808" visible="true" version="1" changeset="127388160" timestamp="2022-10-12T02:21:01Z" user="morago" uid="11113946">
+  <nd ref="1458981285"/>
+  <nd ref="10093755195"/>
+  <nd ref="10093755196"/>
+  <nd ref="10093755197"/>
+  <nd ref="10093755198"/>
+  <nd ref="10093755199"/>
+  <nd ref="10093755200"/>
+  <nd ref="10093755210"/>
+  <nd ref="10093755201"/>
+  <nd ref="10093755202"/>
+  <nd ref="10093755203"/>
+  <nd ref="10093755204"/>
+  <nd ref="10093755205"/>
+  <nd ref="10093755206"/>
+  <nd ref="10093755207"/>
+  <nd ref="10093755208"/>
+  <nd ref="10093755209"/>
+  <tag k="highway" v="unclassified"/>
+ </way>
+</osm>
