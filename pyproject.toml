@@ -1,3 +1,6 @@
+# [build-system]
+# requires = ["hatchling"]
+# build-backend = "hatchling.build"
 
 
 # [project]
@@ -15,6 +18,9 @@
 #     "Operating System :: OS Independent",
 # ]
 
+# [project.urls]
+# "Homepage" = "https://github.com/osmlab/osmdiff"
+# "Bug Tracker" = "https://github.com/osmlab/osmdiff/issues"
 
 # [project.optional-dependencies]
 # test = [
