@@ -2,8 +2,6 @@
 # requires = ["hatchling"]
 # build-backend = "hatchling.build"
 
-# [metadata]
-# name = "osmdiff"
 
 # [project]
 # name = "osmdiff"
