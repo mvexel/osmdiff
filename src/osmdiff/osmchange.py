@@ -9,7 +9,7 @@ from osmdiff.osm import OSMObject
 REPLICATION_URL = "https://planet.openstreetmap.org/replication"
 
 
-class OSMChange(object):
+class OSMChange:
     def __init__(
         self,
         url=REPLICATION_URL,

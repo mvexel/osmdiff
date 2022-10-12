@@ -1,15 +1,18 @@
 import os
+from datetime import datetime
 from xml.etree import cElementTree
 
 import dateutil.parser
 import requests
 
-from .osm import OSMObject
+from osmdiff.osm.osm import Node
+
+from .osm import OSMObject, Way
 
 OVERPASS_URL = "http://overpass-api.de/api"
 
 
-class AugmentedDiff(object):
+class AugmentedDiff:
     base_url = OVERPASS_URL
     minlon = None
     minlat = None
@@ -28,7 +31,7 @@ class AugmentedDiff(object):
         file=None,
         sequence_number=None,
         timestamp=None,
-    ):
+    ) -> None:
         self.debug = debug
         self.create = []
         self.modify = []

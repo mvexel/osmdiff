@@ -1,4 +1,4 @@
-class OSMObject(object):
+class OSMObject:
     def __init__(self) -> None:
         self.tags = {}
         self.attribs = {}
