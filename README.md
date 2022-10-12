@@ -1,6 +1,6 @@
 # osmdiff
 
-[![CircleCI](https://dl.circleci.com/status-badge/img/gh/mvexel/osmdiff/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/mvexel/osmdiff/tree/main)
+main: [![CircleCI](https://dl.circleci.com/status-badge/img/gh/mvexel/osmdiff/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/mvexel/osmdiff/tree/main) develop: [![CircleCI](https://dl.circleci.com/status-badge/img/gh/mvexel/osmdiff/tree/develop.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/mvexel/osmdiff/tree/develop)
 
 A read-only interface to OpenStreetMap change APIs and files. See also [pyosm](https://github.com/iandees/pyosm) which can do similar things. 
 
