@@ -47,6 +47,17 @@ class AugmentedDiff(object):
                 else:
                     raise Exception("invalid bbox.")
 
+    @classmethod
+    def for_datetime(cls, dt: datetime):
+        """
+        Returns an instance of AugmentedDiff populated with the sequence_number for
+        the minutely augmented diff preceding the datetime given. You will still need
+        to retrieve() the actual augmented diff to populate the instance with data from OSM.
+        """
+        if dt > datetime.now():
+            return None
+        return AugmentedDiff(sequence_number=int(dt.timestamp()) // 60 - 22457216)
+
     def get_state(self):
         """Get the current state from the OSM API"""
         state_url = os.path.join(self.base_url, "augmented_diff_status")
