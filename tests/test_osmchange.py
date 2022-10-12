@@ -31,7 +31,7 @@ class TestOSMChange:
         osm_change.sequence_number = "12345"
         assert osm_change.sequence_number == 12345
 
-    def test_3_readfromfile(self):
+    def test_readfromfile(self):
         "Test initializing from file"
         osmchange = OSMChange.from_xml(self.osmchange_file_path)
         assert len(osmchange.create) == 831
