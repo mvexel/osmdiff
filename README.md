@@ -134,6 +134,8 @@ OSM objects expose `__geo_interface__`:
 
 I welcome your contributions in code, documentation and suggestions for enhancements.
 
+Active development happens on the `develop` branch. We use [CircleCI](https://app.circleci.com/pipelines/github/mvexel/osmdiff) to run automated builds. 
+
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 If you find `osmdiff` useful, or you use it in commercial software, please consider sponsoring this project.
