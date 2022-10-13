@@ -28,6 +28,20 @@ Retrieve the latest replication diff from the OSM API:
 OSMChange (677 created, 204 modified, 14 deleted)
 ```
 
+But if you want to retrieve the latest augmented diff, you can use `for_datetime()`:
+
+```python
+>>> from datetime import datetime
+>>> from osmdiff import AugmentedDiff
+>>> aug_diff = AugmentedDiff.for_datetime(datetime.now())
+>>> aug_diff.sequence_number
+5303123
+>>> aug_diff.retrieve()
+200
+>>> aug_diff
+AugmentedDiff (4 created, 25 modified, 0 deleted)
+```
+
 Read a replication diff from a file:
 
 ```python
@@ -63,7 +77,7 @@ AugmentedDiff (2329 created, 677 modified, 39 deleted)
 
 Get all the things that `chris66` has created:
 
-```
+```python
 >>> [n for n in a.create if n.attribs["user"] == "chris66"]
 [Node 5221564287, Node 5221564288, Node 5221564289, Node 5221564290, Node 5221564291, Node 5221564292, Node 5221564293, Node 5221564294, Node 5221564295, Node 5221564296, Node 5221564297, Node 5221564298, Node 5221564299, Node 5221564301, Node 5221564302, Node 5221564303, Node 5221564304, Way 539648222 (5 nodes), Way 539648223 (5 nodes), Way 539648323 (5 nodes)]
 ```
