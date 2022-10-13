@@ -100,6 +100,22 @@ Way 452218081 (10 nodes)
 ['12.8932677', '43.3575917', '12.8948117', '43.3585947']
 ```
 
+### Interoperability
+
+OSM objects expose `__geo_interface__`:
+
+```
+>>> from osmdiff.osm import Node
+>>> from shapely.geometry import shape, mapping
+>>> n = Node((4.22, 52.25))
+>>> s = shape(n)
+>>> s.wkt
+'POINT (4.22 52.25)'
+>>> g = mapping(s)
+>>> s
+{'type': 'Point', 'coordinates': (4.22, 52.25)}
+```
+
 ## Contributing
 
 I welcome your contributions in code, documentation and suggestions for enhancements.
