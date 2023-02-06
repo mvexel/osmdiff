@@ -65,6 +65,7 @@ class AugmentedDiff:
         if response.status_code != 200:
             return False
         self.sequence_number = int(response.text)
+        return self.sequence_number
 
     def _build_adiff_url(self):
         url = "{base}/augmented_diff?id={sequence_number}".format(

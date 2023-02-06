@@ -37,6 +37,7 @@ class OSMChange:
         for line in response.text.split("\n"):
             if line.startswith("sequenceNumber"):
                 self._sequence_number = int(line[15:])
+        return self.sequence_number
 
     def _build_sequence_url(self):
         seqno = str(self._sequence_number).zfill(9)
