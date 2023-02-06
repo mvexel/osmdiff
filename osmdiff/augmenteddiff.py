@@ -78,8 +78,6 @@ class AugmentedDiff:
                 maxlon=self.maxlon,
                 maxlat=self.maxlat,
             )
-        if self.debug:
-            print(url)
         return url
 
     def _build_action(self, elem):
@@ -87,8 +85,6 @@ class AugmentedDiff:
             for child in elem:
                 e = OSMObject.from_xml(child)
                 self.__getattribute__("create").append(e)
-                if self.debug:
-                    print(elem.attrib["type"], e)
         else:
             new = elem.find("new")
             old = elem.find("old")
@@ -98,16 +94,12 @@ class AugmentedDiff:
                 osm_obj_old = OSMObject.from_xml(child)
             for child in new:
                 osm_obj_new = OSMObject.from_xml(child)
-            if self.debug:
-                print(elem.attrib["type"], ": old", osm_obj_old, ", new", osm_obj_new)
             self.__getattribute__(elem.attrib["type"]).append(
                 {"old": osm_obj_old, "new": osm_obj_new}
             )
 
     def _parse_stream(self, stream):
         for event, elem in cElementTree.iterparse(stream):
-            # if self.debug:
-            #     print(event, elem)
             if elem.tag == "remark":
                 raise Exception("Augmented Diff API returned an error:", elem.text)
             if elem.tag == "meta":
@@ -125,15 +117,11 @@ class AugmentedDiff:
         if clear_cache:
             self.create, self.modify, self.delete = ([], [], [])
         url = self._build_adiff_url()
-        if self.debug:
-            print("retrieving...")
         try:
             r = requests.get(url, stream=True, timeout=30)
             if r.status_code != 200:
                 return r.status_code
             r.raw.decode_content = True
-            if self.debug:
-                print("parsing...")
             self._parse_stream(r.raw)
             return r.status_code
         except ConnectionError:
