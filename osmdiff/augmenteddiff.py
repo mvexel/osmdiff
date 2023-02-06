@@ -19,7 +19,6 @@ class AugmentedDiff:
     maxlon = None
     maxlat = None
     timestamp = None
-    debug = False
 
     def __init__(
         self,
@@ -27,12 +26,10 @@ class AugmentedDiff:
         minlat=None,
         maxlon=None,
         maxlat=None,
-        debug=False,
         file=None,
         sequence_number=None,
         timestamp=None,
     ) -> None:
-        self.debug = debug
         self.create = []
         self.modify = []
         self.delete = []
@@ -64,13 +61,10 @@ class AugmentedDiff:
     def get_state(self):
         """Get the current state from the OSM API"""
         state_url = os.path.join(self.base_url, "augmented_diff_status")
-        if self.debug:
-            print("getting state from", state_url)
         response = requests.get(state_url, timeout=5)
         if response.status_code != 200:
             return False
         self.sequence_number = int(response.text)
-        return True
 
     def _build_adiff_url(self):
         url = "{base}/augmented_diff?id={sequence_number}".format(

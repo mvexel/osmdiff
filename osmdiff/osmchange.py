@@ -16,10 +16,8 @@ class OSMChange:
         frequency="minute",
         file=None,
         sequence_number=None,
-        debug=False,
     ):
         self.base_url = url
-        self.debug = debug
         self.create = []
         self.modify = []
         self.delete = []
@@ -37,11 +35,8 @@ class OSMChange:
         if response.status_code != 200:
             return False
         for line in response.text.split("\n"):
-            if self.debug:
-                print(line)
             if line.startswith("sequenceNumber"):
                 self._sequence_number = int(line[15:])
-        return True
 
     def _build_sequence_url(self):
         seqno = str(self._sequence_number).zfill(9)
@@ -52,28 +47,17 @@ class OSMChange:
             seqno[3:6],
             "{}{}".format(seqno[6:], ".osc.gz"),
         )
-        if self.debug:
-            print(url)
         return url
 
     def _parse_stream(self, stream):
         for event, elem in ElementTree.iterparse(stream):
-            # if self.debug:
-            #     print(event, elem)
             if elem.tag in ("create", "modify", "delete"):
                 self._build_action(elem)
-                if self.debug:
-                    print("======={action}========".format(action=elem.tag))
 
     def _build_action(self, elem):
         for thing in elem:
             o = OSMObject.from_xml(thing)
             self.__getattribute__(elem.tag).append(o)
-            if self.debug:
-                print(o)
-                print(o.attribs)
-                print(o.tags)
-                print(o.bounds)
 
     def retrieve(self, clear_cache=False) -> int:
         """
