@@ -28,3 +28,7 @@ Shapely = "^1.8.0"
 
 [tool.poetry.urls]
 "Bug Tracker" = "https://github.com/osmlab/osmdiff/issues"
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.1.0"
+
