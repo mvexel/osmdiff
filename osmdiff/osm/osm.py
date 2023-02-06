@@ -38,8 +38,11 @@ class OSMObject:
             osmtype = elem.attrib["type"]
         else:
             osmtype = elem.tag
-        if osmtype in ("node", "nd"):
-            o = Node((float(elem.attrib.get("lon")), float(elem.attrib.get("lat"))))
+        if osmtype == "node" or osmtype == "nd":
+            if ("lon", "lat") in elem.attrib:
+                o = Node((float(elem.attrib.get("lon")), float(elem.attrib.get("lat"))))
+            else:
+                o = Node()
         elif osmtype == "way":
             o = Way()
             o._parse_nodes(elem)
@@ -55,10 +58,8 @@ class OSMObject:
 
 
 class Node(OSMObject):
-    def __init__(self, location: tuple[float, float]):
+    def __init__(self, location: tuple[float | None, float | None] | None = None):
         super().__init__()
-        if location and not all(isinstance(n, float) for n in location):
-            raise TypeError("location must be (float, float)")
         self._location = location
 
     def _location(self):
