@@ -39,7 +39,7 @@ class OSMObject:
         else:
             osmtype = elem.tag
         if osmtype in ("node", "nd"):
-            o = Node()
+            o = Node((float(elem.attrib.get("lon")), float(elem.attrib.get("lat"))))
         elif osmtype == "way":
             o = Way()
             o._parse_nodes(elem)
@@ -55,32 +55,20 @@ class OSMObject:
 
 
 class Node(OSMObject):
-    def __init__(self, location: tuple[float, float] | None = None):
+    def __init__(self, location: tuple[float, float]):
         super().__init__()
         if location and not all(isinstance(n, float) for n in location):
             raise TypeError("location must be (float, float)")
-        if location:
-            (self.attribs["lon"], self.attribs["lat"]) = location
-
-    def _lon(self):
-        return float(self.attribs.get("lon", 0))
-
-    lon = property(_lon)
-
-    def _lat(self):
-        return float(self.attribs.get("lat", 0))
-
-    lat = property(_lat)
+        self._location = location
 
     def _location(self):
-        return (self.attribs.get("lon"), self.attribs.get("lat"))
+        return self._location
 
     location = property(_location)
 
-    def _geo_interface(self):
-        return {"type": "Point", "coordinates": (self.lon, self.lat)}
-
-    __geo_interface__ = property(_geo_interface)
+    @property
+    def __geo_interface__(self):
+        return {"type": "Point", "coordinates": self.location}
 
     def __eq__(self, other):
         if not isinstance(other, Node):
@@ -104,14 +92,13 @@ class Way(OSMObject):
 
     is_area = property(_is_area)
 
-    def _geo_interface(self):
+    @property
+    def __geo_interface__(self):
         geom_type = "Polygon" if self.is_area else "Linestring"
         return {
             "type": geom_type,
             "coordinates": tuple([(n.lon, n.lat) for n in self.nodes]),
         }
-
-    __geo_interface__ = property(_geo_interface)
 
 
 class Relation(OSMObject):
