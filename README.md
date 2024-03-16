@@ -1,5 +1,7 @@
 # osmdiff
 
+main: [![CircleCI](https://dl.circleci.com/status-badge/img/gh/mvexel/osmdiff/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/mvexel/osmdiff/tree/main) develop: [![CircleCI](https://dl.circleci.com/status-badge/img/gh/mvexel/osmdiff/tree/develop.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/mvexel/osmdiff/tree/develop)
+
 A read-only interface to OpenStreetMap change APIs and files. See also [pyosm](https://github.com/iandees/pyosm) which can do similar things. 
 
 Python 3.7+
@@ -24,6 +26,20 @@ Retrieve the latest replication diff from the OSM API:
 >>> o.retrieve()  # retrieve from API
 >>> o
 OSMChange (677 created, 204 modified, 14 deleted)
+```
+
+But if you want to retrieve the latest augmented diff, you can use `for_datetime()`:
+
+```python
+>>> from datetime import datetime
+>>> from osmdiff import AugmentedDiff
+>>> aug_diff = AugmentedDiff.for_datetime(datetime.now())
+>>> aug_diff.sequence_number
+5303123
+>>> aug_diff.retrieve()
+200
+>>> aug_diff
+AugmentedDiff (4 created, 25 modified, 0 deleted)
 ```
 
 Read a replication diff from a file:
@@ -61,7 +77,7 @@ AugmentedDiff (2329 created, 677 modified, 39 deleted)
 
 Get all the things that `chris66` has created:
 
-```
+```python
 >>> [n for n in a.create if n.attribs["user"] == "chris66"]
 [Node 5221564287, Node 5221564288, Node 5221564289, Node 5221564290, Node 5221564291, Node 5221564292, Node 5221564293, Node 5221564294, Node 5221564295, Node 5221564296, Node 5221564297, Node 5221564298, Node 5221564299, Node 5221564301, Node 5221564302, Node 5221564303, Node 5221564304, Way 539648222 (5 nodes), Way 539648223 (5 nodes), Way 539648323 (5 nodes)]
 ```
@@ -98,9 +114,27 @@ Way 452218081 (10 nodes)
 ['12.8932677', '43.3575917', '12.8948117', '43.3585947']
 ```
 
+### Interoperability
+
+OSM objects expose `__geo_interface__`:
+
+```
+>>> from osmdiff.osm import Node
+>>> from shapely.geometry import shape, mapping
+>>> n = Node((4.22, 52.25))
+>>> s = shape(n)
+>>> s.wkt
+'POINT (4.22 52.25)'
+>>> g = mapping(s)
+>>> s
+{'type': 'Point', 'coordinates': (4.22, 52.25)}
+```
+
 ## Contributing
 
 I welcome your contributions in code, documentation and suggestions for enhancements.
+
+Active development happens on the `develop` branch. We use [CircleCI](https://app.circleci.com/pipelines/github/mvexel/osmdiff) to run automated builds. 
 
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 

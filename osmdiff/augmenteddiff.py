@@ -1,22 +1,24 @@
 import os
+from datetime import datetime
 from xml.etree import cElementTree
 
 import dateutil.parser
 import requests
 
-from .osm import OSMObject
+from osmdiff.osm.osm import Node
+
+from .osm import OSMObject, Way
 
 OVERPASS_URL = "http://overpass-api.de/api"
 
 
-class AugmentedDiff(object):
+class AugmentedDiff:
     base_url = OVERPASS_URL
     minlon = None
     minlat = None
     maxlon = None
     maxlat = None
     timestamp = None
-    debug = False
 
     def __init__(
         self,
@@ -24,12 +26,10 @@ class AugmentedDiff(object):
         minlat=None,
         maxlon=None,
         maxlat=None,
-        debug=False,
         file=None,
         sequence_number=None,
         timestamp=None,
-    ):
-        self.debug = debug
+    ) -> None:
         self.create = []
         self.modify = []
         self.delete = []
@@ -47,16 +47,25 @@ class AugmentedDiff(object):
                 else:
                     raise Exception("invalid bbox.")
 
+    @classmethod
+    def for_datetime(cls, dt: datetime):
+        """
+        Returns an instance of AugmentedDiff populated with the sequence_number for
+        the minutely augmented diff preceding the datetime given. You will still need
+        to retrieve() the actual augmented diff to populate the instance with data from OSM.
+        """
+        if dt > datetime.now():
+            return None
+        return AugmentedDiff(sequence_number=int(dt.timestamp()) // 60 - 22457216)
+
     def get_state(self):
         """Get the current state from the OSM API"""
         state_url = os.path.join(self.base_url, "augmented_diff_status")
-        if self.debug:
-            print("getting state from", state_url)
         response = requests.get(state_url, timeout=5)
         if response.status_code != 200:
             return False
         self.sequence_number = int(response.text)
-        return True
+        return self.sequence_number
 
     def _build_adiff_url(self):
         url = "{base}/augmented_diff?id={sequence_number}".format(
@@ -69,8 +78,6 @@ class AugmentedDiff(object):
                 maxlon=self.maxlon,
                 maxlat=self.maxlat,
             )
-        if self.debug:
-            print(url)
         return url
 
     def _build_action(self, elem):
@@ -78,8 +85,6 @@ class AugmentedDiff(object):
             for child in elem:
                 e = OSMObject.from_xml(child)
                 self.__getattribute__("create").append(e)
-                if self.debug:
-                    print(elem.attrib["type"], e)
         else:
             new = elem.find("new")
             old = elem.find("old")
@@ -89,16 +94,12 @@ class AugmentedDiff(object):
                 osm_obj_old = OSMObject.from_xml(child)
             for child in new:
                 osm_obj_new = OSMObject.from_xml(child)
-            if self.debug:
-                print(elem.attrib["type"], ": old", osm_obj_old, ", new", osm_obj_new)
             self.__getattribute__(elem.attrib["type"]).append(
                 {"old": osm_obj_old, "new": osm_obj_new}
             )
 
     def _parse_stream(self, stream):
         for event, elem in cElementTree.iterparse(stream):
-            # if self.debug:
-            #     print(event, elem)
             if elem.tag == "remark":
                 raise Exception("Augmented Diff API returned an error:", elem.text)
             if elem.tag == "meta":
@@ -116,15 +117,11 @@ class AugmentedDiff(object):
         if clear_cache:
             self.create, self.modify, self.delete = ([], [], [])
         url = self._build_adiff_url()
-        if self.debug:
-            print("retrieving...")
         try:
             r = requests.get(url, stream=True, timeout=30)
             if r.status_code != 200:
                 return r.status_code
             r.raw.decode_content = True
-            if self.debug:
-                print("parsing...")
             self._parse_stream(r.raw)
             return r.status_code
         except ConnectionError:
