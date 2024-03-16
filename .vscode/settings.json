@@ -3,5 +3,5 @@
   "python.testing.unittestEnabled": false,
   "python.testing.pytestEnabled": true,
   "python.testing.pytestPath": "pytest",
-  "python.analysis.typeCheckingMode": "basic"
+  "python.analysis.typeCheckingMode": "off"
 }

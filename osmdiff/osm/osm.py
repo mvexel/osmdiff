@@ -60,6 +60,10 @@ class OSMObject:
 class Node(OSMObject):
     def __init__(self, location: tuple[float | None, float | None] | None = None):
         super().__init__()
+        if not all([isinstance(ll, float) for ll in location]):
+            raise TypeError()
+        if not -180.0 <= location[0] <= 180.0 and -90.0 <= location[1] <= 90.0:
+            raise ValueError
         self._location = location
 
     def _location(self):
@@ -94,12 +98,18 @@ class Way(OSMObject):
     is_area = property(_is_area)
 
     @property
+    def has_geometry(self):
+        return all([n.location for n in self.nodes])
+
+    @property
     def __geo_interface__(self):
-        geom_type = "Polygon" if self.is_area else "Linestring"
-        return {
-            "type": geom_type,
-            "coordinates": tuple([(n.lon, n.lat) for n in self.nodes]),
-        }
+        if self.has_geometry:
+            geom_type = "Polygon" if self.is_area else "Linestring"
+            return {
+                "type": geom_type,
+                "coordinates": tuple([n.location for n in self.nodes]),
+            }
+        return None
 
 
 class Relation(OSMObject):

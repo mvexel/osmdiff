@@ -8,7 +8,7 @@ class TestOSMChange:
     "tests for OSMChange object"
 
     osmchange_file_path = (
-        Path(__file__).parent / "fixtures/test_osmchange.xml"
+        Path(__file__).parent / "files/test_osmchange.xml"
     ).resolve()
 
     def test_init_osmchange(self):

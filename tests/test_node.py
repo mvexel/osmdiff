@@ -8,8 +8,9 @@ from typing_extensions import assert_type
 class TestNode:
     "tests for Node object"
 
-    def test_init_node(self):
-        "Test Node init"
+    def test_valid_node_init(self):
+        "Test initialization of a valid node"
+        loc = (0.0, 0.0)
         node = Node((0.0, 0.0))
         assert_type(node, Node)
         assert_type(node, OSMObject)
@@ -17,15 +18,27 @@ class TestNode:
         assert_type(node.tags, dict)
         assert len(node.attribs) == 0
         assert len(node.tags) == 0
-        assert node.location == (0.0, 0.0)
+        assert node.location == loc
 
+    def test_node_init_with_coords(self):
         loc = (-113.5, 40.1)
         n2 = Node(loc)
         assert n2.location == loc
 
-        loc = ("abc", "abc")
+    def test_node_init_with_string_coords(self):
+        loc = ("-113.5", "40.1")
         with pytest.raises(TypeError):
-            n3 = Node(loc)
+            n2 = Node(loc)
+
+    def test_node_init_with_int_coords(self):
+        loc = (113, 40)
+        with pytest.raises(TypeError):
+            n = Node(loc)
+
+    def test_node_with_coords_out_of_range(self):
+        loc = (-190.0, 20.0)
+        with pytest.raises(ValueError):
+            n = Node(loc)
 
     def test_node_repr(self):
         loc = (-113.5, 40.1)
