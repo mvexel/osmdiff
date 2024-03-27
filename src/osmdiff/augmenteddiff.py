@@ -1,4 +1,4 @@
-import os
+from posixpath import join as urljoin
 from xml.etree import cElementTree
 
 import dateutil.parser
@@ -49,7 +49,7 @@ class AugmentedDiff(object):
 
     def get_state(self):
         """Get the current state from the OSM API"""
-        state_url = os.path.join(self.base_url, "augmented_diff_status")
+        state_url = urljoin(self.base_url, "augmented_diff_status")
         if self.debug:
             print("getting state from", state_url)
         response = requests.get(state_url, timeout=5)

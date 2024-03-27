@@ -1,4 +1,4 @@
-import os
+from posixpath import join as urljoin
 from gzip import GzipFile
 from xml.etree import ElementTree
 
@@ -32,7 +32,7 @@ class OSMChange(object):
 
     def get_state(self):
         """Get the current state from the OSM API"""
-        state_url = os.path.join(self.base_url, self._frequency, "state.txt")
+        state_url = urljoin(self.base_url, self._frequency, "state.txt")
         response = requests.get(state_url, timeout=5)
         if response.status_code != 200:
             return False
@@ -45,7 +45,7 @@ class OSMChange(object):
 
     def _build_sequence_url(self):
         seqno = str(self._sequence_number).zfill(9)
-        url = os.path.join(
+        url = urljoin(
             self.base_url,
             self._frequency,
             seqno[:3],
