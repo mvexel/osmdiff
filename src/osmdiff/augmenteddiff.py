@@ -127,6 +127,10 @@ class AugmentedDiff(object):
     def timestamp(self):
         return self._timestamp
 
+    @timestamp.setter
+    def timestamp(self, value):
+        self._timestamp = value
+
     @property
     def sequence_number(self):
         return self._sequence_number
@@ -134,6 +138,10 @@ class AugmentedDiff(object):
     @sequence_number.setter
     def sequence_number(self, value):
         try:
+            # value can be none
+            if value is None:
+                self._sequence_number = None
+                return
             self._sequence_number = int(value)
         except ValueError:
             raise ValueError(

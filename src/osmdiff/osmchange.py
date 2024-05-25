@@ -146,6 +146,10 @@ class OSMChange(object):
     @sequence_number.setter
     def sequence_number(self, value):
         try:
+            # value can be none
+            if value is None:
+                self._sequence_number = None
+                return
             self._sequence_number = int(value)
         except ValueError:
             raise ValueError(
