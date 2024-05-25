@@ -18,8 +18,7 @@ Retrieve the latest replication diff from the OSM API:
 
 ```python
 >>> from osmdiff import OSMChange
->>> o = OSMChange()
->>> o.frequency = "minute"  # the default
+>>> o = OSMChange(frequency="minute")  # minute is the default frequency
 >>> o.get_state()  # retrieve current sequence ID
 >>> o.sequence_number
 2704451
