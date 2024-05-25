@@ -139,22 +139,26 @@ class OSMChange(object):
             xml = ElementTree.iterparse(fh, events=("start", "end"))
             return cls.from_xml(xml)
 
+    @property
     def sequence_number(self) -> int:
-        """
-        Get the sequence number of the OSMChange object.
-        """
         return self._sequence_number
 
-    def set_sequence_number(self, sn) -> None:
-        """
-        Set the sequence number of the OSMChange object.
+    @sequence_number.setter
+    def sequence_number(self, value):
+        try:
+            self._sequence_number = int(value)
+        except ValueError:
+            raise ValueError(
+                "sequence_number must be an integer or parsable as an integer"
+            )
 
-        :param sn: sequence number
-        :type sn: int
-        """
-        self._sequence_number = int(sn)
+    @property
+    def frequency(self) -> str:
+        return self._frequency
 
-    sequence_number = property(sequence_number, set_sequence_number)
+    @frequency.setter
+    def frequency(self, f) -> None:
+        self._frequency = f
 
     def __repr__(self):
         return "OSMChange ({create} created, {modify} modified, \

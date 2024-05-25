@@ -119,6 +119,27 @@ class AugmentedDiff(object):
             # FIXME should we catch instead?
             return 0
 
+    @property
+    def remarks(self):
+        return self._remarks
+
+    @property
+    def timestamp(self):
+        return self._timestamp
+
+    @property
+    def sequence_number(self):
+        return self._sequence_number
+
+    @sequence_number.setter
+    def sequence_number(self, value):
+        try:
+            self._sequence_number = int(value)
+        except ValueError:
+            raise ValueError(
+                "sequence_number must be an integer or parsable as an integer"
+            )
+
     def __repr__(self):
         return "AugmentedDiff ({create} created, {modify} modified, \
 {delete} deleted)".format(
