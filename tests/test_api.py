@@ -1,3 +1,4 @@
+import pytest
 from osmdiff import AugmentedDiff, OSMChange
 from typing_extensions import assert_type
 
@@ -7,6 +8,7 @@ class TestApi:
 
     state = None
 
+    @pytest.mark.integration
     def test_osm_diff_api(self):
         "Test getting state from OSM API"
         osm_change = OSMChange()
@@ -16,6 +18,7 @@ class TestApi:
         status = osm_change.retrieve()
         assert status == 200
 
+    @pytest.mark.integration
     def test_augmented_diff_api(self):
         "Test getting augmented diff from Overpass API"
         augmented_diff = AugmentedDiff()

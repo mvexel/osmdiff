@@ -1,5 +1,7 @@
 # osmdiff
 
+[![build and test](https://github.com/mvexel/osmdiff/actions/workflows/build_and_test.yml/badge.svg)](https://github.com/mvexel/osmdiff/actions/workflows/build_and_test.yml)
+
 A read-only interface to OpenStreetMap change APIs and files. See also [pyosm](https://github.com/iandees/pyosm) which can do similar things. 
 
 Python 3.7+
@@ -16,8 +18,7 @@ Retrieve the latest replication diff from the OSM API:
 
 ```python
 >>> from osmdiff import OSMChange
->>> o = OSMChange()
->>> o.frequency = "minute"  # the default
+>>> o = OSMChange(frequency="minute")  # minute is the default frequency
 >>> o.get_state()  # retrieve current sequence ID
 >>> o.sequence_number
 2704451

@@ -2,18 +2,25 @@
 
 from osmdiff import AugmentedDiff, OSMChange
 from osmdiff.osm import Node, Relation, Way
+from pathlib import Path
 
-debug = True
+osm_change_file = Path("tests", "data", "test_osmchange.xml")
+print(osm_change_file)
 
-r = OSMChange(debug=debug)
+# absolute path
+osm_change_file = osm_change_file.resolve()
+print(osm_change_file)
+
+
+r = OSMChange()
 r.get_state()
 r.retrieve()
 print(r)
 
-r = OSMChange(file="test_osmchange.xml", debug=debug)
+r = OSMChange(file=osm_change_file)
 print(r)
 
-a = AugmentedDiff(file="test_adiff.xml", debug=debug)
+a = AugmentedDiff(file=osm_change_file)
 print(a)
 
 a = AugmentedDiff(
@@ -21,7 +28,6 @@ a = AugmentedDiff(
     # minlat=20.0,
     # maxlon=-80.0,
     # maxlat=60.0,
-    debug=debug
 )
 a.get_state()
 a.retrieve()
