@@ -5,35 +5,29 @@ build-backend = "pdm.backend"
 [project]
 name = "osmdiff"
 dynamic = ["version"]
-authors = [
-    { name = "Martijn van Exel", email = "m@rtijn.org" },
-]
+authors = [{ name = "Martijn van Exel", email = "m@rtijn.org" }]
 maintainers = [{ name = "Martijn van Exel", email = "m@rtijn.org" }]
 description = "A read-only interface to OpenStreetMap change APIs and files"
 keywords = ["openstreetmap", "osm", "diff", "changeset", "api"]
 readme = "README.md"
 requires-python = ">=3.8"
 classifiers = [
-  "Programming Language :: Python :: 3",
-  "License :: OSI Approved :: MIT License",
-  "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
 ]
-dependencies = [
-    "python-dateutil==2.9.0.post0",
-    "requests==2.28.1",
-    "pytest>=8.2.1",
-]
-license = {text = "MIT"}
+dependencies = ["python-dateutil==2.9.0.post0", "requests==2.28.1"]
+license = { text = "MIT" }
 
+[project.optional-dependencies]
+test = ["pytest>=8.2.1", "typing-extensions>=4.12.0"]
 
 [project.urls]
 "Homepage" = "https://github.com/mvexel/osmdiff"
 "Bug Tracker" = "https://github.com/mvexel/osmdiff/issues"
 
 [tool.pytest.ini_options]
-markers = [
-    "integration: mark a test as an integration test"
-]
+markers = ["integration: mark a test as an integration test"]
 [tool.pdm]
 distribution = true
 version = { source = "file", path = "src/osmdiff/__init__.py" }
