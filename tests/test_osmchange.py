@@ -1,15 +1,9 @@
-from pathlib import Path
-
 from osmdiff import Node, OSMChange, Relation, Way
 from typing_extensions import assert_type
 
 
 class TestOSMChange:
     "tests for OSMChange object"
-
-    osmchange_file_path = (
-        Path(__file__).parent / "fixtures/test_osmchange.xml"
-    ).resolve()
 
     def test_init_osmchange(self):
         "Test OSMChange init"
@@ -31,16 +25,16 @@ class TestOSMChange:
         osm_change.sequence_number = "12345"
         assert osm_change.sequence_number == 12345
 
-    def test_3_readfromfile(self):
-        "Test initializing from file"
-        osmchange = OSMChange.from_xml(self.osmchange_file_path)
-        assert len(osmchange.create) == 831
-        assert len(osmchange.modify) == 368
-        assert len(osmchange.delete) == 3552
+    def test_read_changeset_from_xml_file(self, osmchange_file_path):
+        "Test initializing from an XML object"
+        osmchange = OSMChange.from_xml_file(osmchange_file_path)
+        assert len(osmchange.create) == 1004
+        assert len(osmchange.modify) == 585
+        assert len(osmchange.delete) == 3800
         nodes_created = [o for o in osmchange.create if isinstance(o, Node)]
         ways_created = [o for o in osmchange.create if isinstance(o, Way)]
         rels_created = [o for o in osmchange.create if isinstance(o, Relation)]
-        assert len(nodes_created) == 699
-        assert len(ways_created) == 132
+        assert len(nodes_created) == 858
+        assert len(ways_created) == 146
         assert len(rels_created) == 0
         assert len(nodes_created + ways_created + rels_created) == len(osmchange.create)
