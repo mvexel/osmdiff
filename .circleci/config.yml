@@ -11,7 +11,7 @@ jobs:
           command: pip install pdm==2.15.3
       - run:
           name: Install Dependencies
-          command: pdm install --dev
+          command: pdm install -G test
       - run:
           name: Check Version
           command: pdm run python -c "import osmdiff; print(osmdiff.__version__)"
