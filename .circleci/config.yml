@@ -1,43 +1,19 @@
 version: 2.1
 
+orbs:
+  python: circleci/python@1.0.0
 jobs:
-  test:
-    docker:
-      - image: cimg/python:3.8
-    steps:
-      - checkout
-      - run:
-          name: Install PDM
-          command: pip install pdm==2.15.3
-      - run:
-          name: Install Dependencies
-          command: pdm install -G test
-      - run:
-          name: Check Version
-          command: pdm run python -c "import osmdiff; print(osmdiff.__version__)"
-      - run:
-          name: Run Tests
-          command: pdm run pytest
   build:
-    docker:
-      - image: cimg/python:3.8
+    executor: python/default
     steps:
       - checkout
+      - python/install-packages:
+          pkg-manager: pdm
       - run:
-          name: Install PDM
-          command: pip install pdm==2.15.3
-      - run:
-          name: Install Dependencies
-          command: pdm install
-      - run:
-          name: Build Package
-          command: pdm build
-
+          command: |
+            pdm run pytest --version
+          name: Tests
 workflows:
-  version: 2
-  test:
-    jobs:
-      - test
-  build:
+  main:
     jobs:
       - build
