@@ -1,19 +1,21 @@
 #!/usr/bin/env python
 
+# these will be real useful examples someday
+
 from osmdiff import AugmentedDiff, OSMChange
 from osmdiff.osm import Node, Relation, Way
 
-debug = True
+DEBUG = True
 
-r = OSMChange(debug=debug)
+r = OSMChange()
 r.get_state()
 r.retrieve()
 print(r)
 
-r = OSMChange(file="test_osmchange.xml", debug=debug)
+r = OSMChange(file="test_osmchange.xml")
 print(r)
 
-a = AugmentedDiff(file="test_adiff.xml", debug=debug)
+a = AugmentedDiff(file="test_adiff.xml")
 print(a)
 
 a = AugmentedDiff(
@@ -21,7 +23,6 @@ a = AugmentedDiff(
     # minlat=20.0,
     # maxlon=-80.0,
     # maxlat=60.0,
-    debug=debug
 )
 a.get_state()
 a.retrieve()
