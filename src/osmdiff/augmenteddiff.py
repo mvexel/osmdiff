@@ -6,17 +6,21 @@ import requests
 
 from .osm import OSMObject
 
-from osmdiff.settings import OVERPASS_URL, DEBUG
-from osmdiff.util import get_logger
+from osmdiff.settings import DEFAULT_OVERPASS_URL
 
 
 class AugmentedDiff(object):
-    base_url = OVERPASS_URL
+    """
+    Class to represent an Augmented Diff object.
+    """
+
+    base_url = DEFAULT_OVERPASS_URL
     minlon = None
     minlat = None
     maxlon = None
     maxlat = None
     timestamp = None
+    remarks = []
 
     def __init__(
         self,
@@ -47,10 +51,7 @@ class AugmentedDiff(object):
 
     def get_state(self):
         """Get the current state from the OSM API"""
-        logger = get_logger()
         state_url = urljoin(self.base_url, "augmented_diff_status")
-        if DEBUG:
-            logger.log(10, f"getting state from {state_url}")
         response = requests.get(state_url, timeout=5)
         if response.status_code != 200:
             return False
@@ -58,7 +59,6 @@ class AugmentedDiff(object):
         return True
 
     def _build_adiff_url(self):
-        logger = get_logger()
         url = "{base}/augmented_diff?id={sequence_number}".format(
             base=self.base_url, sequence_number=self.sequence_number
         )
@@ -69,18 +69,13 @@ class AugmentedDiff(object):
                 maxlon=self.maxlon,
                 maxlat=self.maxlat,
             )
-        if DEBUG:
-            logger.log(10, url)
         return url
 
     def _build_action(self, elem):
-        logger = get_logger()
         if elem.attrib["type"] == "create":
             for child in elem:
                 e = OSMObject.from_xml(child)
                 self.__getattribute__("create").append(e)
-                if DEBUG:
-                    logger.log(10, elem.attrib["type"], e)
         else:
             new = elem.find("new")
             old = elem.find("old")
@@ -90,10 +85,6 @@ class AugmentedDiff(object):
                 osm_obj_old = OSMObject.from_xml(child)
             for child in new:
                 osm_obj_new = OSMObject.from_xml(child)
-            if DEBUG:
-                logger.log(
-                    10, f"{elem.attrib['type']}: old {osm_obj_old} , new {osm_obj_new}"
-                )
             self.__getattribute__(elem.attrib["type"]).append(
                 {"old": osm_obj_old, "new": osm_obj_new}
             )
@@ -101,7 +92,7 @@ class AugmentedDiff(object):
     def _parse_stream(self, stream):
         for event, elem in cElementTree.iterparse(stream):
             if elem.tag == "remark":
-                raise Exception("Augmented Diff API returned an error:", elem.text)
+                self.remarks.append(elem.text)
             if elem.tag == "meta":
                 timestamp = dateutil.parser.parse(elem.attrib.get("osm_base"))
                 self.timestamp = timestamp
@@ -112,21 +103,16 @@ class AugmentedDiff(object):
         """
         Retrieve the Augmented diff corresponding to the sequence_number.
         """
-        logger = get_logger()
         if not self.sequence_number:
             raise Exception("invalid sequence number")
         if clear_cache:
             self.create, self.modify, self.delete = ([], [], [])
         url = self._build_adiff_url()
-        if DEBUG:
-            logger.log(10, "retrieving...")
         try:
             r = requests.get(url, stream=True, timeout=timeout)
             if r.status_code != 200:
                 return r.status_code
             r.raw.decode_content = True
-            if DEBUG:
-                logger.log(10, "parsing...")
             self._parse_stream(r.raw)
             return r.status_code
         except ConnectionError:
