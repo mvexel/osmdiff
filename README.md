@@ -1,5 +1,7 @@
 # osmdiff
 
+[![mvexel](https://circleci.com/gh/mvexel/osmdiff.svg?style=svg)](https://circleci.com/gh/mvexel/osmdiff)
+
 A read-only interface to OpenStreetMap change APIs and files. See also [pyosm](https://github.com/iandees/pyosm) which can do similar things. 
 
 Python 3.7+
