@@ -25,7 +25,8 @@ class OSMChange(object):
         self.delete = []
         if file:
             with open(file, "r") as fh:
-                self._parse_stream(fh)
+                xml = ElementTree.iterparse(fh, events=("start", "end"))
+                self._parse_xml(xml)
         else:
             self._frequency = frequency
             self._sequence_number = sequence_number
@@ -56,8 +57,8 @@ class OSMChange(object):
             print(url)
         return url
 
-    def _parse_stream(self, stream):
-        for event, elem in ElementTree.iterparse(stream):
+    def _parse_xml(self, xml):
+        for event, elem in xml:
             # if self.debug:
             #     print(event, elem)
             if elem.tag in ("create", "modify", "delete"):
@@ -88,17 +89,46 @@ class OSMChange(object):
             if r.status_code != 200:
                 return r.status_code
             gzfile = GzipFile(fileobj=r.raw)
-            self._parse_stream(gzfile)
+            xml = ElementTree.iterparse(gzfile, events=("start", "end"))
+            self._parse_xml(xml)
             return r.status_code
         except ConnectionError:
             # FIXME catch this?
             return 0
 
     @classmethod
-    def from_xml(cls, path):
+    def from_xml(cls, xml):
+        """
+        Initialize OSMChange object from an XML object.
+
+        If you used this method before version 0.3, please note that this
+        method now takes an XML object. If you want to initialize from a file,\
+        use the from_xml_file method.
+
+        :param path: path to the XML file
+        :type path: str
+        :return: OSMChange object
+        :rtype: OSMChange
+
+        """
         new_osmchange_obj = cls()
-        new_osmchange_obj._parse_stream(path)
+        new_osmchange_obj._parse_xml(xml)
         return new_osmchange_obj
+
+    @classmethod
+    def from_xml_file(cls, path):
+        """
+        Initialize OSMChange object from an XML file.
+
+        :param path: path to the XML file
+        :type path: str
+        :return: OSMChange object
+        :rtype: OSMChange
+
+        """
+        with open(path, "r") as fh:
+            xml = ElementTree.iterparse(fh, events=("start", "end"))
+            return cls.from_xml(xml)
 
     def sequence_number(self):
         return self._sequence_number
