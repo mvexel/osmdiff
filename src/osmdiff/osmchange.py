@@ -76,7 +76,7 @@ class OSMChange(object):
                 print(o.tags)
                 print(o.bounds)
 
-    def retrieve(self, clear_cache=False) -> int:
+    def retrieve(self, clear_cache=False, timeout=30) -> int:
         """
         Retrieve the OSM diff corresponding to the OSMChange sequence_number.
         """
@@ -85,7 +85,7 @@ class OSMChange(object):
         if clear_cache:
             self.create, self.modify, self.delete = ([], [], [])
         try:
-            r = requests.get(self._build_sequence_url(), stream=True, timeout=30)
+            r = requests.get(self._build_sequence_url(), stream=True, timeout=timeout)
             if r.status_code != 200:
                 return r.status_code
             gzfile = GzipFile(fileobj=r.raw)

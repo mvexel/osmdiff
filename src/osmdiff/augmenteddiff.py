@@ -107,7 +107,7 @@ class AugmentedDiff(object):
             if elem.tag == "action":
                 self._build_action(elem)
 
-    def retrieve(self, clear_cache=False) -> int:
+    def retrieve(self, clear_cache=False, timeout=30) -> int:
         """
         Retrieve the Augmented diff corresponding to the sequence_number.
         """
@@ -119,7 +119,7 @@ class AugmentedDiff(object):
         if self.debug:
             print("retrieving...")
         try:
-            r = requests.get(url, stream=True, timeout=30)
+            r = requests.get(url, stream=True, timeout=timeout)
             if r.status_code != 200:
                 return r.status_code
             r.raw.decode_content = True
