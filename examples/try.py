@@ -1,21 +1,26 @@
 #!/usr/bin/env python
 
-# these will be real useful examples someday
-
 from osmdiff import AugmentedDiff, OSMChange
 from osmdiff.osm import Node, Relation, Way
+from pathlib import Path
 
-DEBUG = True
+osm_change_file = Path("tests", "data", "test_osmchange.xml")
+print(osm_change_file)
+
+# absolute path
+osm_change_file = osm_change_file.resolve()
+print(osm_change_file)
+
 
 r = OSMChange()
 r.get_state()
 r.retrieve()
 print(r)
 
-r = OSMChange(file="test_osmchange.xml")
+r = OSMChange(file=osm_change_file)
 print(r)
 
-a = AugmentedDiff(file="test_adiff.xml")
+a = AugmentedDiff(file=osm_change_file)
 print(a)
 
 a = AugmentedDiff(
