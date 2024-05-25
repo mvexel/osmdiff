@@ -17,7 +17,7 @@ jobs:
           command: pdm run python -c "import osmdiff; print(osmdiff.__version__)"
       - run:
           name: Run Tests
-          command: pdm run pytest --cov=your_package_name
+          command: pdm run pytest
 
 workflows:
   version: 2
