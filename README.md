@@ -1,5 +1,7 @@
 # osmdiff
 
+[![Python package](https://github.com/mvexel/osmdiff/actions/workflows/python-package.yml/badge.svg)](https://github.com/mvexel/osmdiff/actions/workflows/python-package.yml)
+
 A read-only interface to OpenStreetMap change APIs and files. See also [pyosm](https://github.com/iandees/pyosm) which can do similar things. 
 
 Python 3.7+
