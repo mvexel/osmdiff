@@ -2,7 +2,7 @@
 
 [![build and test](https://github.com/mvexel/osmdiff/actions/workflows/build_and_test.yml/badge.svg)](https://github.com/mvexel/osmdiff/actions/workflows/build_and_test.yml) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-A read-only interface to OpenStreetMap change APIs and files. See also [pyosm](https://github.com/iandees/pyosm) which can do similar things. 
+A read-only interface to OpenStreetMap change APIs and files.
 
 This module has been tested with Python 3.8 - 3.12. Use at your own risk with other versions.
 
@@ -101,6 +101,6 @@ Way 452218081 (10 nodes)
 
 ## Contributing
 
-I welcome your contributions in code, documentation and suggestions for enhancements.
+I welcome your contributions in code, documentation and suggestions for enhancements.-
 
 If you find `osmdiff` useful, or you use it in commercial software, please consider sponsoring this project.
