@@ -4,7 +4,7 @@
 
 A read-only interface to OpenStreetMap change APIs and files. See also [pyosm](https://github.com/iandees/pyosm) which can do similar things. 
 
-Python 3.7+
+This module has been tested with Python 3.8 - 3.12. Use at your own risk with other versions.
 
 ## Installing
 
