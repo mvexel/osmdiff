@@ -34,7 +34,7 @@ class OSMChange(object):
         self.modify = []
         self.delete = []
         if file:
-            with open(file, "r") as fh:
+            with open(file, "r", encoding="utf-8") as fh:
                 xml = ElementTree.iterparse(fh)
                 self._parse_xml(xml)
         else:
@@ -135,7 +135,7 @@ class OSMChange(object):
         :return: OSMChange object
         :rtype: OSMChange
         """
-        with open(path, "r") as fh:
+        with open(path, "r", encoding="utf-8") as fh:
             xml = ElementTree.iterparse(fh)
             return cls.from_xml(xml)
 
