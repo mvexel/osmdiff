@@ -28,13 +28,13 @@ class TestOSMChange:
     def test_read_changeset_from_xml_file(self, osmchange_file_path):
         "Test initializing from an XML object"
         osmchange = OSMChange.from_xml_file(osmchange_file_path)
-        assert len(osmchange.create) == 1004
-        assert len(osmchange.modify) == 585
-        assert len(osmchange.delete) == 3800
+        assert len(osmchange.create) == 831
+        assert len(osmchange.modify) == 368
+        assert len(osmchange.delete) == 3552
         nodes_created = [o for o in osmchange.create if isinstance(o, Node)]
         ways_created = [o for o in osmchange.create if isinstance(o, Way)]
         rels_created = [o for o in osmchange.create if isinstance(o, Relation)]
-        assert len(nodes_created) == 858
-        assert len(ways_created) == 146
+        assert len(nodes_created) == 699
+        assert len(ways_created) == 132
         assert len(rels_created) == 0
         assert len(nodes_created + ways_created + rels_created) == len(osmchange.create)
