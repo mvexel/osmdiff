@@ -35,7 +35,7 @@ class OSMChange(object):
         self.delete = []
         if file:
             with open(file, "r") as fh:
-                xml = ElementTree.iterparse(fh, events=("start", "end"))
+                xml = ElementTree.iterparse(fh)
                 self._parse_xml(xml)
         else:
             self._frequency = frequency
@@ -98,7 +98,7 @@ class OSMChange(object):
             if r.status_code != 200:
                 return r.status_code
             gzfile = GzipFile(fileobj=r.raw)
-            xml = ElementTree.iterparse(gzfile, events=("start", "end"))
+            xml = ElementTree.iterparse(gzfile)
             self._parse_xml(xml)
             return r.status_code
         except ConnectionError:
@@ -136,7 +136,7 @@ class OSMChange(object):
         :rtype: OSMChange
         """
         with open(path, "r") as fh:
-            xml = ElementTree.iterparse(fh, events=("start", "end"))
+            xml = ElementTree.iterparse(fh)
             return cls.from_xml(xml)
 
     @property
