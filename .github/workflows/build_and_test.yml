@@ -19,13 +19,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Python+PDM
-        uses: pdm-project/setup-pdm@v4.1
+      - name: Setup Python
+        uses: actions/setup-python@v4.1
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
-          pdm sync -d -G test
+          uv sync --dev
       - name: test
         run: |
-          pdm run -v pytest tests
+          uv run pytest tests
