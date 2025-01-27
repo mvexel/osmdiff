@@ -37,3 +37,9 @@ test = [
 
 [tool.pytest.ini_options]
 markers = ["integration: mark a test as an integration test"]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.4",
+    "typing-extensions>=4.12.2",
+]

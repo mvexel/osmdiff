@@ -9,6 +9,7 @@ class TestApi:
     state = None
 
     @pytest.mark.integration
+    @pytest.mark.skip(reason="API is not working")
     def test_osm_diff_api(self):
         "Test getting state from OSM API"
         osm_change = OSMChange()
@@ -19,6 +20,7 @@ class TestApi:
         assert status == 200
 
     @pytest.mark.integration
+    @pytest.mark.skip(reason="API is not working")
     def test_augmented_diff_api(self):
         "Test getting augmented diff from Overpass API"
         augmented_diff = AugmentedDiff()
