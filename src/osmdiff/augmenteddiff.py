@@ -1,5 +1,7 @@
 from posixpath import join as urljoin
 from xml.etree import cElementTree
+from datetime import datetime
+from typing import Optional
 
 import dateutil.parser
 import requests
@@ -10,8 +12,53 @@ from osmdiff.settings import DEFAULT_OVERPASS_URL
 
 
 class AugmentedDiff(object):
-    """
-    Class to represent an Augmented Diff object.
+    """An Augmented Diff representation for OpenStreetMap changes.
+
+    This class handles the retrieval and parsing of OpenStreetMap augmented diffs,
+    which contain detailed information about changes made to OSM data, including
+    creations, modifications, and deletions.
+
+    Parameters:
+        minlon (float | None): Minimum longitude of bounding box
+        minlat (float | None): Minimum latitude of bounding box
+        maxlon (float | None): Maximum longitude of bounding box
+        maxlat (float | None): Maximum latitude of bounding box
+        file (str | None): Path to an augmented diff file to parse
+        sequence_number (int | None): Sequence number of the augmented diff
+        timestamp (datetime | None): Timestamp of the augmented diff
+
+    Attributes:
+        base_url: Base URL for the Overpass API
+        create: List of created OSM objects
+        modify: List of modified OSM objects (containing old and new versions)
+        delete: List of deleted OSM objects
+        remarks: List of remarks from the augmented diff
+        timestamp: Timestamp of the augmented diff
+
+    Raises:
+        Exception: If an invalid bounding box is provided
+        ValueError: If sequence_number is not parseable as an integer
+
+    Example:
+        ```python
+        # Create an AugmentedDiff instance with a bounding box
+        adiff = AugmentedDiff(
+            minlon=-0.489,
+            minlat=51.28,
+            maxlon=0.236,
+            maxlat=51.686
+        )
+
+        # Get the current state
+        adiff.get_state()
+
+        # Retrieve the diff
+        status = adiff.retrieve()
+        if status == 200:
+            print(f"Created: {len(adiff.create)}")
+            print(f"Modified: {len(adiff.modify)}")
+            print(f"Deleted: {len(adiff.delete)}")
+        ```
     """
 
     base_url = DEFAULT_OVERPASS_URL
@@ -24,14 +71,14 @@ class AugmentedDiff(object):
 
     def __init__(
         self,
-        minlon=None,
-        minlat=None,
-        maxlon=None,
-        maxlat=None,
-        file=None,
-        sequence_number=None,
-        timestamp=None,
-    ):
+        minlon: Optional[float] = None,
+        minlat: Optional[float] = None,
+        maxlon: Optional[float] = None,
+        maxlat: Optional[float] = None,
+        file: Optional[str] = None,
+        sequence_number: Optional[int] = None,
+        timestamp: Optional[datetime] = None
+    ) -> None:
         self.create = []
         self.modify = []
         self.delete = []
@@ -49,8 +96,12 @@ class AugmentedDiff(object):
                 else:
                     raise Exception("invalid bbox.")
 
-    def get_state(self):
-        """Get the current state from the OSM API"""
+    def get_state(self) -> bool:
+        """Get the current state from the OSM API.
+
+        Returns:
+            True if state was successfully retrieved, False otherwise
+        """
         state_url = urljoin(self.base_url, "augmented_diff_status")
         response = requests.get(state_url, timeout=5)
         if response.status_code != 200:
@@ -99,9 +150,20 @@ class AugmentedDiff(object):
             if elem.tag == "action":
                 self._build_action(elem)
 
-    def retrieve(self, clear_cache=False, timeout=30) -> int:
-        """
-        Retrieve the Augmented diff corresponding to the sequence_number.
+    def retrieve(self, clear_cache: bool = False, timeout: int = 30) -> int:
+        """Retrieve the Augmented diff corresponding to the sequence_number.
+
+        Args:
+            clear_cache: Whether to clear existing data before retrieval.
+                Defaults to False.
+            timeout: Request timeout in seconds. Defaults to 30.
+
+        Returns:
+            HTTP status code of the request (200 for success)
+
+        Raises:
+            Exception: If sequence_number is not set
+            ConnectionError: If connection to the server fails
         """
         if not self.sequence_number:
             raise Exception("invalid sequence number")
