@@ -2,12 +2,13 @@ from posixpath import join as urljoin
 from xml.etree import cElementTree
 from datetime import datetime
 from typing import Optional
+import time
 
 import dateutil.parser
 import requests
 
 from .osm import OSMObject
-from .config import API_CONFIG, AUGMENTED_DIFF_CONFIG
+from .config import API_CONFIG, AUGMENTED_DIFF_CONFIG, DEFAULT_HEADERS
 
 from osmdiff.settings import DEFAULT_OVERPASS_URL
 
@@ -93,7 +94,7 @@ class AugmentedDiff(object):
         self.maxlat = maxlat
         self.timestamp = timestamp
         self._remarks = []
-        
+        self._sequence_number = None
         self.create = []
         self.modify = []
         self.delete = []
@@ -138,68 +139,122 @@ class AugmentedDiff(object):
         return url
 
     def _build_action(self, elem):
-        if elem.attrib["type"] == "create":
+        """Parse an action element from an augmented diff.
+        
+        Actions in augmented diffs are ordered: nodes first, then ways, then relations.
+        Within each type, elements are ordered by ID.
+        """
+        action_type = elem.attrib["type"]
+        
+        if action_type == "create":
             for child in elem:
-                e = OSMObject.from_xml(child)
-                self.__getattribute__("create").append(e)
-        else:
-            new = elem.find("new")
+                osm_obj = OSMObject.from_xml(child)
+                self.create.append(osm_obj)
+        elif action_type == "modify":
             old = elem.find("old")
-            osm_obj_old = None
-            osm_obj_new = None
-            for child in old:
-                osm_obj_old = OSMObject.from_xml(child)
-            for child in new:
-                osm_obj_new = OSMObject.from_xml(child)
-            self.__getattribute__(elem.attrib["type"]).append(
-                {"old": osm_obj_old, "new": osm_obj_new}
-            )
+            new = elem.find("new")
+            if old is not None and new is not None:
+                osm_obj_old = None
+                osm_obj_new = None
+                for child in old:
+                    osm_obj_old = OSMObject.from_xml(child)
+                for child in new:
+                    osm_obj_new = OSMObject.from_xml(child)
+                if osm_obj_old and osm_obj_new:
+                    self.modify.append({"old": osm_obj_old, "new": osm_obj_new})
+        elif action_type == "delete":
+            old = elem.find("old")
+            if old is not None:
+                for child in old:
+                    osm_obj_old = OSMObject.from_xml(child)
+                    self.delete.append({"old": osm_obj_old})
 
     def _parse_stream(self, stream):
         for event, elem in cElementTree.iterparse(stream):
             if elem.tag == "remark":
-                self.remarks.append(elem.text)
+                self._remarks.append(elem.text)
             if elem.tag == "meta":
                 timestamp = dateutil.parser.parse(elem.attrib.get("osm_base"))
                 self.timestamp = timestamp
             if elem.tag == "action":
                 self._build_action(elem)
 
-    def retrieve(self, clear_cache: bool = False, timeout: Optional[int] = None) -> int:
+    def retrieve(self, clear_cache: bool = False, timeout: Optional[int] = None, auto_increment: bool = True, max_retries: int = 3) -> int:
         """Retrieve the Augmented diff corresponding to the sequence_number.
 
         Args:
             clear_cache: Whether to clear existing data before retrieval.
                 Defaults to False.
             timeout: Request timeout in seconds. Defaults to None.
+            auto_increment: Whether to automatically increment sequence number after retrieval.
+                Defaults to True.
+            max_retries: Maximum number of retry attempts for failed requests.
+                Defaults to 3.
 
         Returns:
             HTTP status code of the request (200 for success)
 
         Raises:
             Exception: If sequence_number is not set
-            ConnectionError: If connection to the server fails
+            requests.exceptions.RequestException: If all retry attempts fail
         """
         if not self.sequence_number:
             raise Exception("invalid sequence number")
+        
         if clear_cache:
             self.create, self.modify, self.delete = ([], [], [])
+
         url = self._build_adiff_url()
-        try:
-            r = requests.get(
-                url, 
-                stream=True, 
-                timeout=timeout or self.timeout,
-                headers=DEFAULT_HEADERS
-            )
-            if r.status_code != 200:
+        
+        # Store current data before making request
+        prev_create = self.create.copy()
+        prev_modify = self.modify.copy()
+        prev_delete = self.delete.copy()
+        
+        # Use a longer timeout if none specified
+        request_timeout = timeout or self.timeout or 120  # 2 minutes default
+        
+        for attempt in range(max_retries):
+            try:
+                # Exponential backoff between retries
+                if attempt > 0:
+                    time.sleep(2 ** attempt)  # 2, 4, 8 seconds...
+                    
+                r = requests.get(
+                    url, 
+                    stream=True, 
+                    timeout=request_timeout,
+                    headers=DEFAULT_HEADERS
+                )
+                
+                if r.status_code != 200:
+                    return r.status_code
+                    
+                r.raw.decode_content = True
+                
+                # Clear current lists but keep previous data
+                self.create, self.modify, self.delete = ([], [], [])
+                
+                # Parse new data
+                self._parse_stream(r.raw)
+                
+                # Merge with previous data
+                self.create = prev_create + self.create
+                self.modify = prev_modify + self.modify
+                self.delete = prev_delete + self.delete
+                
+                # Automatically increment sequence number after successful retrieval
+                if auto_increment:
+                    self.sequence_number += 1
+                    
                 return r.status_code
-            r.raw.decode_content = True
-            self._parse_stream(r.raw)
-            return r.status_code
-        except ConnectionError:
-            # FIXME should we catch instead?
-            return 0
+                
+            except (requests.exceptions.ReadTimeout, requests.exceptions.ConnectionError) as e:
+                if attempt == max_retries - 1:  # Last attempt
+                    raise
+                continue
+                
+        return 0  # Should never reach here due to raise in except block
 
     @property
     def remarks(self):
