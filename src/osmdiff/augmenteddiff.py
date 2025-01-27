@@ -7,6 +7,7 @@ import dateutil.parser
 import requests
 
 from .osm import OSMObject
+from .config import API_CONFIG, AUGMENTED_DIFF_CONFIG
 
 from osmdiff.settings import DEFAULT_OVERPASS_URL
 
@@ -77,8 +78,22 @@ class AugmentedDiff(object):
         maxlat: Optional[float] = None,
         file: Optional[str] = None,
         sequence_number: Optional[int] = None,
-        timestamp: Optional[datetime] = None
+        timestamp: Optional[datetime] = None,
+        base_url: Optional[str] = None,
+        timeout: Optional[int] = None
     ) -> None:
+        # Initialize with defaults from config
+        self.base_url = base_url or API_CONFIG["overpass"]["base_url"]
+        self.timeout = timeout or API_CONFIG["overpass"]["timeout"]
+        
+        # Initialize other config values
+        self.minlon = minlon
+        self.minlat = minlat
+        self.maxlon = maxlon
+        self.maxlat = maxlat
+        self.timestamp = timestamp
+        self._remarks = []
+        
         self.create = []
         self.modify = []
         self.delete = []
@@ -150,13 +165,13 @@ class AugmentedDiff(object):
             if elem.tag == "action":
                 self._build_action(elem)
 
-    def retrieve(self, clear_cache: bool = False, timeout: int = 30) -> int:
+    def retrieve(self, clear_cache: bool = False, timeout: Optional[int] = None) -> int:
         """Retrieve the Augmented diff corresponding to the sequence_number.
 
         Args:
             clear_cache: Whether to clear existing data before retrieval.
                 Defaults to False.
-            timeout: Request timeout in seconds. Defaults to 30.
+            timeout: Request timeout in seconds. Defaults to None.
 
         Returns:
             HTTP status code of the request (200 for success)
@@ -171,7 +186,12 @@ class AugmentedDiff(object):
             self.create, self.modify, self.delete = ([], [], [])
         url = self._build_adiff_url()
         try:
-            r = requests.get(url, stream=True, timeout=timeout)
+            r = requests.get(
+                url, 
+                stream=True, 
+                timeout=timeout or self.timeout,
+                headers=DEFAULT_HEADERS
+            )
             if r.status_code != 200:
                 return r.status_code
             r.raw.decode_content = True
