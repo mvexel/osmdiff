@@ -184,12 +184,9 @@ class AugmentedDiff(object):
 
         Args:
             clear_cache: Whether to clear existing data before retrieval.
-                Defaults to False.
-            timeout: Request timeout in seconds. Defaults to None.
+            timeout: Request timeout in seconds.
             auto_increment: Whether to automatically increment sequence number after retrieval.
-                Defaults to True.
             max_retries: Maximum number of retry attempts for failed requests.
-                Defaults to 3.
 
         Returns:
             HTTP status code of the request (200 for success)
