@@ -120,9 +120,9 @@ class OSMObject:
 
     def __init__(self, tags: Dict[str, str] = {}, attribs: Dict[str, str] = {}, bounds: List[float] = None) -> None:
         """Initialize an empty OSM object."""
-        self.tags = tags
-        self.attribs = attribs
-        self.bounds = bounds
+        self.tags = tags or {}
+        self.attribs = attribs or {}
+        self.bounds = bounds or None   
 
     def __repr__(self) -> str:
         """

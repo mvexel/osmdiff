@@ -1,5 +1,5 @@
 from posixpath import join as urljoin
-from xml.etree import cElementTree
+from xml.etree import ElementTree
 from datetime import datetime
 from typing import Optional
 import time
@@ -119,7 +119,10 @@ class AugmentedDiff(object):
             True if state was successfully retrieved, False otherwise
         """
         state_url = urljoin(self.base_url, "augmented_diff_status")
-        response = requests.get(state_url, timeout=5)
+        response = requests.get(
+            state_url, 
+            timeout=self.timeout or 5  # Use instance timeout with fallback
+        )
         if response.status_code != 200:
             return False
         self.sequence_number = int(response.text)
@@ -170,7 +173,7 @@ class AugmentedDiff(object):
                     self.delete.append({"old": osm_obj_old})
 
     def _parse_stream(self, stream):
-        for event, elem in cElementTree.iterparse(stream):
+        for event, elem in ElementTree.iterparse(stream):
             if elem.tag == "remark":
                 self._remarks.append(elem.text)
             if elem.tag == "meta":
@@ -287,3 +290,12 @@ class AugmentedDiff(object):
 {delete} deleted)".format(
             create=len(self.create), modify=len(self.modify), delete=len(self.delete)
         )
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Clear all changes when exiting context."""
+        self.create.clear()
+        self.modify.clear()
+        self.delete.clear()
