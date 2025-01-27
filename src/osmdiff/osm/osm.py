@@ -83,7 +83,7 @@ print(node.geo_interface) # {"type": "Point", "coordinates": [-0.1, 51.5]}
 ```
 """
 
-from typing import Dict, Any
+from typing import Dict, Any, List
 from xml.etree import ElementTree
 from xml.etree.ElementTree import Element
 import json
@@ -92,22 +92,37 @@ class OSMObject:
     """
     Base class for OpenStreetMap objects.
 
-    ## Attributes
+    Parameters:
         tags (dict): OSM tags (key-value pairs)
         attribs (dict): XML attributes
         bounds (list): Bounding box [minlon, minlat, maxlon, maxlat]
 
-    ## Methods
+    Attributes:
+        tags (dict): OSM tags (key-value pairs)
+        attribs (dict): XML attributes
+        bounds (list): Bounding box [minlon, minlat, maxlon, maxlat]
+
+    Methods:
         from_xml: Create object from XML element
         _parse_tags: Parse tags from XML
         _parse_bounds: Parse bounds from XML
+    
+    Raises:
+        ValueError: If XML element is invalid
+        TypeError: If element type is unknown
+
+    Example:
+    ```python
+    node = Node()
+    node.attribs = {"lon": "0.0", "lat": "51.5"}
+    ```
     """
 
-    def __init__(self) -> None:
+    def __init__(self, tags: Dict[str, str] = {}, attribs: Dict[str, str] = {}, bounds: List[float] = None) -> None:
         """Initialize an empty OSM object."""
-        self.tags = {}
-        self.attribs = {}
-        self.bounds = None
+        self.tags = tags
+        self.attribs = attribs
+        self.bounds = bounds
 
     def __repr__(self) -> str:
         """

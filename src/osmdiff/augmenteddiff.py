@@ -212,7 +212,7 @@ class AugmentedDiff(object):
         prev_delete = self.delete.copy()
         
         # Use a longer timeout if none specified
-        request_timeout = timeout or self.timeout or 120  # 2 minutes default
+        request_timeout = timeout or self.timeout or 120  # 2 minutes default, this will still fail for very large diffs, like 12346
         
         for attempt in range(max_retries):
             try:

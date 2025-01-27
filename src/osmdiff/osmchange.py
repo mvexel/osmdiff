@@ -121,13 +121,15 @@ class OSMChange(object):
         """
         Retrieve the OSM diff corresponding to the OSMChange sequence_number.
 
-        :param clear_cache: clear the cache
-        :type clear_cache: bool
-        :param timeout: request timeout
-        :type timeout: int
+        Parameters:
+            clear_cache (bool): clear the cache
+            timeout (int): request timeout
 
-        :return: HTTP status code
-        :rtype: int
+        Returns:
+            int: HTTP status code
+    
+        Raises:
+            Exception: If an invalid sequence number is provided
         """
         if not self._sequence_number:
             raise Exception("invalid sequence number")
@@ -151,7 +153,7 @@ class OSMChange(object):
             return 0
 
     @classmethod
-    def from_xml(cls, xml) -> "OSMChange":
+    def from_xml(cls, xml: ElementTree.Element) -> "OSMChange":
         """
         Initialize OSMChange object from an XML object.
 
@@ -159,11 +161,11 @@ class OSMChange(object):
         method now takes an XML object. If you want to initialize from a file,\
         use the from_xml_file method.
 
-        :param path: path to the XML file
-        :type path: str
+        Parameters:
+            xml (ElementTree.Element): XML object
 
-        :return: OSMChange object
-        :rtype: OSMChange
+        Returns:
+            OSMChange: OSMChange object
         """
         new_osmchange_obj = cls()
         new_osmchange_obj._parse_xml(xml)
@@ -174,11 +176,11 @@ class OSMChange(object):
         """
         Initialize OSMChange object from an XML file.
 
-        :param path: path to the XML file
-        :type path: str
+        Parameters:
+            path (str): path to the XML file
 
-        :return: OSMChange object
-        :rtype: OSMChange
+        Returns:
+            OSMChange: OSMChange object
         """
         with open(path, "r") as fh:
             xml = ElementTree.iterparse(fh, events=("start", "end"))

@@ -33,10 +33,11 @@ nav:
       - AugmentedDiff: api/augmenteddiff.md
       - OSMChange: api/osmchange.md
       - OSM: api/osm.md
-
+  - Examples (WIP): examples/index.md
 markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
-  - pymdownx.inlinehilite
-  - pymdownx.snippets
-  - pymdownx.superfences
+  - toc:
+      permalink: "#"
+  - smarty
+  - sane_lists
