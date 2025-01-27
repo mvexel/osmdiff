@@ -1,11 +1,12 @@
 from posixpath import join as urljoin
 from gzip import GzipFile
 from xml.etree import ElementTree
+from typing import Optional
 
 import requests
 
 from osmdiff.osm import OSMObject
-from osmdiff.settings import DEFAULT_REPLICATION_URL
+from osmdiff.config import API_CONFIG, DEFAULT_HEADERS
 
 
 class OSMChange(object):
@@ -24,15 +25,20 @@ class OSMChange(object):
 
     def __init__(
         self,
-        url=DEFAULT_REPLICATION_URL,
-        frequency="minute",
-        file=None,
-        sequence_number=None,
+        url: Optional[str] = None,
+        frequency: str = "minute",
+        file: Optional[str] = None,
+        sequence_number: Optional[int] = None,
+        timeout: Optional[int] = None,
     ):
-        self.base_url = url
+        # Initialize with defaults from config
+        self.base_url = url or API_CONFIG["osm"]["base_url"]
+        self.timeout = timeout or API_CONFIG["osm"]["timeout"]
+        
         self.create = []
         self.modify = []
         self.delete = []
+        
         if file:
             with open(file, "r") as fh:
                 xml = ElementTree.iterparse(fh, events=("start", "end"))
@@ -43,12 +49,20 @@ class OSMChange(object):
 
     def get_state(self) -> bool:
         """
-        Get the current state from the OSM API.
+        Retrieve the current state from the OSM API.
+
+        Returns:
+            bool: True if state was successfully retrieved, False otherwise
+
+        Raises:
+            requests.RequestException: If the API request fails
         """
-        # FIXME this should really not return a boolean
-        """Get the current state from the OSM API"""
         state_url = urljoin(self.base_url, self._frequency, "state.txt")
-        response = requests.get(state_url, timeout=5)
+        response = requests.get(
+            state_url, 
+            timeout=self.timeout,
+            headers=DEFAULT_HEADERS
+        )
         if response.status_code != 200:
             return False
         for line in response.text.split("\n"):
@@ -72,12 +86,18 @@ class OSMChange(object):
             if elem.tag in ("create", "modify", "delete"):
                 self._build_action(elem)
 
-    def _build_action(self, elem) -> None:
+    def _build_action(self, elem: ElementTree.Element) -> None:
+        """
+        Build OSM objects from XML elements and add them to the appropriate list.
+
+        Args:
+            elem (ElementTree.Element): XML element containing OSM objects
+        """
         for thing in elem:
             o = OSMObject.from_xml(thing)
-            self.__getattribute__(elem.tag).append(o)
+            getattr(self, elem.tag).append(o)  # Use getattr instead of __getattribute__
 
-    def retrieve(self, clear_cache=False, timeout=30) -> int:
+    def retrieve(self, clear_cache: bool = False, timeout: Optional[int] = None) -> int:
         """
         Retrieve the OSM diff corresponding to the OSMChange sequence_number.
 
@@ -94,7 +114,12 @@ class OSMChange(object):
         if clear_cache:
             self.create, self.modify, self.delete = ([], [], [])
         try:
-            r = requests.get(self._build_sequence_url(), stream=True, timeout=timeout)
+            r = requests.get(
+                self._build_sequence_url(), 
+                stream=True, 
+                timeout=timeout or self.timeout,
+                headers=DEFAULT_HEADERS
+            )
             if r.status_code != 200:
                 return r.status_code
             gzfile = GzipFile(fileobj=r.raw)
@@ -161,7 +186,19 @@ class OSMChange(object):
         return self._frequency
 
     @frequency.setter
-    def frequency(self, f) -> None:
+    def frequency(self, f: str) -> None:
+        """
+        Set the frequency for OSM changes.
+
+        Args:
+            f (str): Frequency ('minute', 'hour', or 'day')
+
+        Raises:
+            ValueError: If frequency is not one of the valid options
+        """
+        VALID_FREQUENCIES = {"minute", "hour", "day"}
+        if f not in VALID_FREQUENCIES:
+            raise ValueError(f"Frequency must be one of: {', '.join(VALID_FREQUENCIES)}")
         self._frequency = f
 
     def __repr__(self):
@@ -169,3 +206,12 @@ class OSMChange(object):
 {delete} deleted)".format(
             create=len(self.create), modify=len(self.modify), delete=len(self.delete)
         )
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Clear all changes when exiting context."""
+        self.create.clear()
+        self.modify.clear()
+        self.delete.clear()

@@ -99,6 +99,43 @@ Way 452218081 (10 nodes)
 ['12.8932677', '43.3575917', '12.8948117', '43.3585947']
 ```
 
+## Configuration
+
+The osmdiff package uses a centralized configuration system in `src/osmdiff/config.py`. This includes:
+
+### API Configuration
+Default settings for API endpoints and timeouts:
+
+```python
+API_CONFIG = {
+    "overpass": {"base_url": "...", "timeout": 30},
+    "osm": {"base_url": "...", "timeout": 30},
+    "nominatim": {"base_url": "...", "timeout": 30}
+}
+```
+
+### Request Headers
+Standard headers used in all API requests:
+```python
+DEFAULT_HEADERS = {
+    "User-Agent": "osmdiff/1.0",
+    "Accept": "application/json, text/xml"
+}
+```
+
+### Customizing Configuration
+You can override any configuration value at runtime by passing parameters to the respective class constructors:
+
+```python
+from osmdiff import OSMChange
+
+# Override default URL and timeout
+change = OSMChange(
+    url="https://custom-api.example.com",
+    timeout=60
+)
+```
+
 ## Contributing
 
 I welcome your contributions in code, documentation and suggestions for enhancements.
