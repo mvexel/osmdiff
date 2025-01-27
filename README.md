@@ -4,6 +4,12 @@
 
 A read-only interface to OpenStreetMap change APIs and files. See also [pyosm](https://github.com/iandees/pyosm) which can do similar things. 
 
+## Documentation
+
+📚 Comprehensive documentation is available at [mvexel.github.io/osmdiff](https://mvexel.github.io/osmdiff/)
+
+## Python Version Support
+
 This module has been tested with Python 3.8 - 3.12. Use at your own risk with other versions.
 
 ## Installing
@@ -11,6 +17,8 @@ This module has been tested with Python 3.8 - 3.12. Use at your own risk with ot
 `pip install osmdiff`
 
 ## Usage
+
+See the [documentation](https://mvexel.github.io/osmdiff/) for more details.
 
 ### Reading
 
@@ -135,6 +143,16 @@ change = OSMChange(
     timeout=60
 )
 ```
+
+## Community
+
+Join the conversation and get help:
+
+- [GitHub Discussions](https://github.com/mvexel/osmdiff/discussions) - For questions, ideas, and general discussion
+- [OpenStreetMap Community Forum](https://community.openstreetmap.org/) - For broader OSM-related discussions
+- [OSM Slack](https://osmus.slack.com/) - Join the #dev channel
+
+Please be respectful and follow the [OpenStreetMap Code of Conduct](https://wiki.openstreetmap.org/wiki/Code_of_conduct) in all community interactions.
 
 ## Contributing
 
