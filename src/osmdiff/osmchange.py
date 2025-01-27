@@ -13,14 +13,34 @@ class OSMChange(object):
     """
     Class to represent an OSMChange object.
 
-    :param url: URL of the OSM replication server
-    :type url: str
-    :param frequency: frequency of the replication diff
-    :type frequency: str
-    :param file: path to the XML file
-    :type file: str
-    :param sequence_number: sequence number of the diff
-    :type sequence_number: int
+    Parameters:
+        url (str | None): URL of the OSM replication server
+        frequency (str): frequency of the replication diff
+        file (str | None): path to the XML file
+        sequence_number (int | None): sequence number of the diff
+        timeout (int | None): request timeout
+
+    Attributes:
+        base_url (str): URL of the OSM replication server
+        timeout (int): request timeout
+        create (list): list of created OSM objects
+        modify (list): list of modified OSM objects
+        delete (list): list of deleted OSM objects
+
+    Raises:
+        Exception: If an invalid sequence number is provided
+        ValueError: If frequency is not one of the valid options
+
+    Example:
+        ```python
+        # Create an OSMChange object with a URL and frequency
+        osmchange = OSMChange(
+            url="https://osm.example.com",
+            frequency="minute",
+            file="path/to/osmchange.xml",
+            sequence_number=123456789,
+        )
+        ```
     """
 
     def __init__(

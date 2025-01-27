@@ -31,6 +31,8 @@ nav:
   - Home: index.md
   - API Reference:
       - AugmentedDiff: api/augmenteddiff.md
+      - OSMChange: api/osmchange.md
+      - OSM: api/osm.md
 
 markdown_extensions:
   - pymdownx.highlight:
