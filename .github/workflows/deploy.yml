@@ -1,0 +1,13 @@
+# Recommended workflow (.github/workflows/deploy.yml)
+name: Deploy Docs
+on:
+  push:
+    branches: [main, develop]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+      - run: pip install mkdocs-material
+      - run: mkdocs gh-deploy --force
