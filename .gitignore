@@ -8,3 +8,4 @@ dist/
 .pdm-python
 .aider*
 site/
+.vscode/
