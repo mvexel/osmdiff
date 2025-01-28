@@ -54,11 +54,11 @@ class OSMChange(object):
         # Initialize with defaults from config
         self.base_url = url or API_CONFIG["osm"]["base_url"]
         self.timeout = timeout or API_CONFIG["osm"]["timeout"]
-        
+
         self.create = []
         self.modify = []
         self.delete = []
-        
+
         if file:
             with open(file, "r") as fh:
                 xml = ElementTree.iterparse(fh, events=("start", "end"))
@@ -79,9 +79,7 @@ class OSMChange(object):
         """
         state_url = urljoin(self.base_url, self._frequency, "state.txt")
         response = requests.get(
-            state_url, 
-            timeout=self.timeout,
-            headers=DEFAULT_HEADERS
+            state_url, timeout=self.timeout, headers=DEFAULT_HEADERS
         )
         if response.status_code != 200:
             return False
@@ -127,7 +125,7 @@ class OSMChange(object):
 
         Returns:
             int: HTTP status code
-    
+
         Raises:
             Exception: If an invalid sequence number is provided
         """
@@ -137,10 +135,10 @@ class OSMChange(object):
             self.create, self.modify, self.delete = ([], [], [])
         try:
             r = requests.get(
-                self._build_sequence_url(), 
-                stream=True, 
+                self._build_sequence_url(),
+                stream=True,
                 timeout=timeout or self.timeout,
-                headers=DEFAULT_HEADERS
+                headers=DEFAULT_HEADERS,
             )
             if r.status_code != 200:
                 return r.status_code
@@ -220,7 +218,9 @@ class OSMChange(object):
         """
         VALID_FREQUENCIES = {"minute", "hour", "day"}
         if f not in VALID_FREQUENCIES:
-            raise ValueError(f"Frequency must be one of: {', '.join(VALID_FREQUENCIES)}")
+            raise ValueError(
+                f"Frequency must be one of: {', '.join(VALID_FREQUENCIES)}"
+            )
         self._frequency = f
 
     def __repr__(self):

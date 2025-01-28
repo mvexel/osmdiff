@@ -81,12 +81,12 @@ class AugmentedDiff(object):
         sequence_number: Optional[int] = None,
         timestamp: Optional[datetime] = None,
         base_url: Optional[str] = None,
-        timeout: Optional[int] = None
+        timeout: Optional[int] = None,
     ) -> None:
         # Initialize with defaults from config
         self.base_url = base_url or API_CONFIG["overpass"]["base_url"]
         self.timeout = timeout or API_CONFIG["overpass"]["timeout"]
-        
+
         # Initialize other config values
         self.minlon = minlon
         self.minlat = minlat
@@ -120,8 +120,7 @@ class AugmentedDiff(object):
         """
         state_url = urljoin(self.base_url, "augmented_diff_status")
         response = requests.get(
-            state_url, 
-            timeout=self.timeout or 5  # Use instance timeout with fallback
+            state_url, timeout=self.timeout or 5  # Use instance timeout with fallback
         )
         if response.status_code != 200:
             return False
@@ -143,12 +142,12 @@ class AugmentedDiff(object):
 
     def _build_action(self, elem):
         """Parse an action element from an augmented diff.
-        
+
         Actions in augmented diffs are ordered: nodes first, then ways, then relations.
         Within each type, elements are ordered by ID.
         """
         action_type = elem.attrib["type"]
-        
+
         if action_type == "create":
             for child in elem:
                 osm_obj = OSMObject.from_xml(child)
@@ -182,7 +181,13 @@ class AugmentedDiff(object):
             if elem.tag == "action":
                 self._build_action(elem)
 
-    def retrieve(self, clear_cache: bool = False, timeout: Optional[int] = None, auto_increment: bool = True, max_retries: int = 3) -> int:
+    def retrieve(
+        self,
+        clear_cache: bool = False,
+        timeout: Optional[int] = None,
+        auto_increment: bool = True,
+        max_retries: int = 3,
+    ) -> int:
         """Retrieve the Augmented diff corresponding to the sequence_number.
 
         Args:
@@ -200,60 +205,62 @@ class AugmentedDiff(object):
         """
         if not self.sequence_number:
             raise Exception("invalid sequence number")
-        
+
         if clear_cache:
             self.create, self.modify, self.delete = ([], [], [])
 
         url = self._build_adiff_url()
-        
+
         # Store current data before making request
         prev_create = self.create.copy()
         prev_modify = self.modify.copy()
         prev_delete = self.delete.copy()
-        
+
         # Use a longer timeout if none specified
-        request_timeout = timeout or self.timeout or 120  # 2 minutes default, this will still fail for very large diffs, like 12346
-        
+        request_timeout = (
+            timeout or self.timeout or 120
+        )  # 2 minutes default, this will still fail for very large diffs, like 12346
+
         for attempt in range(max_retries):
             try:
                 # Exponential backoff between retries
                 if attempt > 0:
-                    time.sleep(2 ** attempt)  # 2, 4, 8 seconds...
-                    
+                    time.sleep(2**attempt)  # 2, 4, 8 seconds...
+
                 r = requests.get(
-                    url, 
-                    stream=True, 
-                    timeout=request_timeout,
-                    headers=DEFAULT_HEADERS
+                    url, stream=True, timeout=request_timeout, headers=DEFAULT_HEADERS
                 )
-                
+
                 if r.status_code != 200:
                     return r.status_code
-                    
+
                 r.raw.decode_content = True
-                
+
                 # Clear current lists but keep previous data
                 self.create, self.modify, self.delete = ([], [], [])
-                
+
                 # Parse new data
                 self._parse_stream(r.raw)
-                
+
                 # Merge with previous data
                 self.create = prev_create + self.create
                 self.modify = prev_modify + self.modify
                 self.delete = prev_delete + self.delete
-                
+
                 # Automatically increment sequence number after successful retrieval
                 if auto_increment:
                     self.sequence_number += 1
-                    
+
                 return r.status_code
-                
-            except (requests.exceptions.ReadTimeout, requests.exceptions.ConnectionError) as e:
+
+            except (
+                requests.exceptions.ReadTimeout,
+                requests.exceptions.ConnectionError,
+            ) as e:
                 if attempt == max_retries - 1:  # Last attempt
                     raise
                 continue
-                
+
         return 0  # Should never reach here due to raise in except block
 
     @property

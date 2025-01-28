@@ -78,8 +78,10 @@ rel.tags = {
 
 # Access __geo_interface__ for GeoJSON compatibility
 
+See https://gist.github.com/sgillies/2217756 for more details.
+
 ```python
-print(node.geo_interface) # {"type": "Point", "coordinates": [-0.1, 51.5]}
+print(node.__geo_interface__) # {"type": "Point", "coordinates": [-0.1, 51.5]}
 ```
 """
 
@@ -87,6 +89,7 @@ from typing import Dict, Any, List
 from xml.etree import ElementTree
 from xml.etree.ElementTree import Element
 import json
+
 
 class OSMObject:
     """
@@ -106,7 +109,7 @@ class OSMObject:
         from_xml: Create object from XML element
         _parse_tags: Parse tags from XML
         _parse_bounds: Parse bounds from XML
-    
+
     Raises:
         ValueError: If XML element is invalid
         TypeError: If element type is unknown
@@ -118,11 +121,16 @@ class OSMObject:
     ```
     """
 
-    def __init__(self, tags: Dict[str, str] = {}, attribs: Dict[str, str] = {}, bounds: List[float] = None) -> None:
+    def __init__(
+        self,
+        tags: Dict[str, str] = {},
+        attribs: Dict[str, str] = {},
+        bounds: List[float] = None,
+    ) -> None:
         """Initialize an empty OSM object."""
         self.tags = tags or {}
         self.attribs = attribs or {}
-        self.bounds = bounds or None   
+        self.bounds = bounds or None
 
     def __repr__(self) -> str:
         """
@@ -165,7 +173,7 @@ class OSMObject:
             ]
 
     @classmethod
-    def from_xml(cls, elem: Element) -> 'OSMObject':
+    def from_xml(cls, elem: Element) -> "OSMObject":
         """
         Create OSM object from XML element.
 
@@ -219,7 +227,7 @@ class OSMObject:
             "type": self.__class__.__name__,
             "id": self.attribs.get("id"),
             "tags": self.tags,
-            "bounds": self.bounds
+            "bounds": self.bounds,
         }
 
     def to_json(self) -> str:
@@ -232,7 +240,7 @@ class OSMObject:
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_file(cls, filename: str) -> 'OSMObject':
+    def from_file(cls, filename: str) -> "OSMObject":
         """
         Create object from XML file.
 
@@ -242,7 +250,7 @@ class OSMObject:
         Returns:
             OSMObject: Parsed object
         """
-        with open(filename, 'r') as f:
+        with open(filename, "r") as f:
             tree = ElementTree.parse(f)
             return cls.from_xml(tree.getroot())
 
@@ -254,7 +262,7 @@ class Node(OSMObject):
     ## Attributes
         lon (float): Longitude
         lat (float): Latitude
-        __geo_interface__ (dict): GeoJSON-compatible interface
+        __geo_interface__ (dict): GeoJSON-compatible interface, see https://gist.github.com/sgillies/2217756 for more details.
 
     ## Example
     ```python
@@ -264,9 +272,13 @@ class Node(OSMObject):
     ```
     """
 
-    def __init__(self):
-        """Initialize an empty node."""
-        super().__init__()
+    def __init__(
+        self,
+        tags: Dict[str, str] = {},
+        attribs: Dict[str, str] = {},
+        bounds: List[float] = None,
+    ):
+        super().__init__(tags, attribs, bounds)
 
     def _validate_coords(self) -> None:
         """Validate node coordinates."""
@@ -299,6 +311,7 @@ class Node(OSMObject):
         return {"type": "Point", "coordinates": [self.lon, self.lat]}
 
     __geo_interface__ = property(_geo_interface)
+
     def __eq__(self, other) -> bool:
         """
         Check if two nodes are equal.
@@ -320,8 +333,7 @@ class Way(OSMObject):
 
     ## Attributes
         nodes (list): List of Node objects
-        __geo_interface__ (dict): GeoJSON-compatible interface
-
+        __geo_interface__ (dict): GeoJSON-compatible interface, see https://gist.github.com/sgillies/2217756 for more details.
     ## Example
     ```python
     way = Way()
@@ -330,10 +342,14 @@ class Way(OSMObject):
     ```
     """
 
-    def __init__(self):
-        """Initialize an empty way."""
+    def __init__(
+        self,
+        tags: Dict[str, str] = {},
+        attribs: Dict[str, str] = {},
+        bounds: List[float] = None,
+    ):
+        super().__init__(tags, attribs, bounds)
         self.nodes = []
-        super().__init__()
 
     def is_closed(self) -> bool:
         """
@@ -371,11 +387,14 @@ class Way(OSMObject):
         Returns:
             dict: GeoJSON LineString or Polygon geometry
         """
-        geom_type = "LineString" if self.nodes[0] == self.nodes[-1] else "Polygon"
-        return {
-            "type": geom_type,
-            "coordinates": [[[n.lon, n.lat] for n in self.nodes]],
-        }
+        geom_type = "Polygon" if self.is_closed() else "LineString"
+        coordinates = [[n.lon, n.lat] for n in self.nodes]
+
+        # For Polygon, we need to wrap coordinates in an extra list
+        if geom_type == "Polygon":
+            coordinates = [coordinates]
+
+        return {"type": geom_type, "coordinates": coordinates}
 
     __geo_interface__ = property(_geo_interface)
 
@@ -386,7 +405,7 @@ class Relation(OSMObject):
 
     ## Attributes
         members (list): List of member objects
-        __geo_interface__ (dict): GeoJSON-compatible interface
+        __geo_interface__ (dict): GeoJSON-compatible interface, see https://gist.github.com/sgillies/2217756 for more details.
 
     ## Example
     ```python
@@ -396,10 +415,14 @@ class Relation(OSMObject):
     ```
     """
 
-    def __init__(self):
-        """Initialize an empty relation."""
+    def __init__(
+        self,
+        tags: Dict[str, str] = {},
+        attribs: Dict[str, str] = {},
+        bounds: List[float] = None,
+    ):
+        super().__init__(tags, attribs, bounds)
         self.members = []
-        super().__init__()
 
     def _parse_members(self, elem: Element):
         """
@@ -416,19 +439,21 @@ class Relation(OSMObject):
         GeoJSON-compatible interface.
 
         Returns:
-            dict: GeoJSON FeatureCollection
+            dict: GeoJSON GeometryCollection
         """
         return {
-            "type": "FeatureCollection",
-            "Features": [[f.__geo_interface__ for f in self.members]],
+            "type": "GeometryCollection",
+            "geometries": [m.__geo_interface__ for m in self.members],
         }
 
     __geo_interface__ = property(_geo_interface)
+
 
 class Member(OSMObject):
     """
     Represents an OSM member (a feature within a relation).
     """
+
     def __init__(self):
         """Initialize an empty member."""
         self.type = None
@@ -457,11 +482,7 @@ class Member(OSMObject):
         return {
             "type": "Feature",
             "geometry": None,
-            "properties": {
-                "type": self.type,
-                "ref": self.ref,
-                "role": self.role
-            }
+            "properties": {"type": self.type, "ref": self.ref, "role": self.role},
         }
 
     __geo_interface__ = property(_geo_interface)
