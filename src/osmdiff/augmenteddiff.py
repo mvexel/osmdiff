@@ -1,8 +1,10 @@
 from posixpath import join as urljoin
 from xml.etree import ElementTree
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Optional
 import time
+import logging
+from contextlib import contextmanager
 
 import dateutil.parser
 import requests
@@ -112,20 +114,28 @@ class AugmentedDiff(object):
                 else:
                     raise Exception("invalid bbox.")
 
-    def get_state(self) -> bool:
-        """Get the current state from the OSM API.
+    @classmethod
+    def get_state(cls, base_url: Optional[str] = None, timeout: Optional[int] = None) -> Optional[int]:
+        """Get the current sequence number from the OSM API.
+
+        Args:
+            base_url: Optional override for API base URL
+            timeout: Optional override for request timeout
 
         Returns:
-            True if state was successfully retrieved, False otherwise
+            Current sequence number if successful, None if failed
         """
-        state_url = urljoin(self.base_url, "augmented_diff_status")
-        response = requests.get(
-            state_url, timeout=self.timeout or 5  # Use instance timeout with fallback
-        )
-        if response.status_code != 200:
-            return False
-        self.sequence_number = int(response.text)
-        return True
+        base = base_url or API_CONFIG["overpass"]["base_url"]
+        state_url = urljoin(base, "augmented_diff_status")
+        try:
+            response = requests.get(
+                state_url, timeout=timeout or 5
+            )
+            if response.status_code != 200:
+                return None
+            return int(response.text)
+        except (requests.exceptions.RequestException, ValueError):
+            return None
 
     def _build_adiff_url(self):
         url = "{base}/augmented_diff?id={sequence_number}".format(
@@ -306,3 +316,146 @@ class AugmentedDiff(object):
         self.create.clear()
         self.modify.clear()
         self.delete.clear()
+
+
+class ContinuousAugmentedDiff:
+    """Iterator class for continuously fetching augmented diffs.
+
+    This class handles the continuous retrieval of augmented diffs with proper
+    backoff and state checking. It yields AugmentedDiff objects as new diffs
+    become available.
+
+    Parameters:
+        minlon (float | None): Minimum longitude of bounding box
+        minlat (float | None): Minimum latitude of bounding box
+        maxlon (float | None): Maximum longitude of bounding box
+        maxlat (float | None): Maximum latitude of bounding box
+        base_url (str | None): Override default Overpass API URL
+        timeout (int | None): Request timeout in seconds
+        min_interval (int): Minimum seconds between checks (default: 30)
+        max_interval (int): Maximum seconds between checks (default: 120)
+
+    Example:
+        ```python
+        # Create continuous fetcher for London area
+        fetcher = ContinuousAugmentedDiff(
+            minlon=-0.489,
+            minlat=51.28,
+            maxlon=0.236,
+            maxlat=51.686
+        )
+
+        # Iterate over diffs as they become available
+        for diff in fetcher:
+            print(f"Got diff {diff.sequence_number} with {len(diff.create)} creates")
+        ```
+    """
+
+    def __init__(
+        self,
+        minlon: Optional[float] = None,
+        minlat: Optional[float] = None,
+        maxlon: Optional[float] = None,
+        maxlat: Optional[float] = None,
+        base_url: Optional[str] = None,
+        timeout: Optional[int] = None,
+        min_interval: int = 30,
+        max_interval: int = 120,
+    ):
+        self.bbox = (minlon, minlat, maxlon, maxlat)
+        self.base_url = base_url
+        self.timeout = timeout
+        self.min_interval = min_interval
+        self.max_interval = max_interval
+        
+        self._current_sequence = None
+        self._current_interval = min_interval
+        self._last_check = None
+        self._logger = logging.getLogger(__name__)
+
+    def _wait_for_next_check(self) -> None:
+        """Wait appropriate time before next check, using exponential backoff."""
+        now = datetime.now()
+        if self._last_check:
+            elapsed = (now - self._last_check).total_seconds()
+            wait_time = max(0, self._current_interval - elapsed)
+            if wait_time > 0:
+                time.sleep(wait_time)
+
+        self._last_check = datetime.now()
+
+    def _backoff(self) -> None:
+        """Increase check interval, up to max_interval."""
+        self._current_interval = min(
+            self._current_interval * 2,
+            self.max_interval
+        )
+
+    def _reset_backoff(self) -> None:
+        """Reset check interval to minimum."""
+        self._current_interval = self.min_interval
+
+    def __iter__(self):
+        return self
+
+    def __next__(self) -> AugmentedDiff:
+        """Get next available augmented diff.
+        
+        Yields:
+            AugmentedDiff: Next available diff
+            
+        Raises:
+            StopIteration: Never raised, iterates indefinitely
+        """
+        while True:
+            self._wait_for_next_check()
+            
+            # Get current state
+            new_sequence = AugmentedDiff.get_state(
+                base_url=self.base_url,
+                timeout=self.timeout
+            )
+            
+            if new_sequence is None:
+                self._logger.warning("Failed to get state, backing off")
+                self._backoff()
+                continue
+                
+            # Initialize sequence number on first run
+            if self._current_sequence is None:
+                self._current_sequence = new_sequence
+                continue
+                
+            # Check if new diff is available
+            if new_sequence <= self._current_sequence:
+                self._backoff()
+                continue
+                
+            # Create diff object for new sequence
+            diff = AugmentedDiff(
+                minlon=self.bbox[0],
+                minlat=self.bbox[1],
+                maxlon=self.bbox[2],
+                maxlat=self.bbox[3],
+                sequence_number=self._current_sequence + 1,
+                base_url=self.base_url,
+                timeout=self.timeout
+            )
+            
+            # Try to retrieve the diff
+            try:
+                status = diff.retrieve(auto_increment=False)
+                if status != 200:
+                    self._logger.warning(f"Failed to retrieve diff: HTTP {status}")
+                    self._backoff()
+                    continue
+                    
+                # Success! Reset backoff and update sequence
+                self._reset_backoff()
+                self._current_sequence += 1
+                return diff
+                
+            except Exception as e:
+                self._logger.warning(f"Error retrieving diff: {e}")
+                self._backoff()
+                continue
