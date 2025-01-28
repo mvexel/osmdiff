@@ -55,6 +55,28 @@ class TestAugmentedDiffRetries(unittest.TestCase):
         
         self.assertEqual(mock_get.call_count, 3)  # Verify it tried 3 times
 
+    def test_delete_metadata(self):
+        """Test that metadata is captured for deleted objects"""
+        with open("tests/data/test_delete_metadata.xml", "r") as f:
+            adiff = AugmentedDiff(file=f.name)
+            
+        self.assertEqual(len(adiff.delete), 1)
+        deletion = adiff.delete[0]
+        
+        # Check the metadata is present
+        self.assertIn("meta", deletion)
+        self.assertEqual(deletion["meta"]["user"], "TestUser")
+        self.assertEqual(deletion["meta"]["uid"], "12345")
+        self.assertEqual(deletion["meta"]["changeset"], "67890")
+        self.assertEqual(deletion["meta"]["timestamp"], "2024-01-28T12:00:00Z")
+        
+        # Check the old object is present
+        self.assertIn("old", deletion)
+        self.assertEqual(deletion["old"].attribs["id"], "123")
+        self.assertEqual(deletion["old"].attribs["lat"], "51.5")
+        self.assertEqual(deletion["old"].attribs["lon"], "-0.1")
+        self.assertEqual(deletion["old"].tags["amenity"], "cafe")
+
     @patch('requests.get')
     def test_consecutive_sequence_numbers(self, mock_get):
         # Test retrieving consecutive diffs (12345 -> 12346)
