@@ -22,8 +22,7 @@ Example:
 # Default API URLs and settings for different services
 API_CONFIG = {
     "overpass": {
-    # I want to change this endpoint to https://adiffs.osmcha.org/changesets/161860000.adiff AI!
-        "base_url": "https://overpass-api.de/api",
+        "base_url": "https://adiffs.osmcha.org/changesets/161860000.adiff",
         "timeout": 30,  # Default timeout in seconds
     },
     "osm": {
