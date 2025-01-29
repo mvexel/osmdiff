@@ -22,7 +22,7 @@ Example:
 # Default API URLs and settings for different services
 API_CONFIG = {
     "overpass": {
-        "base_url": "https://adiffs.osmcha.org/changesets/161860000.adiff", # well we need to take into account that the sequence number is a placeholder AI!
+        "base_url": "https://adiffs.osmcha.org/changesets/{sequence}.adiff",
         "timeout": 30,  # Default timeout in seconds
     },
     "osm": {
