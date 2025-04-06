@@ -6,7 +6,7 @@ maintainers = [{ name = "Martijn van Exel", email = "m@rtijn.org" }]
 description = "A read-only interface to OpenStreetMap change APIs and files"
 keywords = ["openstreetmap", "osm", "diff", "changeset", "api"]
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.9"
 classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
