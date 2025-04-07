@@ -9,6 +9,9 @@
 name: Publish Python Package
 
 on:
+  push:
+    tags:
+      - "v*"  # Push events matching v1.0, v20.15.10, etc.
   release:
     types: [published]
 
@@ -28,7 +31,9 @@ jobs:
       - name: Build package
         run: pdm build
       - name: Publish package
-        uses: pypa/gh-action-pypi-publish@27b31702a0e7fc50959f5ad993c78deac1bdfc29
+        uses: pypa/gh-action-pypi-publish@release/v1
         with:
           user: __token__
           password: ${{ secrets.PYPI_API_TOKEN }}
+          skip-existing: true
+          verbose: true
