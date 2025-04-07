@@ -1,9 +1,6 @@
 import pytest
 import xml.etree.ElementTree as ET
 from unittest.mock import Mock
-import os
-import glob
-import tempfile
 
 
 @pytest.fixture
@@ -12,8 +9,9 @@ def mock_osm_api_response():
         "status": 200,
         "data": {
             # mock response data
-        }
+        },
     }
+
 
 @pytest.fixture
 def mock_osm_api(monkeypatch):
@@ -22,8 +20,9 @@ def mock_osm_api(monkeypatch):
     mock.get.return_value.json.return_value = {
         # mock response data
     }
-    monkeypatch.setattr('requests.get', mock.get)
+    monkeypatch.setattr("requests.get", mock.get)
     return mock
+
 
 # Define a fixture to load the XML file
 @pytest.fixture
@@ -47,13 +46,11 @@ def adiff_file_path():
 @pytest.fixture
 def api_config():
     return {
-        'base_url': 'https://api.openstreetmap.org/api/0.6',
-        'timeout': 30,
-        'headers': {
-            'Content-Type': 'application/xml',
-            'Accept': 'application/xml'
-        }
+        "base_url": "https://api.openstreetmap.org/api/0.6",
+        "timeout": 30,
+        "headers": {"Content-Type": "application/xml", "Accept": "application/xml"},
     }
+
 
 @pytest.fixture
 def create_test_changeset():
@@ -65,4 +62,5 @@ def create_test_changeset():
             </create>
         </osmChange>
         """
+
     return _create_changeset
