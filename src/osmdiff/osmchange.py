@@ -19,41 +19,8 @@ class OSMChange(object):
         sequence_number: Sequence number of the diff
         timeout: Request timeout in seconds
 
-    Attributes:
-        create (list): Created OSM objects
-        modify (list): Modified OSM objects  
-        delete (list): Deleted OSM objects
-        frequency (str): Current replication frequency
-        sequence_number (int): Current sequence number
-        base_url (str): Replication server URL
-        timeout (int): Request timeout
-
-    Methods:
-        get_state: Get current replication state
-        retrieve: Fetch changeset
-        from_xml: Create from XML object
-        from_xml_file: Create from XML file
-
-    Raises:
-        ValueError: For invalid frequency or sequence number
-        requests.exceptions.RequestException: For HTTP errors
-        Exception: For invalid bounding boxes
-
-    Examples:
-        From sequence number:
-        ```python
-        change = OSMChange(sequence_number=12345)
-        change.retrieve()
-        ```
-
-        From local file:
-        ```python  
-        change = OSMChange(file="changes.osc")
-        ```
-
     Note:
-        Follows the OSM replication protocol:
-        https://wiki.openstreetmap.org/wiki/Planet.osm/diffs
+        Follows the OSM replication protocol.
     """
 
     def __init__(

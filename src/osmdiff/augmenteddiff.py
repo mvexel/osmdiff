@@ -19,52 +19,20 @@ class AugmentedDiff:
     """An Augmented Diff representation for OpenStreetMap changes.
     
     Handles retrieval and parsing of OpenStreetMap augmented diffs containing detailed
-    information about changes to OSM data (creations, modifications, deletions).
+    changes to OSM data (creations, modifications, deletions).
 
     Args:
         minlon: Minimum longitude of bounding box (WGS84)
-        minlat: Minimum latitude of bounding box (WGS84) 
-        maxlon: Maximum longitude of bounding box (WGS84)
+        minlat: Minimum latitude of bounding box (WGS84)
+        maxlon: Maximum longitude of bounding box (WGS84) 
         maxlat: Maximum latitude of bounding box (WGS84)
-        file: Path to local augmented diff XML file to parse
-        sequence_number: Sequence number of the augmented diff
-        timestamp: Timestamp of the augmented diff
+        file: Path to local augmented diff XML file
+        sequence_number: Sequence number of the diff
         base_url: Override default Overpass API URL
         timeout: Request timeout in seconds
 
-    Attributes:
-        base_url (str): Base URL for the Overpass API
-        create (list): List of created OSM objects
-        modify (list): List of modified OSM objects (dicts with 'old' and 'new')
-        delete (list): List of deleted OSM objects with metadata
-        remarks (list): List of remarks from the augmented diff
-        timestamp (datetime): Timestamp of the augmented diff
-
-    Raises:
-        ValueError: If sequence_number is not parseable as integer
-        Exception: If invalid bounding box coordinates provided
-
-    Examples:
-        Basic usage with bounding box:
-        ```python
-        adiff = AugmentedDiff(
-            minlon=-0.489,
-            minlat=51.28,
-            maxlon=0.236, 
-            maxlat=51.686
-        )
-        adiff.retrieve()
-        ```
-
-        Using a local file:
-        ```python
-        adiff = AugmentedDiff(file="changes.adiff")
-        ```
-
     Note:
         The bounding box coordinates should be in WGS84 (EPSG:4326) format.
-        For large areas, consider using smaller sequence numbers or splitting
-        into multiple requests.
     """
 
     base_url = DEFAULT_OVERPASS_URL
@@ -361,36 +329,19 @@ class AugmentedDiff:
 
 
 class ContinuousAugmentedDiff:
-    """Iterator class for continuously fetching augmented diffs.
+    """Iterator for continuously fetching augmented diffs with backoff.
 
-    This class handles the continuous retrieval of augmented diffs with proper
-    backoff and state checking. It yields AugmentedDiff objects as new diffs
-    become available.
+    Yields AugmentedDiff objects as new diffs become available.
 
-    Parameters:
-        minlon (float | None): Minimum longitude of bounding box
-        minlat (float | None): Minimum latitude of bounding box
-        maxlon (float | None): Maximum longitude of bounding box
-        maxlat (float | None): Maximum latitude of bounding box
-        base_url (str | None): Override default Overpass API URL
-        timeout (int | None): Request timeout in seconds
-        min_interval (int): Minimum seconds between checks (default: 30)
-        max_interval (int): Maximum seconds between checks (default: 120)
-
-    Example:
-        ```python
-        # Create continuous fetcher for London area
-        fetcher = ContinuousAugmentedDiff(
-            minlon=-0.489,
-            minlat=51.28,
-            maxlon=0.236,
-            maxlat=51.686
-        )
-
-        # Iterate over diffs as they become available
-        for diff in fetcher:
-            print(f"Got diff {diff.sequence_number} with {len(diff.create)} creates")
-        ```
+    Args:
+        minlon: Minimum longitude of bounding box
+        minlat: Minimum latitude of bounding box
+        maxlon: Maximum longitude of bounding box
+        maxlat: Maximum latitude of bounding box
+        base_url: Override default Overpass API URL
+        timeout: Request timeout in seconds
+        min_interval: Minimum seconds between checks (default: 30)
+        max_interval: Maximum seconds between checks (default: 120)
     """
 
     def __init__(
