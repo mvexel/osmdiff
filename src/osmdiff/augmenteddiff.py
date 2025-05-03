@@ -275,23 +275,41 @@ class AugmentedDiff:
         return 0  # Should never reach here due to raise in except block
 
     @property
-    def remarks(self):
+    def remarks(self) -> list:
+        """Get the list of remarks from the augmented diff.
+        
+        Remarks provide additional metadata about the changes in the diff.
+        """
         return self._remarks
 
     @property
-    def timestamp(self):
+    def timestamp(self) -> datetime:
+        """Get the timestamp of when the changes in this diff were made.
+        
+        Returns:
+            datetime: The timestamp parsed from the diff metadata
+        """
         return self._timestamp
 
     @timestamp.setter
-    def timestamp(self, value):
+    def timestamp(self, value: datetime) -> None:
+        """Set the timestamp for this diff.
+        
+        Args:
+            value: The new timestamp to set
+        """
         self._timestamp = value
 
     @property
-    def sequence_number(self):
+    def sequence_number(self) -> int:
+        """Get the sequence number identifying this diff.
+        
+        Sequence numbers increment monotonically and uniquely identify each diff.
+        """
         return self._sequence_number
 
     @sequence_number.setter
-    def sequence_number(self, value):
+    def sequence_number(self, value: int) -> None:
         try:
             # value can be none
             if value is None:
