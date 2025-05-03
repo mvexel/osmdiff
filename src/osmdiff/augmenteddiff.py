@@ -15,7 +15,7 @@ from .config import API_CONFIG, DEFAULT_HEADERS
 from .osm import OSMObject
 
 
-class AugmentedDiff(object):
+class AugmentedDiff:
     """An Augmented Diff representation for OpenStreetMap changes.
 
     This class handles the retrieval and parsing of OpenStreetMap augmented diffs,
