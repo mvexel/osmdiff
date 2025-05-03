@@ -5,8 +5,8 @@ It provides classes for working with OpenStreetMap changesets and diffs, and
 includes a parser for the OpenStreetMap changeset API.
 """
 
-from .augmenteddiff import AugmentedDiff, ContinuousAugmentedDiff
+from .augmenteddiff import AugmentedDiff
 from .osm import Node, Relation, Way
 from .osmchange import OSMChange
 
-__version__ = "0.5.0beta2"
+__version__ = "0.4.4"
