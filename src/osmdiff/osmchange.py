@@ -1,12 +1,12 @@
-from posixpath import join as urljoin
 from gzip import GzipFile
-from xml.etree import ElementTree
+from posixpath import join as urljoin
 from typing import Optional
+from xml.etree import ElementTree
 
 import requests
 
-from osmdiff.osm import OSMObject
 from osmdiff.config import API_CONFIG, DEFAULT_HEADERS
+from osmdiff.osm import OSMObject
 
 
 class OSMChange(object):
@@ -83,12 +83,12 @@ class OSMChange(object):
         )
         if response.status_code != 200:
             return False
-        
+
         # Parse XML response
         root = ElementTree.fromstring(response.content)
-        state = root.find('state')
+        state = root.find("state")
         if state is not None:
-            seq = state.find('sequenceNumber')
+            seq = state.find("sequenceNumber")
             if seq is not None and seq.text:
                 self._sequence_number = int(seq.text)
                 return True
@@ -150,7 +150,7 @@ class OSMChange(object):
                 return r.status_code
             # Handle both gzipped and plain XML responses
             content = r.content
-            if content.startswith(b'\x1f\x8b'):  # Gzip magic number
+            if content.startswith(b"\x1f\x8b"):  # Gzip magic number
                 gzfile = GzipFile(fileobj=r.raw)
                 xml = ElementTree.iterparse(gzfile, events=("start", "end"))
             else:
@@ -237,11 +237,7 @@ class OSMChange(object):
     @property
     def actions(self):
         """Get all actions combined in a single list."""
-        return {
-            'create': self.create,
-            'modify': self.modify, 
-            'delete': self.delete
-        }
+        return {"create": self.create, "modify": self.modify, "delete": self.delete}
 
     def __repr__(self):
         return "OSMChange ({create} created, {modify} modified, \
