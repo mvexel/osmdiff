@@ -24,8 +24,9 @@ class TestAugmentedDiff:
         mock_response.text = xml_content
         mock_response.content = xml_content.encode()
         
-        # Create a raw attribute with a read method
-        mock_raw = BytesIO(xml_content.encode())
+        # Create a proper raw attribute that can be streamed
+        mock_raw = MagicMock()
+        mock_raw.read.return_value = xml_content.encode()
         mock_raw.decode_content = True
         mock_response.raw = mock_raw
         
@@ -37,6 +38,13 @@ class TestAugmentedDiff:
         mock_response = MagicMock(spec=requests.Response)
         mock_response.status_code = 200
         mock_response.raise_for_status.side_effect = requests.exceptions.ReadTimeout("Timeout")
+        
+        # Add raw attribute that will raise timeout when read
+        mock_raw = MagicMock()
+        mock_raw.read.side_effect = requests.exceptions.ReadTimeout("Timeout")
+        mock_raw.decode_content = True
+        mock_response.raw = mock_raw
+        
         return mock_response
 
     @pytest.fixture
