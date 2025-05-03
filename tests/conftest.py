@@ -5,23 +5,44 @@ from unittest.mock import Mock
 
 @pytest.fixture
 def mock_osm_api_response():
+    """Standard mock response for OSM API calls"""
     return {
-        "status": 200,
-        "data": {
-            # mock response data
-        },
+        "version": "0.6",
+        "generator": "OpenStreetMap server",
+        "elements": [
+            {
+                "type": "node",
+                "id": 123,
+                "lat": 51.5,
+                "lon": -0.1,
+                "tags": {"amenity": "cafe"}
+            }
+        ]
     }
-
 
 @pytest.fixture
 def mock_osm_api(monkeypatch):
+    """Mock requests.get for OSM API calls"""
     mock = Mock()
     mock.get.return_value.status_code = 200
     mock.get.return_value.json.return_value = {
-        # mock response data
+        "version": "0.6",
+        "generator": "OpenStreetMap server",
+        "elements": []
     }
     monkeypatch.setattr("requests.get", mock.get)
     return mock
+
+@pytest.fixture
+def mock_adiff_response():
+    """Mock response for AugmentedDiff API calls"""
+    return b'''<?xml version='1.0' encoding='UTF-8'?>
+    <osm version="0.6" generator="Overpass API">
+        <meta osm_base="2023-01-01T00:00:00Z"/>
+        <action type="create">
+            <node id="123" lat="51.5" lon="-0.1" version="1"/>
+        </action>
+    </osm>'''
 
 
 # Define a fixture to load the XML file
