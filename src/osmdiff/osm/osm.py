@@ -275,20 +275,19 @@ class Node(OSMObject):
     """OpenStreetMap node (geographic point feature).
 
     Args:
-        lon: Longitude in decimal degrees (WGS84)
-        lat: Latitude in decimal degrees (WGS84)
         tags: Key-value tag dictionary
-        attribs: XML attributes dictionary
+        attribs: XML attributes dictionary (must contain 'lon' and 'lat' for coordinates)
+        bounds: Optional bounding box coordinates
 
     Attributes:
-        lon (float): Longitude
-        lat (float): Latitude
+        lon (float): Longitude from attribs
+        lat (float): Latitude from attribs
         __geo_interface__ (dict): GeoJSON Point representation
 
     Examples:
         Create a node:
         ```python
-        node = Node(lon=-0.127, lat=51.507,
+        node = Node(attribs={"lon": "-0.127", "lat": "51.507"},
                    tags={"amenity": "cafe"})
         ```
 
@@ -300,7 +299,6 @@ class Node(OSMObject):
     Note:
         Implements __geo_interface__ for GeoJSON compatibility.
         Coordinates must be valid (-180<=lon<=180, -90<=lat<=90).
-    ```
     """
 
     def __init__(
@@ -308,7 +306,7 @@ class Node(OSMObject):
         tags: Dict[str, str] = {},
         attribs: Dict[str, str] = {},
         bounds: List[float] = None,
-    ):
+    ) -> None:
         super().__init__(tags, attribs, bounds)
 
     def _validate_coords(self) -> None:
@@ -375,10 +373,13 @@ class Way(OSMObject):
 
     def __init__(
         self,
-        tags: Dict[str, str] = {},
-        attribs: Dict[str, str] = {},
+        tags: Dict[str, str] = None,
+        attribs: Dict[str, str] = None,
         bounds: List[float] = None,
-    ):
+    ) -> None:
+        """Initialize a Way object."""
+        tags = tags or {}
+        attribs = attribs or {}
         super().__init__(tags, attribs, bounds)
         self.nodes = []
 
@@ -448,10 +449,13 @@ class Relation(OSMObject):
 
     def __init__(
         self,
-        tags: Dict[str, str] = {},
-        attribs: Dict[str, str] = {},
+        tags: Dict[str, str] = None,
+        attribs: Dict[str, str] = None,
         bounds: List[float] = None,
-    ):
+    ) -> None:
+        """Initialize a Relation object."""
+        tags = tags or {}
+        attribs = attribs or {}
         super().__init__(tags, attribs, bounds)
         self.members = []
 
