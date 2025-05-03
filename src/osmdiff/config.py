@@ -22,7 +22,7 @@ Example:
 # Default API URLs and settings for different services
 API_CONFIG = {
     "overpass": {
-        "base_url": "https://overpass-api.de/api",
+        "base_url": "https://adiffs.osmcha.org/changesets/{sequence}.adiff",
         "timeout": 30,  # Default timeout in seconds
     },
     "osm": {
@@ -32,7 +32,7 @@ API_CONFIG = {
     "nominatim": {
         "base_url": "https://nominatim.openstreetmap.org",
         "timeout": 30,
-    }
+    },
 }
 
 # Default parameters for AugmentedDiff operations
@@ -41,7 +41,7 @@ AUGMENTED_DIFF_CONFIG = {
     "minlat": None,  # Minimum latitude for bounding box
     "maxlon": None,  # Maximum longitude for bounding box
     "maxlat": None,  # Maximum latitude for bounding box
-    "timestamp": None  # Timestamp for diff operations
+    "timestamp": None,  # Timestamp for diff operations
 }
 
 # User agent string following OSM API guidelines
@@ -49,7 +49,4 @@ AUGMENTED_DIFF_CONFIG = {
 USER_AGENT = "osmdiff/1.0"  # Replace with your actual user agent
 
 # Standard headers used in all API requests
-DEFAULT_HEADERS = {
-    "User-Agent": USER_AGENT,
-    "Accept": "application/json, text/xml"
-} 
+DEFAULT_HEADERS = {"User-Agent": USER_AGENT, "Accept": "application/json, text/xml"}

@@ -1,8 +1,10 @@
-# AugmentedDiff
+# Augmented Diffs
 
-This class is used to represent an OSM Augmented Diff. For more information about OSM Augmented Diffs, see the [Augmented Diff](https://wiki.openstreetmap.org/wiki/Overpass_API/Augmented_Diffs) page on the OpenStreetMap Wiki.
+This module provides classes for working with OSM Augmented Diffs. For more information about OSM Augmented Diffs, see the [Augmented Diff](https://wiki.openstreetmap.org/wiki/Overpass_API/Augmented_Diffs) page on the OpenStreetMap Wiki.
 
-Basic usage:
+## AugmentedDiff
+
+Basic usage of the AugmentedDiff class:
 
 ```python
 >>> from osmdiff import AugmentedDiff
@@ -26,6 +28,34 @@ AugmentedDiff (3191 created, 1724 modified, 7077 deleted)  # the results of the 
 ```
 
 ::: osmdiff.augmenteddiff.AugmentedDiff
+    options:
+      show_root_heading: true
+      show_source: false
+
+## ContinuousAugmentedDiff
+
+The ContinuousAugmentedDiff class provides an iterator interface for continuously fetching augmented diffs as they become available. It handles timing, backoff, and error recovery automatically.
+
+Basic usage:
+
+```python
+>>> from osmdiff import ContinuousAugmentedDiff
+>>> # Create fetcher for London area
+>>> fetcher = ContinuousAugmentedDiff(
+...     minlon=-0.489,
+...     minlat=51.28,
+...     maxlon=0.236,
+...     maxlat=51.686
+... )
+>>> # Iterate over diffs as they become available
+>>> for diff in fetcher:
+...     print(f"Got diff {diff.sequence_number} with {len(diff.create)} creates")
+Got diff 6509701 with 2776 creates
+Got diff 6509702 with 3191 creates
+# ... continues until interrupted
+```
+
+::: osmdiff.augmenteddiff.ContinuousAugmentedDiff
     options:
       show_root_heading: true
       show_source: false
