@@ -1,7 +1,7 @@
 from osmdiff import Node, AugmentedDiff, Relation, Way
 from typing_extensions import assert_type
 from unittest.mock import patch, Mock
-from io import StringIO
+from io import StringIO, BytesIO
 
 
 class TestAugmentedDiff:

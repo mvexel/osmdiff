@@ -1,5 +1,6 @@
 from osmdiff import Node, OSMChange, Relation, Way
 from typing_extensions import assert_type
+from unittest.mock import patch
 
 
 class TestOSMChange:
