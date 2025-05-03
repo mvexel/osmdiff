@@ -9,48 +9,83 @@ class TestApi:
     """Tests for OSM API integration."""
 
     @pytest.fixture
-    def mock_api_response(self):
-        """Fixture providing a mock API response."""
+    def mock_osm_state_response(self):
+        """Fixture providing a mock OSM state API response."""
         mock_response = MagicMock(spec=requests.Response)
         mock_response.status_code = 200
-        mock_response.text = "<osm></osm>"
+        mock_response.text = """<?xml version='1.0'?>
+        <osm version='0.6'>
+            <state>
+                <sequenceNumber>12345</sequenceNumber>
+                <timestamp>2024-01-01T00:00:00Z</timestamp>
+            </state>
+        </osm>"""
+        return mock_response
+
+    @pytest.fixture
+    def mock_osm_diff_response(self):
+        """Fixture providing a mock OSM diff response."""
+        mock_response = MagicMock(spec=requests.Response)
+        mock_response.status_code = 200
+        mock_response.text = """<?xml version='1.0'?>
+        <osmChange version='0.6'>
+            <create>
+                <node id='1' version='1' timestamp='2024-01-01T00:00:00Z'/>
+            </create>
+        </osmChange>"""
+        return mock_response
+
+    @pytest.fixture
+    def mock_adiff_response(self):
+        """Fixture providing a mock Augmented Diff response."""
+        mock_response = MagicMock(spec=requests.Response)
+        mock_response.status_code = 200
+        mock_response.text = """<?xml version='1.0'?>
+        <osm version='0.6'>
+            <meta osm_base='2024-01-01T00:00:00Z'/>
+            <action type='create'>
+                <node id='1' version='1' timestamp='2024-01-01T00:00:00Z'/>
+            </action>
+        </osm>"""
         return mock_response
 
     @pytest.mark.integration
-    def test_osm_diff_api_state(self, mock_api_response):
+    def test_osm_diff_api_state(self, mock_osm_state_response):
         """Test getting state from OSM API returns valid sequence number."""
-        with patch('requests.get', return_value=mock_api_response):
+        with patch('requests.get', return_value=mock_osm_state_response):
             osm_change = OSMChange()
             assert osm_change.get_state() is True
-            assert_type(osm_change.sequence_number, int)
-            assert osm_change.sequence_number >= 0
+            assert osm_change.sequence_number == 12345
+            assert isinstance(osm_change.sequence_number, int)
 
     @pytest.mark.integration
-    def test_osm_diff_retrieve(self, mock_api_response):
+    def test_osm_diff_retrieve(self, mock_osm_diff_response):
         """Test retrieving OSM diff returns successful status."""
-        with patch('requests.get', return_value=mock_api_response):
-            osm_change = OSMChange()
+        with patch('requests.get', return_value=mock_osm_diff_response):
+            osm_change = OSMChange(sequence_number=12345)
             status = osm_change.retrieve()
             assert status == 200
             assert hasattr(osm_change, 'actions')
+            assert len(osm_change.actions) > 0
 
     @pytest.mark.integration
-    def test_augmented_diff_api_state(self, mock_api_response):
+    def test_augmented_diff_api_state(self, mock_osm_state_response):
         """Test getting state from Augmented Diff API returns valid sequence number."""
-        with patch('requests.get', return_value=mock_api_response):
+        with patch('requests.get', return_value=mock_osm_state_response):
             augmented_diff = AugmentedDiff()
             assert augmented_diff.get_state() is True
-            assert_type(augmented_diff.sequence_number, int)
-            assert augmented_diff.sequence_number >= 0
+            assert augmented_diff.sequence_number == 12345
+            assert isinstance(augmented_diff.sequence_number, int)
 
     @pytest.mark.integration
-    def test_augmented_diff_retrieve(self, mock_api_response):
+    def test_augmented_diff_retrieve(self, mock_adiff_response):
         """Test retrieving Augmented Diff returns successful status."""
-        with patch('requests.get', return_value=mock_api_response):
-            augmented_diff = AugmentedDiff()
+        with patch('requests.get', return_value=mock_adiff_response):
+            augmented_diff = AugmentedDiff(sequence_number=12345)
             status = augmented_diff.retrieve()
             assert status == 200
             assert hasattr(augmented_diff, 'remarks')
+            assert len(augmented_diff.remarks) > 0
 
     @pytest.mark.integration
     def test_api_error_handling(self):
