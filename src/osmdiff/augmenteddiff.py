@@ -340,7 +340,6 @@ class AugmentedDiff:
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        """Clear all changes when exiting context."""
         self.create.clear()
         self.modify.clear()
         self.delete.clear()
@@ -407,14 +406,6 @@ class ContinuousAugmentedDiff:
         return self
 
     def __next__(self) -> AugmentedDiff:
-        """Get next available augmented diff.
-
-        Yields:
-            AugmentedDiff: Next available diff
-
-        Raises:
-            StopIteration: Never raised, iterates indefinitely
-        """
         while True:
             self._wait_for_next_check()
 
