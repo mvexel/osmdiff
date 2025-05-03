@@ -89,7 +89,6 @@ from typing import Dict, Any, List
 from xml.etree import ElementTree
 from xml.etree.ElementTree import Element
 import json
-from osmdiff.osm import Node, Way, Relation
 
 
 class OSMObject:
