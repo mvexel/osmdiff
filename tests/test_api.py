@@ -13,46 +13,34 @@ class TestApi:
         """Fixture providing a mock OSM state API response."""
         mock_response = MagicMock(spec=requests.Response)
         mock_response.status_code = 200
-        mock_response.content = """<?xml version='1.0'?>
+        mock_response.text = """<?xml version='1.0'?>
         <osm version='0.6'>
             <state>
                 <sequenceNumber>12345</sequenceNumber>
                 <timestamp>2024-01-01T00:00:00Z</timestamp>
             </state>
-        </osm>""".encode()
-        mock_response.raw = MagicMock()
-        mock_response.raw.decode_content = True
-        mock_response.raw.read.return_value = mock_response.content
+        </osm>"""
+        mock_response.content = mock_response.text.encode()
         return mock_response
 
     @pytest.fixture
     def mock_osm_diff_response(self):
         """Fixture providing a mock OSM diff response."""
-        import gzip
-        import io
         xml_content = """<?xml version='1.0'?>
         <osmChange version='0.6'>
             <create>
                 <node id='1' version='1' timestamp='2024-01-01T00:00:00Z'/>
             </create>
         </osmChange>"""
-        buffer = io.BytesIO()
-        with gzip.GzipFile(fileobj=buffer, mode='wb') as f:
-            f.write(xml_content.encode())
         mock_response = MagicMock(spec=requests.Response)
         mock_response.status_code = 200
-        mock_response.headers = {'Content-Encoding': 'gzip'}
-        mock_response.content = buffer.getvalue()
-        mock_response.raw = MagicMock()
-        mock_response.raw.decode_content = True
-        mock_response.raw.read.return_value = buffer.getvalue()
+        mock_response.text = xml_content
+        mock_response.content = xml_content.encode()
         return mock_response
 
     @pytest.fixture
     def mock_adiff_response(self):
         """Fixture providing a mock Augmented Diff response."""
-        import gzip
-        import io
         xml_content = """<?xml version='1.0'?>
         <osm version='0.6'>
             <meta osm_base='2024-01-01T00:00:00Z'/>
@@ -60,16 +48,10 @@ class TestApi:
                 <node id='1' version='1' timestamp='2024-01-01T00:00:00Z'/>
             </action>
         </osm>"""
-        buffer = io.BytesIO()
-        with gzip.GzipFile(fileobj=buffer, mode='wb') as f:
-            f.write(xml_content.encode())
         mock_response = MagicMock(spec=requests.Response)
         mock_response.status_code = 200
-        mock_response.headers = {'Content-Encoding': 'gzip'}
-        mock_response.content = buffer.getvalue()
-        mock_response.raw = MagicMock()
-        mock_response.raw.decode_content = True
-        mock_response.raw.read.return_value = buffer.getvalue()
+        mock_response.text = xml_content
+        mock_response.content = xml_content.encode()
         return mock_response
 
     @pytest.mark.integration
@@ -79,7 +61,7 @@ class TestApi:
             osm_change = OSMChange()
             osm_change.base_url = "http://example.com/api"
             state = osm_change.get_state()
-            assert state == 1  # get_state() returns 1 on success
+            assert state is True  # get_state() returns True on success
             assert osm_change.sequence_number == 12345
             assert isinstance(osm_change.sequence_number, int)
 
@@ -99,10 +81,10 @@ class TestApi:
         with patch('osmdiff.augmenteddiff.requests.get', return_value=mock_osm_state_response):
             augmented_diff = AugmentedDiff()
             augmented_diff.base_url = "http://example.com/api"
-            state = augmented_diff.get_state()
-            assert state == 1  # get_state() returns 1 on success
-            assert augmented_diff.sequence_number == 12345
-            assert isinstance(augmented_diff.sequence_number, int)
+            state = AugmentedDiff.get_state(base_url="http://example.com/api")
+            assert state is not None
+            assert isinstance(state, dict)
+            assert state.get('sequenceNumber') == 12345
 
     @pytest.mark.integration
     def test_augmented_diff_retrieve(self, mock_adiff_response):
@@ -111,8 +93,8 @@ class TestApi:
             augmented_diff = AugmentedDiff(sequence_number=12345)
             status = augmented_diff.retrieve()
             assert status == 200
-            assert hasattr(augmented_diff, 'remarks')
-            assert len(augmented_diff.remarks) > 0
+            assert hasattr(augmented_diff, 'actions')
+            assert len(augmented_diff.actions) > 0
 
     @pytest.mark.integration
     def test_api_error_handling(self):
