@@ -20,6 +20,9 @@ class TestApi:
                 <timestamp>2024-01-01T00:00:00Z</timestamp>
             </state>
         </osm>""".encode()
+        mock_response.raw = MagicMock()
+        mock_response.raw.decode_content = True
+        mock_response.raw.read.return_value = mock_response.content
         return mock_response
 
     @pytest.fixture
@@ -40,6 +43,9 @@ class TestApi:
         mock_response.status_code = 200
         mock_response.headers = {'Content-Encoding': 'gzip'}
         mock_response.content = buffer.getvalue()
+        mock_response.raw = MagicMock()
+        mock_response.raw.decode_content = True
+        mock_response.raw.read.return_value = buffer.getvalue()
         return mock_response
 
     @pytest.fixture
@@ -61,6 +67,9 @@ class TestApi:
         mock_response.status_code = 200
         mock_response.headers = {'Content-Encoding': 'gzip'}
         mock_response.content = buffer.getvalue()
+        mock_response.raw = MagicMock()
+        mock_response.raw.decode_content = True
+        mock_response.raw.read.return_value = buffer.getvalue()
         return mock_response
 
     @pytest.mark.integration
@@ -70,7 +79,7 @@ class TestApi:
             osm_change = OSMChange()
             osm_change.base_url = "http://example.com/api"
             state = osm_change.get_state()
-            assert state is True
+            assert state == 1  # get_state() returns 1 on success
             assert osm_change.sequence_number == 12345
             assert isinstance(osm_change.sequence_number, int)
 
@@ -91,7 +100,7 @@ class TestApi:
             augmented_diff = AugmentedDiff()
             augmented_diff.base_url = "http://example.com/api"
             state = augmented_diff.get_state()
-            assert state is True
+            assert state == 1  # get_state() returns 1 on success
             assert augmented_diff.sequence_number == 12345
             assert isinstance(augmented_diff.sequence_number, int)
 
