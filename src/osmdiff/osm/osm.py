@@ -271,17 +271,35 @@ class OSMObject:
 
 
 class Node(OSMObject):
-    """
-    Represents an OSM node (point feature).
+    """OpenStreetMap node (geographic point feature).
 
-    ## Attributes
+    Args:
+        lon: Longitude in decimal degrees (WGS84)
+        lat: Latitude in decimal degrees (WGS84)
+        tags: Key-value tag dictionary
+        attribs: XML attributes dictionary
+
+    Attributes:
         lon (float): Longitude
         lat (float): Latitude
-        __geo_interface__ (dict): GeoJSON-compatible interface, see https://gist.github.com/sgillies/2217756 for more details.
+        __geo_interface__ (dict): GeoJSON Point representation
 
-    ## Example
-    ```python
-    node = Node()
+    Examples:
+        Create a node:
+        ```python
+        node = Node(lon=-0.127, lat=51.507, 
+                   tags={"amenity": "cafe"})
+        ```
+
+        Convert to GeoJSON:
+        ```python
+        geojson = node.__geo_interface__
+        ```
+
+    Note:
+        Implements __geo_interface__ for GeoJSON compatibility.
+        Coordinates must be valid (-180<=lon<=180, -90<=lat<=90).
+    """
     node.attribs = {"lon": "0.0", "lat": "51.5"}
     print(node.lon, node.lat)  # 0.0, 51.5
     ```
