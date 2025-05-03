@@ -43,8 +43,7 @@ jobs:
     permissions:
       id-token: write
 
-    environment:
-      name: release
+    environment: release
 
     steps:
       - name: Retrieve release distributions
