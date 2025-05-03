@@ -13,49 +13,54 @@ class TestApi:
         """Fixture providing a mock OSM state API response."""
         mock_response = MagicMock(spec=requests.Response)
         mock_response.status_code = 200
-        mock_response.text = """<?xml version='1.0'?>
+        mock_response.content = """<?xml version='1.0'?>
         <osm version='0.6'>
             <state>
                 <sequenceNumber>12345</sequenceNumber>
                 <timestamp>2024-01-01T00:00:00Z</timestamp>
             </state>
-        </osm>"""
-        mock_response.raw = MagicMock()
-        mock_response.raw.decode_content = True
-        mock_response.raw.read.return_value = mock_response.text.encode()
+        </osm>""".encode()
         return mock_response
 
     @pytest.fixture
     def mock_osm_diff_response(self):
         """Fixture providing a mock OSM diff response."""
-        mock_response = MagicMock(spec=requests.Response)
-        mock_response.status_code = 200
-        mock_response.text = """<?xml version='1.0'?>
+        import gzip
+        import io
+        xml_content = """<?xml version='1.0'?>
         <osmChange version='0.6'>
             <create>
                 <node id='1' version='1' timestamp='2024-01-01T00:00:00Z'/>
             </create>
         </osmChange>"""
-        mock_response.raw = MagicMock()
-        mock_response.raw.decode_content = True
-        mock_response.raw.read.return_value = mock_response.text.encode()
+        buffer = io.BytesIO()
+        with gzip.GzipFile(fileobj=buffer, mode='wb') as f:
+            f.write(xml_content.encode())
+        mock_response = MagicMock(spec=requests.Response)
+        mock_response.status_code = 200
+        mock_response.headers = {'Content-Encoding': 'gzip'}
+        mock_response.content = buffer.getvalue()
         return mock_response
 
     @pytest.fixture
     def mock_adiff_response(self):
         """Fixture providing a mock Augmented Diff response."""
-        mock_response = MagicMock(spec=requests.Response)
-        mock_response.status_code = 200
-        mock_response.text = """<?xml version='1.0'?>
+        import gzip
+        import io
+        xml_content = """<?xml version='1.0'?>
         <osm version='0.6'>
             <meta osm_base='2024-01-01T00:00:00Z'/>
             <action type='create'>
                 <node id='1' version='1' timestamp='2024-01-01T00:00:00Z'/>
             </action>
         </osm>"""
-        mock_response.raw = MagicMock()
-        mock_response.raw.decode_content = True
-        mock_response.raw.read.return_value = mock_response.text.encode()
+        buffer = io.BytesIO()
+        with gzip.GzipFile(fileobj=buffer, mode='wb') as f:
+            f.write(xml_content.encode())
+        mock_response = MagicMock(spec=requests.Response)
+        mock_response.status_code = 200
+        mock_response.headers = {'Content-Encoding': 'gzip'}
+        mock_response.content = buffer.getvalue()
         return mock_response
 
     @pytest.mark.integration
@@ -63,6 +68,7 @@ class TestApi:
         """Test getting state from OSM API returns valid sequence number."""
         with patch('osmdiff.osmchange.requests.get', return_value=mock_osm_state_response):
             osm_change = OSMChange()
+            osm_change.base_url = "http://example.com/api"
             state = osm_change.get_state()
             assert state is True
             assert osm_change.sequence_number == 12345
@@ -83,6 +89,7 @@ class TestApi:
         """Test getting state from Augmented Diff API returns valid sequence number."""
         with patch('osmdiff.augmenteddiff.requests.get', return_value=mock_osm_state_response):
             augmented_diff = AugmentedDiff()
+            augmented_diff.base_url = "http://example.com/api"
             state = augmented_diff.get_state()
             assert state is True
             assert augmented_diff.sequence_number == 12345
