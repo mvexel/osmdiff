@@ -1,6 +1,50 @@
 # ContinuousAugmentedDiff
 
-An iterator that continuously monitors and yields new AugmentedDiffs as they become available.
+Iterator for continuous monitoring of OpenStreetMap changes using augmented diffs.
+
+Builds on [AugmentedDiff](augmenteddiff.md) to provide automatic polling with backoff.
+
+## Features
+
+- Continuous monitoring
+- Automatic sequence number tracking
+- Exponential backoff during errors
+- Configurable polling intervals
+- Bounding box filtering
+
+## Basic Usage
+
+```python
+from osmdiff import ContinuousAugmentedDiff
+
+# Monitor London area
+monitor = ContinuousAugmentedDiff(
+    minlon=-0.489,
+    minlat=51.28,
+    maxlon=0.236,
+    maxlat=51.686
+)
+
+for changes in monitor:  # Runs indefinitely
+    print(f"Changeset {changes.sequence_number}:")
+    print(f"  New: {len(changes.create)}")
+    print(f"  Modified: {len(changes.modify)}")
+```
+
+## Advanced Configuration
+
+```python
+monitor = ContinuousAugmentedDiff(
+    minlon=-0.489,
+    minlat=51.28,
+    maxlon=0.236,
+    maxlat=51.686,
+    min_interval=60,  # Minimum 1 minute between checks
+    max_interval=300  # Maximum 5 minutes during backoff
+)
+```
+
+## API Reference
 
 ::: osmdiff.augmenteddiff.ContinuousAugmentedDiff
     options:
@@ -11,37 +55,7 @@ An iterator that continuously monitors and yields new AugmentedDiffs as they bec
         - __iter__
         - __next__
 
-## Features
+## See Also
 
-- Automatic sequence number tracking
-- Exponential backoff during errors
-- Configurable polling intervals
-- Bounding box filtering
-
-## Example Usage
-
-```python
-from osmdiff import ContinuousAugmentedDiff
-
-# Monitor Paris area changes
-monitor = ContinuousAugmentedDiff(
-    minlon=2.224,
-    minlat=48.815,
-    maxlon=2.469,
-    maxlat=48.902,
-    min_interval=60  # Check every minute
-)
-
-for changes in monitor:
-    print(f"New changeset {changes.sequence_number}:")
-    print(f"  Creates: {len(changes.create)} features")
-    print(f"  Modifies: {len(changes.modify)} features")
-    print(f"  Deletes: {len(changes.delete)} features")
-```
-
-## Error Handling
-
-The iterator automatically:
-- Retries failed requests (up to 3 times)
-- Increases polling interval during errors
-- Resets to normal polling after success
+- [AugmentedDiff](augmenteddiff.md) - For single diff retrieval
+- [OSMChange](osmchange.md) - For standard changesets
