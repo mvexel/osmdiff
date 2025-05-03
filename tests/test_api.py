@@ -89,7 +89,7 @@ class TestApi:
             osm_change = OSMChange()
             osm_change.base_url = "http://example.com/api"
             state = osm_change.get_state()
-            assert state is True  # get_state() returns True on success
+            assert state is True
             assert osm_change.sequence_number == 12345
             assert isinstance(osm_change.sequence_number, int)
 
@@ -109,7 +109,7 @@ class TestApi:
         with patch('osmdiff.augmenteddiff.requests.get', return_value=mock_osm_state_response):
             state = AugmentedDiff.get_state(base_url="http://example.com/api")
             assert state is not None
-            assert state.get('sequenceNumber') == 12345
+            assert state.get('sequenceNumber') == '12345'
 
     @pytest.mark.integration
     def test_augmented_diff_retrieve(self, mock_adiff_response):

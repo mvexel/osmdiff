@@ -77,16 +77,22 @@ class OSMChange(object):
         Raises:
             requests.RequestException: If the API request fails
         """
-        state_url = urljoin(self.base_url, self._frequency, "state.txt")
+        state_url = urljoin(self.base_url, "api/0.6/changesets/state")
         response = requests.get(
             state_url, timeout=self.timeout, headers=DEFAULT_HEADERS
         )
         if response.status_code != 200:
             return False
-        for line in response.text.split("\n"):
-            if line.startswith("sequenceNumber"):
-                self._sequence_number = int(line[15:])
-        return True
+        
+        # Parse XML response
+        root = ElementTree.fromstring(response.content)
+        state = root.find('state')
+        if state is not None:
+            seq = state.find('sequenceNumber')
+            if seq is not None and seq.text:
+                self._sequence_number = int(seq.text)
+                return True
+        return False
 
     def _build_sequence_url(self) -> str:
         seqno = str(self._sequence_number).zfill(9)
@@ -142,8 +148,13 @@ class OSMChange(object):
             )
             if r.status_code != 200:
                 return r.status_code
-            gzfile = GzipFile(fileobj=r.raw)
-            xml = ElementTree.iterparse(gzfile, events=("start", "end"))
+            # Handle both gzipped and plain XML responses
+            content = r.content
+            if content.startswith(b'\x1f\x8b'):  # Gzip magic number
+                gzfile = GzipFile(fileobj=r.raw)
+                xml = ElementTree.iterparse(gzfile, events=("start", "end"))
+            else:
+                xml = ElementTree.iterparse(r.raw, events=("start", "end"))
             self._parse_xml(xml)
             return r.status_code
         except ConnectionError:

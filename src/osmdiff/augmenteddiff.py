@@ -115,26 +115,40 @@ class AugmentedDiff(object):
                     raise Exception("invalid bbox.")
 
     @classmethod
-    def get_state(cls, base_url: Optional[str] = None, timeout: Optional[int] = None) -> Optional[int]:
-        """Get the current sequence number from the OSM API.
+    def get_state(cls, base_url: Optional[str] = None, timeout: Optional[int] = None) -> Optional[dict]:
+        """Get the current state from the OSM API.
 
         Args:
             base_url: Optional override for API base URL
             timeout: Optional override for request timeout
 
         Returns:
-            Current sequence number if successful, None if failed
+            Dictionary with state info if successful, None if failed
         """
         base = base_url or API_CONFIG["overpass"]["base_url"]
-        state_url = urljoin(base, "augmented_diff_status")
+        state_url = urljoin(base, "api/0.6/changesets/state")
         try:
             response = requests.get(
-                state_url, timeout=timeout or 5
+                state_url, 
+                timeout=timeout or 5,
+                headers=DEFAULT_HEADERS
             )
             if response.status_code != 200:
                 return None
-            return int(response.text)
-        except (requests.exceptions.RequestException, ValueError):
+            
+            # Parse XML response
+            root = ElementTree.fromstring(response.content)
+            state = root.find('state')
+            if state is None:
+                return None
+                
+            result = {}
+            for child in state:
+                if child.text:
+                    result[child.tag] = child.text
+            return result
+            
+        except (requests.exceptions.RequestException, ValueError, ElementTree.ParseError):
             return None
 
     def _build_adiff_url(self):
