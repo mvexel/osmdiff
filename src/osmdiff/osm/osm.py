@@ -38,9 +38,9 @@ Example:
 # Create a node
 node = Node()
 node.attribs = {
-    "id": "123", 
+    "id": "123",
     "version": "2",
-    "lat": "37.7", 
+    "lat": "37.7",
     "lon": "-122.4"
 }
 node.tags = {
@@ -49,7 +49,7 @@ node.tags = {
 }
 
 # Create a way
-way = Way() 
+way = Way()
 way.attribs = {
     "id": "456",
     "version": "1"
@@ -89,6 +89,7 @@ from typing import Dict, Any, List
 from xml.etree import ElementTree
 from xml.etree.ElementTree import Element
 import json
+from osmdiff.osm import Node, Way, Relation
 
 
 class OSMObject:
@@ -104,7 +105,7 @@ class OSMObject:
         attribs (dict): XML attributes including:
             - id: OSM element ID
             - version: Element version
-            - changeset: Associated changeset ID  
+            - changeset: Associated changeset ID
             - timestamp: Last edit time
             - uid: User ID
             - user: Username
@@ -287,7 +288,7 @@ class Node(OSMObject):
     Examples:
         Create a node:
         ```python
-        node = Node(lon=-0.127, lat=51.507, 
+        node = Node(lon=-0.127, lat=51.507,
                    tags={"amenity": "cafe"})
         ```
 
@@ -299,9 +300,6 @@ class Node(OSMObject):
     Note:
         Implements __geo_interface__ for GeoJSON compatibility.
         Coordinates must be valid (-180<=lon<=180, -90<=lat<=90).
-    """
-    node.attribs = {"lon": "0.0", "lat": "51.5"}
-    print(node.lon, node.lat)  # 0.0, 51.5
     ```
     """
 
