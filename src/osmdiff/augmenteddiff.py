@@ -190,12 +190,19 @@ class AugmentedDiff(object):
                     self.modify.append({"old": osm_obj_old, "new": osm_obj_new})
         elif action_type == "delete":
             old = elem.find("old")
+            new = elem.find("new")
+            osm_obj_old = None
+            osm_obj_new = None
             if old is not None:
                 for child in old:
                     osm_obj_old = OSMObject.from_xml(child)
-                    # Include the action attributes (user, changeset, etc) with the deleted object
-                    deletion_info = {"old": osm_obj_old, "meta": elem.attrib.copy()}
-                    self.delete.append(deletion_info)
+            if new is not None:
+                for child in new:
+                    osm_obj_new = OSMObject.from_xml(child)
+            if osm_obj_old is not None or osm_obj_new is not None:
+                # Store both old and new, and optionally meta info
+                deletion_info = {"old": osm_obj_old, "new": osm_obj_new, "meta": elem.attrib.copy()}
+                self.delete.append(deletion_info)
 
     def _parse_stream(self, stream):
         for event, elem in ElementTree.iterparse(stream):
