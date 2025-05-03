@@ -33,12 +33,13 @@ plugins:
 
 nav:
   - Home: index.md
+  - Getting Started: getting-started.md
+  - Examples: examples/index.md
   - API Reference:
       - AugmentedDiff: api/augmenteddiff.md
       - ContinuousAugmentedDiff: api/continuous.md
       - OSMChange: api/osmchange.md
       - OSM: api/osm.md
-  - Examples (WIP): examples/index.md
 markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
