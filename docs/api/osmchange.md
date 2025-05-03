@@ -2,7 +2,7 @@
 
 Core class for retrieving and parsing OpenStreetMap changesets in OSMChange format.
 
-For continuous monitoring of changes, see [AugmentedDiff](augmenteddiff.md).
+For continuous monitoring of changes, see [ContinuousAugmentedDiff](augmenteddiff.md#continuousaugmenteddiff).
 
 ## Features
 
