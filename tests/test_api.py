@@ -20,6 +20,9 @@ class TestApi:
                 <timestamp>2024-01-01T00:00:00Z</timestamp>
             </state>
         </osm>"""
+        mock_response.raw = MagicMock()
+        mock_response.raw.decode_content = True
+        mock_response.raw.read.return_value = mock_response.text.encode()
         return mock_response
 
     @pytest.fixture
@@ -33,6 +36,9 @@ class TestApi:
                 <node id='1' version='1' timestamp='2024-01-01T00:00:00Z'/>
             </create>
         </osmChange>"""
+        mock_response.raw = MagicMock()
+        mock_response.raw.decode_content = True
+        mock_response.raw.read.return_value = mock_response.text.encode()
         return mock_response
 
     @pytest.fixture
@@ -47,14 +53,18 @@ class TestApi:
                 <node id='1' version='1' timestamp='2024-01-01T00:00:00Z'/>
             </action>
         </osm>"""
+        mock_response.raw = MagicMock()
+        mock_response.raw.decode_content = True
+        mock_response.raw.read.return_value = mock_response.text.encode()
         return mock_response
 
     @pytest.mark.integration
     def test_osm_diff_api_state(self, mock_osm_state_response):
         """Test getting state from OSM API returns valid sequence number."""
-        with patch('requests.get', return_value=mock_osm_state_response):
+        with patch('osmdiff.osmchange.requests.get', return_value=mock_osm_state_response):
             osm_change = OSMChange()
-            assert osm_change.get_state() is True
+            state = osm_change.get_state()
+            assert state is True
             assert osm_change.sequence_number == 12345
             assert isinstance(osm_change.sequence_number, int)
 
@@ -71,9 +81,10 @@ class TestApi:
     @pytest.mark.integration
     def test_augmented_diff_api_state(self, mock_osm_state_response):
         """Test getting state from Augmented Diff API returns valid sequence number."""
-        with patch('requests.get', return_value=mock_osm_state_response):
+        with patch('osmdiff.augmenteddiff.requests.get', return_value=mock_osm_state_response):
             augmented_diff = AugmentedDiff()
-            assert augmented_diff.get_state() is True
+            state = augmented_diff.get_state()
+            assert state is True
             assert augmented_diff.sequence_number == 12345
             assert isinstance(augmented_diff.sequence_number, int)
 
