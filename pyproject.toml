@@ -26,6 +26,7 @@ version = {attr = "osmdiff.__version__"}
 
 [tool.pytest.ini_options]
 markers = ["integration: mark a test as an integration test"]
+addopts = "--cov=src/osmdiff --cov-report=term-missing --cov-report=html --cov-fail-under=85"
 
 [dependency-groups]
 dev = [

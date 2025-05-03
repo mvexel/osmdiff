@@ -9,3 +9,5 @@ dist/
 .aider*
 site/
 .vscode/
+.coverage
+htmlcov/
