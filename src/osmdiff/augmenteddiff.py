@@ -17,52 +17,54 @@ from .osm import OSMObject
 
 class AugmentedDiff:
     """An Augmented Diff representation for OpenStreetMap changes.
+    
+    Handles retrieval and parsing of OpenStreetMap augmented diffs containing detailed
+    information about changes to OSM data (creations, modifications, deletions).
 
-    This class handles the retrieval and parsing of OpenStreetMap augmented diffs,
-    which contain detailed information about changes made to OSM data, including
-    creations, modifications, and deletions.
-
-    Parameters:
-        minlon (float | None): Minimum longitude of bounding box
-        minlat (float | None): Minimum latitude of bounding box
-        maxlon (float | None): Maximum longitude of bounding box
-        maxlat (float | None): Maximum latitude of bounding box
-        file (str | None): Path to an augmented diff file to parse
-        sequence_number (int | None): Sequence number of the augmented diff
-        timestamp (datetime | None): Timestamp of the augmented diff
+    Args:
+        minlon: Minimum longitude of bounding box (WGS84)
+        minlat: Minimum latitude of bounding box (WGS84) 
+        maxlon: Maximum longitude of bounding box (WGS84)
+        maxlat: Maximum latitude of bounding box (WGS84)
+        file: Path to local augmented diff XML file to parse
+        sequence_number: Sequence number of the augmented diff
+        timestamp: Timestamp of the augmented diff
+        base_url: Override default Overpass API URL
+        timeout: Request timeout in seconds
 
     Attributes:
-        base_url: Base URL for the Overpass API
-        create: List of created OSM objects
-        modify: List of modified OSM objects (containing old and new versions)
-        delete: List of deleted OSM objects
-        remarks: List of remarks from the augmented diff
-        timestamp: Timestamp of the augmented diff
+        base_url (str): Base URL for the Overpass API
+        create (list): List of created OSM objects
+        modify (list): List of modified OSM objects (dicts with 'old' and 'new')
+        delete (list): List of deleted OSM objects with metadata
+        remarks (list): List of remarks from the augmented diff
+        timestamp (datetime): Timestamp of the augmented diff
 
     Raises:
-        Exception: If an invalid bounding box is provided
-        ValueError: If sequence_number is not parseable as an integer
+        ValueError: If sequence_number is not parseable as integer
+        Exception: If invalid bounding box coordinates provided
 
-    Example:
+    Examples:
+        Basic usage with bounding box:
         ```python
-        # Create an AugmentedDiff instance with a bounding box
         adiff = AugmentedDiff(
             minlon=-0.489,
             minlat=51.28,
-            maxlon=0.236,
+            maxlon=0.236, 
             maxlat=51.686
         )
-
-        # Get the current state
-        adiff.get_state()
-
-        # Retrieve the diff
-        status = adiff.retrieve()
-        if status == 200:
-            print(f"Created: {len(adiff.create)}")
-            print(f"Modified: {len(adiff.modify)}")
-            print(f"Deleted: {len(adiff.delete)}")
+        adiff.retrieve()
         ```
+
+        Using a local file:
+        ```python
+        adiff = AugmentedDiff(file="changes.adiff")
+        ```
+
+    Note:
+        The bounding box coordinates should be in WGS84 (EPSG:4326) format.
+        For large areas, consider using smaller sequence numbers or splitting
+        into multiple requests.
     """
 
     base_url = DEFAULT_OVERPASS_URL
