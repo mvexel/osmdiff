@@ -273,7 +273,7 @@ class Node(OSMObject):
         self._validate_coords()
         return float(self.attribs.get("lat", 0))
 
-    def _geo_interface(self):
+    def _geo_interface(self) -> dict:
         """
         GeoJSON-compatible interface.
 
@@ -348,7 +348,7 @@ class Way(OSMObject):
         for node in elem.findall("nd"):
             self.nodes.append(OSMObject.from_xml(node))
 
-    def _geo_interface(self):
+    def _geo_interface(self) -> dict:
         """
         GeoJSON-compatible interface.
 
@@ -405,7 +405,7 @@ class Relation(OSMObject):
         for member in elem.findall("member"):
             self.members.append(OSMObject.from_xml(member))
 
-    def _geo_interface(self):
+    def _geo_interface(self) -> dict:
         """
         GeoJSON-compatible interface.
 
