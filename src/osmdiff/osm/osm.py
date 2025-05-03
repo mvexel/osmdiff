@@ -95,42 +95,9 @@ class OSMObject:
     """Base class for all OpenStreetMap elements (nodes, ways, relations).
 
     Args:
-        tags: Key-value tag dictionary (e.g., {"highway": "residential"})
-        attribs: XML attributes dictionary (e.g., {"id": "123", "version": "2"})
-        bounds: Optional bounding box as [minlon, minlat, maxlon, maxlat]
-
-    Attributes:
-        tags (dict): OSM tags
-        attribs (dict): XML attributes including:
-            - id: OSM element ID
-            - version: Element version
-            - changeset: Associated changeset ID
-            - timestamp: Last edit time
-            - uid: User ID
-            - user: Username
-        bounds (list): Optional bounding coordinates
-
-    Methods:
-        from_xml: Create from XML element
-        to_dict: Convert to dictionary
-        to_json: Convert to JSON string
-        from_file: Create from XML file
-
-    Raises:
-        ValueError: For invalid XML input
-        TypeError: For unknown element types
-
-    Examples:
-        Create empty object:
-        ```python
-        obj = OSMObject(tags={"name": "Example"})
-        ```
-
-        Parse from XML:
-        ```python
-        elem = ElementTree.fromstring('<node id="123"/>')
-        obj = OSMObject.from_xml(elem)
-        ```
+        tags: Key-value tag dictionary
+        attribs: XML attributes dictionary
+        bounds: Optional bounding box coordinates [minlon, minlat, maxlon, maxlat]
 
     Note:
         This is an abstract base class - use Node, Way or Relation for concrete elements.
@@ -273,31 +240,8 @@ class OSMObject:
 class Node(OSMObject):
     """OpenStreetMap node (geographic point feature).
 
-    Args:
-        tags: Key-value tag dictionary
-        attribs: XML attributes dictionary (must contain 'lon' and 'lat' for coordinates)
-        bounds: Optional bounding box coordinates
-
-    Attributes:
-        lon (float): Longitude from attribs
-        lat (float): Latitude from attribs
-        __geo_interface__ (dict): GeoJSON Point representation
-
-    Examples:
-        Create a node:
-        ```python
-        node = Node(attribs={"lon": "-0.127", "lat": "51.507"},
-                   tags={"amenity": "cafe"})
-        ```
-
-        Convert to GeoJSON:
-        ```python
-        geojson = node.__geo_interface__
-        ```
-
-    Note:
-        Implements __geo_interface__ for GeoJSON compatibility.
-        Coordinates must be valid (-180<=lon<=180, -90<=lat<=90).
+    Implements __geo_interface__ for GeoJSON compatibility as a Point feature.
+    Coordinates must be valid (-180<=lon<=180, -90<=lat<=90).
     """
 
     def __init__(
@@ -356,18 +300,11 @@ class Node(OSMObject):
 
 
 class Way(OSMObject):
-    """
-    Represents an OSM way (linear feature).
+    """Represents an OSM way (linear feature).
 
-    ## Attributes
-        nodes (list): List of Node objects
-        __geo_interface__ (dict): GeoJSON-compatible interface, see https://gist.github.com/sgillies/2217756 for more details.
-    ## Example
-    ```python
-    way = Way()
-    way.nodes = [Node(), Node()]  # Add nodes
-    print(way.__geo_interface__["type"])  # "LineString" or "Polygon"
-    ```
+    Implements __geo_interface__ for GeoJSON compatibility as either:
+    - LineString for open ways
+    - Polygon for closed ways
     """
 
     def __init__(
