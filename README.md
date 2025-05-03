@@ -107,6 +107,26 @@ Way 452218081 (10 nodes)
 ['12.8932677', '43.3575917', '12.8948117', '43.3585947']
 ```
 
+### Iterating
+
+To continuously iterate over AugmentedDiff objects, use `ContinuousAugmentedDiff`:
+
+```python
+>>> for a in ContinuousAugmentedDiff():
+...     print(a)
+```
+
+This will iterate indefinitely, printing each AugmentedDiff as it is retrieved.
+
+You can also use it in a loop:
+
+```python
+for a in ContinuousAugmentedDiff():
+    if a.sequence_number > 123456:
+        break
+    print(a)
+```
+
 ## Configuration
 
 The osmdiff package uses a centralized configuration system in `src/osmdiff/config.py`. This includes:
