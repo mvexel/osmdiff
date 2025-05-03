@@ -1,111 +1,98 @@
-import unittest
-from unittest.mock import patch
-import requests
+import pytest
 from osmdiff import AugmentedDiff
+from unittest.mock import patch, MagicMock
+import requests
 from io import BytesIO
 
-class MockStream:
-    def __init__(self, content):
-        self.content = content
-        self.position = 0
-        self.decode_content = None
 
-    def read(self, size=None):
-        if self.position >= len(self.content):
-            return b''
-        if size is None:
-            data = self.content[self.position:]
-            self.position = len(self.content)
-        else:
-            data = self.content[self.position:self.position + size]
-            self.position += size
-        return data
+class TestAugmentedDiff:
+    """Tests for AugmentedDiff class."""
 
-class TestAugmentedDiffRetries(unittest.TestCase):
-    def setUp(self):
-        self.adiff = AugmentedDiff(sequence_number=12345)
-
-    @patch('requests.get')
-    def test_timeout_retry_success(self, mock_get):
-        # First call raises timeout, second succeeds
-        xml_content = b'''<?xml version='1.0' encoding='UTF-8'?>
-        <osm version="0.6">
-            <meta osm_base="2024-01-01T00:00:00Z"/>
-        </osm>'''
+    @pytest.fixture
+    def mock_adiff_response(self):
+        """Fixture providing a mock Augmented Diff response."""
+        xml_content = """<?xml version='1.0'?>
+        <osm version='0.6'>
+            <meta osm_base='2024-01-01T00:00:00Z'/>
+            <action type='create'>
+                <node id='1' version='1' timestamp='2024-01-01T00:00:00Z'/>
+            </action>
+        </osm>"""
         
-        mock_get.side_effect = [
-            requests.exceptions.ReadTimeout("Timeout"),
-            type('Response', (), {
-                'status_code': 200,
-                'raw': MockStream(xml_content)
-            })
-        ]
-
-        status = self.adiff.retrieve()
-        self.assertEqual(status, 200)
-        self.assertEqual(mock_get.call_count, 2)  # Verify it retried once
-
-    @patch('requests.get')
-    def test_multiple_timeouts(self, mock_get):
-        # All calls timeout
-        mock_get.side_effect = requests.exceptions.ReadTimeout("Timeout")
-
-        with self.assertRaises(requests.exceptions.ReadTimeout):
-            self.adiff.retrieve()
+        mock_response = MagicMock(spec=requests.Response)
+        mock_response.status_code = 200
+        mock_response.text = xml_content
+        mock_response.content = xml_content.encode()
         
-        self.assertEqual(mock_get.call_count, 3)  # Verify it tried 3 times
+        # Create a raw attribute with a read method
+        mock_raw = BytesIO(xml_content.encode())
+        mock_raw.decode_content = True
+        mock_response.raw = mock_raw
+        
+        return mock_response
 
-    def test_delete_metadata(self):
-        """Test that metadata is captured for deleted objects"""
+    @pytest.fixture
+    def mock_timeout_response(self):
+        """Fixture providing a mock timeout response."""
+        mock_response = MagicMock(spec=requests.Response)
+        mock_response.status_code = 200
+        mock_response.raise_for_status.side_effect = requests.exceptions.ReadTimeout("Timeout")
+        return mock_response
+
+    @pytest.fixture
+    def augmented_diff(self):
+        """Fixture providing a basic AugmentedDiff instance."""
+        return AugmentedDiff(sequence_number=12345)
+
+    def test_delete_metadata(self, augmented_diff):
+        """Test that metadata is captured for deleted objects."""
         with open("tests/data/test_delete_metadata.xml", "r") as f:
             adiff = AugmentedDiff(file=f.name)
             
-        self.assertEqual(len(adiff.delete), 1)
+        assert len(adiff.delete) == 1
         deletion = adiff.delete[0]
         
         # Check the metadata is present
-        self.assertIn("meta", deletion)
-        self.assertEqual(deletion["meta"]["user"], "TestUser")
-        self.assertEqual(deletion["meta"]["uid"], "12345")
-        self.assertEqual(deletion["meta"]["changeset"], "67890")
-        self.assertEqual(deletion["meta"]["timestamp"], "2024-01-28T12:00:00Z")
+        assert "meta" in deletion
+        assert deletion["meta"]["user"] == "TestUser"
+        assert deletion["meta"]["uid"] == "12345"
+        assert deletion["meta"]["changeset"] == "67890"
+        assert deletion["meta"]["timestamp"] == "2024-01-28T12:00:00Z"
         
         # Check the old object is present
-        self.assertIn("old", deletion)
-        self.assertEqual(deletion["old"].attribs["id"], "123")
-        self.assertEqual(deletion["old"].attribs["lat"], "51.5")
-        self.assertEqual(deletion["old"].attribs["lon"], "-0.1")
-        self.assertEqual(deletion["old"].tags["amenity"], "cafe")
+        assert "old" in deletion
+        assert deletion["old"].attribs["id"] == "123"
+        assert deletion["old"].attribs["lat"] == "51.5"
+        assert deletion["old"].attribs["lon"] == "-0.1"
+        assert deletion["old"].tags["amenity"] == "cafe"
 
-    @patch('requests.get')
-    def test_consecutive_sequence_numbers(self, mock_get):
-        # Test retrieving consecutive diffs (12345 -> 12346)
-        xml_content = b'''<?xml version='1.0' encoding='UTF-8'?>
-        <osm version="0.6">
-            <meta osm_base="2024-01-01T00:00:00Z"/>
-            <action type="create">
-                <node id="1" version="1" timestamp="2024-01-01T00:00:00Z" uid="1" user="test" changeset="1" lat="0" lon="0"/>
-            </action>
-        </osm>'''
-        
-        def mock_responses(*args, **kwargs):
-            return type('Response', (), {
-                'status_code': 200,
-                'raw': MockStream(xml_content)
-            })
+    def test_timeout_retry_success(self, augmented_diff, mock_adiff_response, mock_timeout_response):
+        """Test successful retry after timeout."""
+        with patch('requests.get', side_effect=[mock_timeout_response, mock_adiff_response]) as mock_get:
+            status = augmented_diff.retrieve()
+            assert status == 200
+            assert mock_get.call_count == 2  # Verify it retried once
 
-        mock_get.side_effect = mock_responses
+    def test_multiple_timeouts(self, augmented_diff, mock_timeout_response):
+        """Test max retries on consecutive timeouts."""
+        with patch('requests.get', return_value=mock_timeout_response) as mock_get:
+            with pytest.raises(requests.exceptions.ReadTimeout):
+                augmented_diff.retrieve()
+            assert mock_get.call_count == 3  # Verify it tried 3 times
 
-        # Retrieve first diff
-        status1 = self.adiff.retrieve(auto_increment=True)
-        self.assertEqual(status1, 200)
-        self.assertEqual(self.adiff.sequence_number, 12346)
-        initial_create_count = len(self.adiff.create)
+    def test_consecutive_sequence_numbers(self, augmented_diff, mock_adiff_response):
+        """Test auto-increment of sequence numbers."""
+        with patch('requests.get', return_value=mock_adiff_response) as mock_get:
+            # Retrieve first diff
+            status1 = augmented_diff.retrieve(auto_increment=True)
+            assert status1 == 200
+            assert augmented_diff.sequence_number == 12346
+            initial_create_count = len(augmented_diff.create)
 
-        # Retrieve next diff
-        status2 = self.adiff.retrieve(auto_increment=True)
-        self.assertEqual(status2, 200)
-        self.assertEqual(self.adiff.sequence_number, 12347)
-        
-        # Verify changes were merged
-        self.assertGreater(len(self.adiff.create), initial_create_count)
+            # Retrieve next diff
+            status2 = augmented_diff.retrieve(auto_increment=True)
+            assert status2 == 200
+            assert augmented_diff.sequence_number == 12347
+            
+            # Verify changes were merged
+            assert len(augmented_diff.create) > initial_create_count
