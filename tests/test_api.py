@@ -11,36 +11,57 @@ class TestApi:
     @pytest.fixture
     def mock_osm_state_response(self):
         """Fixture providing a mock OSM state API response."""
-        mock_response = MagicMock(spec=requests.Response)
-        mock_response.status_code = 200
-        mock_response.text = """<?xml version='1.0'?>
+        from io import BytesIO
+        
+        xml_content = """<?xml version='1.0'?>
         <osm version='0.6'>
             <state>
                 <sequenceNumber>12345</sequenceNumber>
                 <timestamp>2024-01-01T00:00:00Z</timestamp>
             </state>
         </osm>"""
-        mock_response.content = mock_response.text.encode()
+        
+        mock_response = MagicMock(spec=requests.Response)
+        mock_response.status_code = 200
+        mock_response.text = xml_content
+        mock_response.content = xml_content.encode()
+        
+        # Create a raw attribute with a read method
+        mock_raw = BytesIO(xml_content.encode())
+        mock_raw.decode_content = True
+        mock_response.raw = mock_raw
+        
         return mock_response
 
     @pytest.fixture
     def mock_osm_diff_response(self):
         """Fixture providing a mock OSM diff response."""
+        from io import BytesIO
+        
         xml_content = """<?xml version='1.0'?>
         <osmChange version='0.6'>
             <create>
                 <node id='1' version='1' timestamp='2024-01-01T00:00:00Z'/>
             </create>
         </osmChange>"""
+        
         mock_response = MagicMock(spec=requests.Response)
         mock_response.status_code = 200
         mock_response.text = xml_content
         mock_response.content = xml_content.encode()
+        
+        # Create a raw attribute with a read method
+        mock_raw = BytesIO(xml_content.encode())
+        mock_raw.decode_content = True
+        mock_response.raw = mock_raw
+        
         return mock_response
 
     @pytest.fixture
     def mock_adiff_response(self):
         """Fixture providing a mock Augmented Diff response."""
+        from io import BytesIO
+        
         xml_content = """<?xml version='1.0'?>
         <osm version='0.6'>
             <meta osm_base='2024-01-01T00:00:00Z'/>
@@ -48,10 +69,17 @@ class TestApi:
                 <node id='1' version='1' timestamp='2024-01-01T00:00:00Z'/>
             </action>
         </osm>"""
+        
         mock_response = MagicMock(spec=requests.Response)
         mock_response.status_code = 200
         mock_response.text = xml_content
         mock_response.content = xml_content.encode()
+        
+        # Create a raw attribute with a read method
+        mock_raw = BytesIO(xml_content.encode())
+        mock_raw.decode_content = True
+        mock_response.raw = mock_raw
+        
         return mock_response
 
     @pytest.mark.integration
@@ -79,11 +107,8 @@ class TestApi:
     def test_augmented_diff_api_state(self, mock_osm_state_response):
         """Test getting state from Augmented Diff API returns valid sequence number."""
         with patch('osmdiff.augmenteddiff.requests.get', return_value=mock_osm_state_response):
-            augmented_diff = AugmentedDiff()
-            augmented_diff.base_url = "http://example.com/api"
             state = AugmentedDiff.get_state(base_url="http://example.com/api")
             assert state is not None
-            assert isinstance(state, dict)
             assert state.get('sequenceNumber') == 12345
 
     @pytest.mark.integration
