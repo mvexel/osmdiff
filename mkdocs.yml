@@ -36,10 +36,10 @@ nav:
   - Getting Started: getting-started.md
   - Examples: examples/index.md
   - API Reference:
+      - OSM: api/osm.md
+      - OSMChange: api/osmchange.md
       - AugmentedDiff: api/augmenteddiff.md
       - ContinuousAugmentedDiff: api/continuous.md
-      - OSMChange: api/osmchange.md
-      - OSM: api/osm.md
 markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
