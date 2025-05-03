@@ -10,37 +10,50 @@ from osmdiff.osm import OSMObject
 
 
 class OSMChange(object):
-    """
-    Class to represent an OSMChange object.
+    """Handles OpenStreetMap changesets in OSMChange format.
 
-    Parameters:
-        url (str | None): URL of the OSM replication server
-        frequency (str): frequency of the replication diff
-        file (str | None): path to the XML file
-        sequence_number (int | None): sequence number of the diff
-        timeout (int | None): request timeout
+    Args:
+        url: Base URL of OSM replication server
+        frequency: Replication frequency ('minute', 'hour', or 'day')
+        file: Path to local OSMChange XML file
+        sequence_number: Sequence number of the diff
+        timeout: Request timeout in seconds
 
     Attributes:
-        base_url (str): URL of the OSM replication server
-        timeout (int): request timeout
-        create (list): list of created OSM objects
-        modify (list): list of modified OSM objects
-        delete (list): list of deleted OSM objects
+        create (list): Created OSM objects
+        modify (list): Modified OSM objects  
+        delete (list): Deleted OSM objects
+        frequency (str): Current replication frequency
+        sequence_number (int): Current sequence number
+        base_url (str): Replication server URL
+        timeout (int): Request timeout
+
+    Methods:
+        get_state: Get current replication state
+        retrieve: Fetch changeset
+        from_xml: Create from XML object
+        from_xml_file: Create from XML file
 
     Raises:
-        Exception: If an invalid sequence number is provided
-        ValueError: If frequency is not one of the valid options
+        ValueError: For invalid frequency or sequence number
+        requests.exceptions.RequestException: For HTTP errors
+        Exception: For invalid bounding boxes
 
-    Example:
+    Examples:
+        From sequence number:
         ```python
-        # Create an OSMChange object with a URL and frequency
-        osmchange = OSMChange(
-            url="https://osm.example.com",
-            frequency="minute",
-            file="path/to/osmchange.xml",
-            sequence_number=123456789,
-        )
+        change = OSMChange(sequence_number=12345)
+        change.retrieve()
         ```
+
+        From local file:
+        ```python  
+        change = OSMChange(file="changes.osc")
+        ```
+
+    Note:
+        Follows the OSM replication protocol:
+        https://wiki.openstreetmap.org/wiki/Planet.osm/diffs
     """
 
     def __init__(

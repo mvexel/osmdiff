@@ -92,33 +92,48 @@ import json
 
 
 class OSMObject:
-    """
-    Base class for OpenStreetMap objects.
+    """Base class for all OpenStreetMap elements (nodes, ways, relations).
 
-    Parameters:
-        tags (dict): OSM tags (key-value pairs)
-        attribs (dict): XML attributes
-        bounds (list): Bounding box [minlon, minlat, maxlon, maxlat]
+    Args:
+        tags: Key-value tag dictionary (e.g., {"highway": "residential"})
+        attribs: XML attributes dictionary (e.g., {"id": "123", "version": "2"})
+        bounds: Optional bounding box as [minlon, minlat, maxlon, maxlat]
 
     Attributes:
-        tags (dict): OSM tags (key-value pairs)
-        attribs (dict): XML attributes
-        bounds (list): Bounding box [minlon, minlat, maxlon, maxlat]
+        tags (dict): OSM tags
+        attribs (dict): XML attributes including:
+            - id: OSM element ID
+            - version: Element version
+            - changeset: Associated changeset ID  
+            - timestamp: Last edit time
+            - uid: User ID
+            - user: Username
+        bounds (list): Optional bounding coordinates
 
     Methods:
-        from_xml: Create object from XML element
-        _parse_tags: Parse tags from XML
-        _parse_bounds: Parse bounds from XML
+        from_xml: Create from XML element
+        to_dict: Convert to dictionary
+        to_json: Convert to JSON string
+        from_file: Create from XML file
 
     Raises:
-        ValueError: If XML element is invalid
-        TypeError: If element type is unknown
+        ValueError: For invalid XML input
+        TypeError: For unknown element types
 
-    Example:
-    ```python
-    node = Node()
-    node.attribs = {"lon": "0.0", "lat": "51.5"}
-    ```
+    Examples:
+        Create empty object:
+        ```python
+        obj = OSMObject(tags={"name": "Example"})
+        ```
+
+        Parse from XML:
+        ```python
+        elem = ElementTree.fromstring('<node id="123"/>')
+        obj = OSMObject.from_xml(elem)
+        ```
+
+    Note:
+        This is an abstract base class - use Node, Way or Relation for concrete elements.
     """
 
     def __init__(
