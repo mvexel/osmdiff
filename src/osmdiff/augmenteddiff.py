@@ -1,18 +1,18 @@
-from posixpath import join as urljoin
-from xml.etree import ElementTree
-from datetime import datetime, timedelta
-from typing import Optional
-import time
 import logging
-from contextlib import contextmanager
+import time
+from datetime import datetime
+from posixpath import join as urljoin
+from textwrap import dedent
+from typing import Optional
+from xml.etree import ElementTree
 
-import dateutil.parser
 import requests
-
-from .osm import OSMObject
-from .config import API_CONFIG, AUGMENTED_DIFF_CONFIG, DEFAULT_HEADERS
+from dateutil import parser
 
 from osmdiff.settings import DEFAULT_OVERPASS_URL
+
+from .config import API_CONFIG, DEFAULT_HEADERS
+from .osm import OSMObject
 
 
 class AugmentedDiff(object):
@@ -115,7 +115,9 @@ class AugmentedDiff(object):
                     raise Exception("invalid bbox.")
 
     @classmethod
-    def get_state(cls, base_url: Optional[str] = None, timeout: Optional[int] = None) -> Optional[dict]:
+    def get_state(
+        cls, base_url: Optional[str] = None, timeout: Optional[int] = None
+    ) -> Optional[dict]:
         """Get the current state from the OSM API.
 
         Args:
@@ -129,26 +131,28 @@ class AugmentedDiff(object):
         state_url = urljoin(base, "api/0.6/changesets/state")
         try:
             response = requests.get(
-                state_url, 
-                timeout=timeout or 5,
-                headers=DEFAULT_HEADERS
+                state_url, timeout=timeout or 5, headers=DEFAULT_HEADERS
             )
             if response.status_code != 200:
                 return None
-            
+
             # Parse XML response
             root = ElementTree.fromstring(response.content)
-            state = root.find('state')
+            state = root.find("state")
             if state is None:
                 return None
-                
+
             result = {}
             for child in state:
                 if child.text:
                     result[child.tag] = child.text
             return result
-            
-        except (requests.exceptions.RequestException, ValueError, ElementTree.ParseError):
+
+        except (
+            requests.exceptions.RequestException,
+            ValueError,
+            ElementTree.ParseError,
+        ):
             return None
 
     def _build_adiff_url(self):
@@ -201,7 +205,11 @@ class AugmentedDiff(object):
                     osm_obj_new = OSMObject.from_xml(child)
             if osm_obj_old is not None or osm_obj_new is not None:
                 # Store both old and new, and optionally meta info
-                deletion_info = {"old": osm_obj_old, "new": osm_obj_new, "meta": elem.attrib.copy()}
+                deletion_info = {
+                    "old": osm_obj_old,
+                    "new": osm_obj_new,
+                    "meta": elem.attrib.copy(),
+                }
                 self.delete.append(deletion_info)
 
     def _parse_stream(self, stream):
@@ -209,7 +217,7 @@ class AugmentedDiff(object):
             if elem.tag == "remark":
                 self._remarks.append(elem.text)
             if elem.tag == "meta":
-                timestamp = dateutil.parser.parse(elem.attrib.get("osm_base"))
+                timestamp = parser.parse(elem.attrib.get("osm_base"))
                 self.timestamp = timestamp
             if elem.tag == "action":
                 self._build_action(elem)
@@ -325,19 +333,19 @@ class AugmentedDiff(object):
                 "sequence_number must be an integer or parsable as an integer"
             )
 
-    @property 
+    @property
     def actions(self):
         """Get all actions combined in a single list."""
-        return {
-            'create': self.create,
-            'modify': self.modify,
-            'delete': self.delete
-        }
+        return {"create": self.create, "modify": self.modify, "delete": self.delete}
 
     def __repr__(self):
-        return "AugmentedDiff ({create} created, {modify} modified, \
-{delete} deleted)".format(
-            create=len(self.create), modify=len(self.modify), delete=len(self.delete)
+        return dedent(
+            """AugmentedDiff ({create} created, {modify} modified,
+        {delete} deleted)""".format(
+                create=len(self.create),
+                modify=len(self.modify),
+                delete=len(self.delete),
+            )
         )
 
     def __enter__(self):
@@ -399,7 +407,7 @@ class ContinuousAugmentedDiff:
         self.timeout = timeout
         self.min_interval = min_interval
         self.max_interval = max_interval
-        
+
         self._current_sequence = None
         self._current_interval = min_interval
         self._last_check = None
@@ -418,10 +426,7 @@ class ContinuousAugmentedDiff:
 
     def _backoff(self) -> None:
         """Increase check interval, up to max_interval."""
-        self._current_interval = min(
-            self._current_interval * 2,
-            self.max_interval
-        )
+        self._current_interval = min(self._current_interval * 2, self.max_interval)
 
     def _reset_backoff(self) -> None:
         """Reset check interval to minimum."""
@@ -432,37 +437,36 @@ class ContinuousAugmentedDiff:
 
     def __next__(self) -> AugmentedDiff:
         """Get next available augmented diff.
-        
+
         Yields:
             AugmentedDiff: Next available diff
-            
+
         Raises:
             StopIteration: Never raised, iterates indefinitely
         """
         while True:
             self._wait_for_next_check()
-            
+
             # Get current state
             new_sequence = AugmentedDiff.get_state(
-                base_url=self.base_url,
-                timeout=self.timeout
+                base_url=self.base_url, timeout=self.timeout
             )
-            
+
             if new_sequence is None:
                 self._logger.warning("Failed to get state, backing off")
                 self._backoff()
                 continue
-                
+
             # Initialize sequence number on first run
             if self._current_sequence is None:
                 self._current_sequence = new_sequence
                 continue
-                
+
             # Check if new diff is available
             if new_sequence <= self._current_sequence:
                 self._backoff()
                 continue
-                
+
             # Create diff object for new sequence
             diff = AugmentedDiff(
                 minlon=self.bbox[0],
@@ -471,9 +475,9 @@ class ContinuousAugmentedDiff:
                 maxlat=self.bbox[3],
                 sequence_number=self._current_sequence + 1,
                 base_url=self.base_url,
-                timeout=self.timeout
+                timeout=self.timeout,
             )
-            
+
             # Try to retrieve the diff
             try:
                 status = diff.retrieve(auto_increment=False)
@@ -481,12 +485,12 @@ class ContinuousAugmentedDiff:
                     self._logger.warning(f"Failed to retrieve diff: HTTP {status}")
                     self._backoff()
                     continue
-                    
+
                 # Success! Reset backoff and update sequence
                 self._reset_backoff()
                 self._current_sequence += 1
                 return diff
-                
+
             except Exception as e:
                 self._logger.warning(f"Error retrieving diff: {e}")
                 self._backoff()
