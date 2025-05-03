@@ -12,24 +12,18 @@ class TestAugmentedDiff:
     def mock_adiff_response(self):
         """Fixture providing a mock Augmented Diff response."""
         xml_content = """<?xml version='1.0'?>
-        <osm version='0.6'>
-            <meta osm_base='2024-01-01T00:00:00Z'/>
-            <action type='create'>
-                <node id='1' version='1' timestamp='2024-01-01T00:00:00Z'/>
-            </action>
-        </osm>"""
+<osm version='0.6'>
+<meta osm_base='2024-01-01T00:00:00Z'/>
+<action type='create'>
+<node id='1' version='1' timestamp='2024-01-01T00:00:00Z'/>
+</action>
+</osm>""".strip()
         
         mock_response = MagicMock(spec=requests.Response)
         mock_response.status_code = 200
         mock_response.text = xml_content
         mock_response.content = xml_content.encode()
-        
-        # Create a proper raw attribute that can be streamed
-        mock_raw = MagicMock()
-        mock_raw.read.return_value = xml_content.encode()
-        mock_raw.decode_content = True
-        mock_response.raw = mock_raw
-        
+        mock_response.raw = BytesIO(xml_content.encode())
         return mock_response
 
     @pytest.fixture
@@ -88,9 +82,18 @@ class TestAugmentedDiff:
                 augmented_diff.retrieve()
             assert mock_get.call_count == 3  # Verify it tried 3 times
 
-    def test_consecutive_sequence_numbers(self, augmented_diff, mock_adiff_response):
+    def test_consecutive_sequence_numbers(self, augmented_diff):
         """Test auto-increment of sequence numbers."""
-        with patch('requests.get', return_value=mock_adiff_response) as mock_get:
+        def new_mock_response():
+            xml_content = """<?xml version='1.0'?>\n<osm version='0.6'>\n<meta osm_base='2024-01-01T00:00:00Z'/>\n<action type='create'>\n<node id='1' version='1' timestamp='2024-01-01T00:00:00Z'/>\n</action>\n</osm>""".strip()
+            mock_response = MagicMock(spec=requests.Response)
+            mock_response.status_code = 200
+            mock_response.text = xml_content
+            mock_response.content = xml_content.encode()
+            mock_response.raw = BytesIO(xml_content.encode())
+            return mock_response
+
+        with patch('requests.get', side_effect=[new_mock_response(), new_mock_response()]) as mock_get:
             # Retrieve first diff
             status1 = augmented_diff.retrieve(auto_increment=True)
             assert status1 == 200
@@ -101,6 +104,5 @@ class TestAugmentedDiff:
             status2 = augmented_diff.retrieve(auto_increment=True)
             assert status2 == 200
             assert augmented_diff.sequence_number == 12347
-            
-            # Verify changes were merged
-            assert len(augmented_diff.create) > initial_create_count
+            assert len(augmented_diff.create) == initial_create_count * 2
+            assert mock_get.call_count == 2
