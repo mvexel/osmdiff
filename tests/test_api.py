@@ -101,7 +101,7 @@ class TestApi:
             status = osm_change.retrieve()
             assert status == 200
             assert hasattr(osm_change, 'actions')
-            assert len(osm_change.actions) > 0
+            assert len(osm_change.actions['create']) > 0
 
     @pytest.mark.integration
     def test_augmented_diff_api_state(self, mock_osm_state_response):
@@ -118,8 +118,8 @@ class TestApi:
             augmented_diff = AugmentedDiff(sequence_number=12345)
             status = augmented_diff.retrieve()
             assert status == 200
-            assert hasattr(augmented_diff, 'actions')
-            assert len(augmented_diff.actions) > 0
+            assert hasattr(augmented_diff, 'actions') 
+            assert len(augmented_diff.actions['create']) > 0
 
     @pytest.mark.integration
     def test_api_error_handling(self):

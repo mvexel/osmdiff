@@ -234,6 +234,15 @@ class OSMChange(object):
             )
         self._frequency = f
 
+    @property
+    def actions(self):
+        """Get all actions combined in a single list."""
+        return {
+            'create': self.create,
+            'modify': self.modify, 
+            'delete': self.delete
+        }
+
     def __repr__(self):
         return "OSMChange ({create} created, {modify} modified, \
 {delete} deleted)".format(

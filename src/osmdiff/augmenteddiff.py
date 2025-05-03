@@ -318,6 +318,15 @@ class AugmentedDiff(object):
                 "sequence_number must be an integer or parsable as an integer"
             )
 
+    @property 
+    def actions(self):
+        """Get all actions combined in a single list."""
+        return {
+            'create': self.create,
+            'modify': self.modify,
+            'delete': self.delete
+        }
+
     def __repr__(self):
         return "AugmentedDiff ({create} created, {modify} modified, \
 {delete} deleted)".format(
