@@ -194,6 +194,7 @@ class OSMObject:
         else:
             pass
         o.attribs = elem.attrib
+        o.osmtype = str(o.__class__.__name__).lower()[0]
         o._parse_tags(elem)
         o._parse_bounds(elem)
         return o
