@@ -195,4 +195,23 @@ def test_relation_init_with_values():
     assert relation.attribs == attribs
     assert relation.bounds == bounds
     assert relation.members == members
+
+def test_member_class():
+    """Test Member class methods."""
+    member = Member()
+    elem = ElementTree.Element("member", {
+        "type": "node", 
+        "ref": "123", 
+        "role": "point"
+    })
+    member._parse_attributes(elem)
+    assert member.__geo_interface__ == {
+        "type": "Feature",
+        "geometry": None,
+        "properties": {
+            "type": "node",
+            "ref": 123,
+            "role": "point"
+        }
+    }
     
