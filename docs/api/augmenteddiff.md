@@ -1,61 +1,56 @@
-# Augmented Diffs
+# AugmentedDiff
 
-This module provides classes for working with OSM Augmented Diffs. For more information about OSM Augmented Diffs, see the [Augmented Diff](https://wiki.openstreetmap.org/wiki/Overpass_API/Augmented_Diffs) page on the OpenStreetMap Wiki.
+Core class for retrieving and parsing OpenStreetMap augmented diffs.
 
-## AugmentedDiff
+For continuous monitoring of changes, see [ContinuousAugmentedDiff](continuous.md).
 
-Basic usage of the AugmentedDiff class:
+## Features
+
+- Single diff retrieval
+- Bounding box filtering
+- Automatic sequence number handling
+- Context manager support
+
+## Basic Usage
 
 ```python
->>> from osmdiff import AugmentedDiff
->>> ad = AugmentedDiff()
->>> ad.get_state()
-True
->>> ad.sequence_number
-6509700
->>> ad.retrieve()
-200
->>> ad.sequence_number
-6509701
->>> ad
-AugmentedDiff (2776 created, 927 modified, 6999 deleted)
->>> ad.retrieve()
-200
->>> ad.sequence_number
-6509702
->>> ad
-AugmentedDiff (3191 created, 1724 modified, 7077 deleted)  # the results of the two calls to retrieve() are merged
+from osmdiff import AugmentedDiff
+
+# Create with bounding box for London
+adiff = AugmentedDiff(
+    minlon=-0.489,
+    minlat=51.28,
+    maxlon=0.236,
+    maxlat=51.686
+)
+
+# Retrieve and process changes
+status = adiff.retrieve()
+if status == 200:
+    print(f"Created: {len(adiff.create)} features")
+    print(f"Modified: {len(adiff.modify)} features")
+    print(f"Deleted: {len(adiff.delete)} features")
 ```
+
+## API Reference
 
 ::: osmdiff.augmenteddiff.AugmentedDiff
     options:
-      show_root_heading: true
-      show_source: false
+      heading_level: 2
+      show_source: true
+      members:
+        - __init__
+        - get_state
+        - retrieve
+        - sequence_number
+        - timestamp
+        - remarks
+        - actions
+        - __repr__
+        - __enter__
+        - __exit__
 
-## ContinuousAugmentedDiff
+## See Also
 
-The ContinuousAugmentedDiff class provides an iterator interface for continuously fetching augmented diffs as they become available. It handles timing, backoff, and error recovery automatically.
-
-Basic usage:
-
-```python
->>> from osmdiff import ContinuousAugmentedDiff
->>> # Create fetcher for London area
->>> fetcher = ContinuousAugmentedDiff(
-...     minlon=-0.489,
-...     minlat=51.28,
-...     maxlon=0.236,
-...     maxlat=51.686
-... )
->>> # Iterate over diffs as they become available
->>> for diff in fetcher:
-...     print(f"Got diff {diff.sequence_number} with {len(diff.create)} creates")
-Got diff 6509701 with 2776 creates
-Got diff 6509702 with 3191 creates
-# ... continues until interrupted
-```
-
-::: osmdiff.augmenteddiff.ContinuousAugmentedDiff
-    options:
-      show_root_heading: true
-      show_source: false
+- [ContinuousAugmentedDiff](continuous.md) - For continuous monitoring
+- [OSMChange](osmchange.md) - For standard OSM changesets

@@ -1,46 +1,26 @@
-from posixpath import join as urljoin
 from gzip import GzipFile
-from xml.etree import ElementTree
+from posixpath import join as urljoin
 from typing import Optional
+from xml.etree import ElementTree
 
 import requests
 
-from osmdiff.osm import OSMObject
 from osmdiff.config import API_CONFIG, DEFAULT_HEADERS
+from osmdiff.osm import OSMObject
 
 
 class OSMChange(object):
-    """
-    Class to represent an OSMChange object.
+    """Handles OpenStreetMap changesets in OSMChange format.
 
-    Parameters:
-        url (str | None): URL of the OSM replication server
-        frequency (str): frequency of the replication diff
-        file (str | None): path to the XML file
-        sequence_number (int | None): sequence number of the diff
-        timeout (int | None): request timeout
+    Args:
+        url: Base URL of OSM replication server
+        frequency: Replication frequency ('minute', 'hour', or 'day')
+        file: Path to local OSMChange XML file
+        sequence_number: Sequence number of the diff
+        timeout: Request timeout in seconds
 
-    Attributes:
-        base_url (str): URL of the OSM replication server
-        timeout (int): request timeout
-        create (list): list of created OSM objects
-        modify (list): list of modified OSM objects
-        delete (list): list of deleted OSM objects
-
-    Raises:
-        Exception: If an invalid sequence number is provided
-        ValueError: If frequency is not one of the valid options
-
-    Example:
-        ```python
-        # Create an OSMChange object with a URL and frequency
-        osmchange = OSMChange(
-            url="https://osm.example.com",
-            frequency="minute",
-            file="path/to/osmchange.xml",
-            sequence_number=123456789,
-        )
-        ```
+    Note:
+        Follows the OSM replication protocol.
     """
 
     def __init__(
@@ -83,12 +63,12 @@ class OSMChange(object):
         )
         if response.status_code != 200:
             return False
-        
+
         # Parse XML response
         root = ElementTree.fromstring(response.content)
-        state = root.find('state')
+        state = root.find("state")
         if state is not None:
-            seq = state.find('sequenceNumber')
+            seq = state.find("sequenceNumber")
             if seq is not None and seq.text:
                 self._sequence_number = int(seq.text)
                 return True
@@ -150,7 +130,7 @@ class OSMChange(object):
                 return r.status_code
             # Handle both gzipped and plain XML responses
             content = r.content
-            if content.startswith(b'\x1f\x8b'):  # Gzip magic number
+            if content.startswith(b"\x1f\x8b"):  # Gzip magic number
                 gzfile = GzipFile(fileobj=r.raw)
                 xml = ElementTree.iterparse(gzfile, events=("start", "end"))
             else:
@@ -237,11 +217,7 @@ class OSMChange(object):
     @property
     def actions(self):
         """Get all actions combined in a single list."""
-        return {
-            'create': self.create,
-            'modify': self.modify, 
-            'delete': self.delete
-        }
+        return {"create": self.create, "modify": self.modify, "delete": self.delete}
 
     def __repr__(self):
         return "OSMChange ({create} created, {modify} modified, \

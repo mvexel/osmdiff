@@ -38,9 +38,9 @@ Example:
 # Create a node
 node = Node()
 node.attribs = {
-    "id": "123", 
+    "id": "123",
     "version": "2",
-    "lat": "37.7", 
+    "lat": "37.7",
     "lon": "-122.4"
 }
 node.tags = {
@@ -49,7 +49,7 @@ node.tags = {
 }
 
 # Create a way
-way = Way() 
+way = Way()
 way.attribs = {
     "id": "456",
     "version": "1"
@@ -92,33 +92,15 @@ import json
 
 
 class OSMObject:
-    """
-    Base class for OpenStreetMap objects.
+    """Base class for all OpenStreetMap elements (nodes, ways, relations).
 
-    Parameters:
-        tags (dict): OSM tags (key-value pairs)
-        attribs (dict): XML attributes
-        bounds (list): Bounding box [minlon, minlat, maxlon, maxlat]
+    Args:
+        tags: Key-value tag dictionary
+        attribs: XML attributes dictionary
+        bounds: Optional bounding box coordinates [minlon, minlat, maxlon, maxlat]
 
-    Attributes:
-        tags (dict): OSM tags (key-value pairs)
-        attribs (dict): XML attributes
-        bounds (list): Bounding box [minlon, minlat, maxlon, maxlat]
-
-    Methods:
-        from_xml: Create object from XML element
-        _parse_tags: Parse tags from XML
-        _parse_bounds: Parse bounds from XML
-
-    Raises:
-        ValueError: If XML element is invalid
-        TypeError: If element type is unknown
-
-    Example:
-    ```python
-    node = Node()
-    node.attribs = {"lon": "0.0", "lat": "51.5"}
-    ```
+    Note:
+        This is an abstract base class - use Node, Way or Relation for concrete elements.
     """
 
     def __init__(
@@ -256,20 +238,10 @@ class OSMObject:
 
 
 class Node(OSMObject):
-    """
-    Represents an OSM node (point feature).
+    """OpenStreetMap node (geographic point feature).
 
-    ## Attributes
-        lon (float): Longitude
-        lat (float): Latitude
-        __geo_interface__ (dict): GeoJSON-compatible interface, see https://gist.github.com/sgillies/2217756 for more details.
-
-    ## Example
-    ```python
-    node = Node()
-    node.attribs = {"lon": "0.0", "lat": "51.5"}
-    print(node.lon, node.lat)  # 0.0, 51.5
-    ```
+    Implements __geo_interface__ for GeoJSON compatibility as a Point feature.
+    Coordinates must be valid (-180<=lon<=180, -90<=lat<=90).
     """
 
     def __init__(
@@ -277,7 +249,7 @@ class Node(OSMObject):
         tags: Dict[str, str] = {},
         attribs: Dict[str, str] = {},
         bounds: List[float] = None,
-    ):
+    ) -> None:
         super().__init__(tags, attribs, bounds)
 
     def _validate_coords(self) -> None:
@@ -301,7 +273,7 @@ class Node(OSMObject):
         self._validate_coords()
         return float(self.attribs.get("lat", 0))
 
-    def _geo_interface(self):
+    def _geo_interface(self) -> dict:
         """
         GeoJSON-compatible interface.
 
@@ -328,26 +300,22 @@ class Node(OSMObject):
 
 
 class Way(OSMObject):
-    """
-    Represents an OSM way (linear feature).
+    """Represents an OSM way (linear feature).
 
-    ## Attributes
-        nodes (list): List of Node objects
-        __geo_interface__ (dict): GeoJSON-compatible interface, see https://gist.github.com/sgillies/2217756 for more details.
-    ## Example
-    ```python
-    way = Way()
-    way.nodes = [Node(), Node()]  # Add nodes
-    print(way.__geo_interface__["type"])  # "LineString" or "Polygon"
-    ```
+    Implements __geo_interface__ for GeoJSON compatibility as either:
+    - LineString for open ways
+    - Polygon for closed ways
     """
 
     def __init__(
         self,
-        tags: Dict[str, str] = {},
-        attribs: Dict[str, str] = {},
+        tags: Dict[str, str] = None,
+        attribs: Dict[str, str] = None,
         bounds: List[float] = None,
-    ):
+    ) -> None:
+        """Initialize a Way object."""
+        tags = tags or {}
+        attribs = attribs or {}
         super().__init__(tags, attribs, bounds)
         self.nodes = []
 
@@ -380,7 +348,7 @@ class Way(OSMObject):
         for node in elem.findall("nd"):
             self.nodes.append(OSMObject.from_xml(node))
 
-    def _geo_interface(self):
+    def _geo_interface(self) -> dict:
         """
         GeoJSON-compatible interface.
 
@@ -417,10 +385,13 @@ class Relation(OSMObject):
 
     def __init__(
         self,
-        tags: Dict[str, str] = {},
-        attribs: Dict[str, str] = {},
+        tags: Dict[str, str] = None,
+        attribs: Dict[str, str] = None,
         bounds: List[float] = None,
-    ):
+    ) -> None:
+        """Initialize a Relation object."""
+        tags = tags or {}
+        attribs = attribs or {}
         super().__init__(tags, attribs, bounds)
         self.members = []
 
@@ -434,7 +405,7 @@ class Relation(OSMObject):
         for member in elem.findall("member"):
             self.members.append(OSMObject.from_xml(member))
 
-    def _geo_interface(self):
+    def _geo_interface(self) -> dict:
         """
         GeoJSON-compatible interface.
 

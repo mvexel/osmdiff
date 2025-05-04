@@ -21,19 +21,25 @@ plugins:
       default_handler: python
       handlers:
         python:
-          paths: [src] # search packages in src directory
+          paths: [src]
           options:
+            docstring_style: google
             show_source: true
-            show_root_heading: true
-            heading_level: 1
+            show_root_heading: false
+            heading_level: 2
+            show_submodules: true
+            members_order: alphabetical
+            merge_init_into_class: true
 
 nav:
   - Home: index.md
+  - Getting Started: getting-started.md
+  - Examples: examples/index.md
   - API Reference:
-      - AugmentedDiff: api/augmenteddiff.md
-      - OSMChange: api/osmchange.md
       - OSM: api/osm.md
-  - Examples (WIP): examples/index.md
+      - OSMChange: api/osmchange.md
+      - AugmentedDiff: api/augmenteddiff.md
+      - ContinuousAugmentedDiff: api/continuous.md
 markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
