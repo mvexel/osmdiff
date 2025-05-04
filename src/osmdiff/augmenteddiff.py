@@ -387,9 +387,9 @@ class ContinuousAugmentedDiff:
                 self._backoff()
                 continue
 
-            # Initialize sequence number on first run
+            # Initialize sequence number on first run and fetch first diff
             if self._current_sequence is None:
-                self._current_sequence = new_sequence
+                self._current_sequence = new_sequence - 1  # Start from previous sequence
                 continue
 
             # Check if new diff is available
