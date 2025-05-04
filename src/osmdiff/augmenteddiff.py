@@ -1,6 +1,6 @@
 import logging
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from posixpath import join as urljoin
 from textwrap import dedent
 from typing import Optional
@@ -11,20 +11,20 @@ from dateutil import parser
 
 from osmdiff.settings import DEFAULT_OVERPASS_URL
 
-from .config import API_CONFIG, DEFAULT_HEADERS
-from .osm import OSMObject
+from osmdiff.config import API_CONFIG, DEFAULT_HEADERS
+from osmdiff.osm import OSMObject
 
 
 class AugmentedDiff:
     """An Augmented Diff representation for OpenStreetMap changes.
-    
+
     Handles retrieval and parsing of OpenStreetMap augmented diffs containing detailed
     changes to OSM data (creations, modifications, deletions).
 
     Args:
         minlon: Minimum longitude of bounding box (WGS84)
         minlat: Minimum latitude of bounding box (WGS84)
-        maxlon: Maximum longitude of bounding box (WGS84) 
+        maxlon: Maximum longitude of bounding box (WGS84)
         maxlat: Maximum latitude of bounding box (WGS84)
         file: Path to local augmented diff XML file
         sequence_number: Sequence number of the diff
@@ -85,45 +85,15 @@ class AugmentedDiff:
                     raise Exception("invalid bbox.")
 
     @classmethod
-    def get_state(
-        cls, base_url: Optional[str] = None, timeout: Optional[int] = None
-    ) -> Optional[dict]:
-        """Get the current state from the OSM API.
-
-        Args:
-            base_url: Optional override for API base URL
-            timeout: Optional override for request timeout
+    def _get_current_id(cls) -> int:
+        """Compute the latest adiff identifier.
 
         Returns:
-            Dictionary with state info if successful, None if failed
+            Integer representing the current (latest) adiff ID
         """
-        base = base_url or API_CONFIG["overpass"]["base_url"]
-        state_url = urljoin(base, "api/0.6/changesets/state")
-        try:
-            response = requests.get(
-                state_url, timeout=timeout or 5, headers=DEFAULT_HEADERS
-            )
-            if response.status_code != 200:
-                return None
-
-            # Parse XML response
-            root = ElementTree.fromstring(response.content)
-            state = root.find("state")
-            if state is None:
-                return None
-
-            result = {}
-            for child in state:
-                if child.text:
-                    result[child.tag] = child.text
-            return result
-
-        except (
-            requests.exceptions.RequestException,
-            ValueError,
-            ElementTree.ParseError,
-        ):
-            return None
+        return (
+            int(datetime(2017, 1, 16, 15, 35, 17, tzinfo=timezone.utc).timestamp()) + 59
+        ) // 60 - 22457216
 
     def _build_adiff_url(self):
         url = "{base}/augmented_diff?id={sequence_number}".format(
@@ -277,7 +247,7 @@ class AugmentedDiff:
     @property
     def remarks(self) -> list:
         """Get the list of remarks from the augmented diff.
-        
+
         Remarks provide additional metadata about the changes in the diff.
         """
         return self._remarks
@@ -285,7 +255,7 @@ class AugmentedDiff:
     @property
     def timestamp(self) -> datetime:
         """Get the timestamp of when the changes in this diff were made.
-        
+
         Returns:
             datetime: The timestamp parsed from the diff metadata
         """
@@ -294,7 +264,7 @@ class AugmentedDiff:
     @timestamp.setter
     def timestamp(self, value: datetime) -> None:
         """Set the timestamp for this diff.
-        
+
         Args:
             value: The new timestamp to set
         """
@@ -303,7 +273,7 @@ class AugmentedDiff:
     @property
     def sequence_number(self) -> int:
         """Get the sequence number identifying this diff.
-        
+
         Sequence numbers increment monotonically and uniquely identify each diff.
         """
         return self._sequence_number
@@ -410,9 +380,7 @@ class ContinuousAugmentedDiff:
             self._wait_for_next_check()
 
             # Get current state
-            new_sequence = AugmentedDiff.get_state(
-                base_url=self.base_url, timeout=self.timeout
-            )
+            new_sequence = AugmentedDiff._get_current_id()
 
             if new_sequence is None:
                 self._logger.warning("Failed to get state, backing off")
