@@ -22,7 +22,8 @@ Example:
 # Default API URLs and settings for different services
 API_CONFIG = {
     "overpass": {
-        "base_url": "https://adiffs.osmcha.org/changesets/{sequence}.adiff",
+        "base_url": "http://overpass-api.de/api/augmented_diff?id={sequence_number}",  # sic
+        "state_url": "https://overpass-api.de/api/augmented_diff_status",
         "timeout": 30,  # Default timeout in seconds
     },
     "osm": {

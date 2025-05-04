@@ -29,7 +29,7 @@ a = AugmentedDiff(
     # maxlon=-80.0,
     # maxlat=60.0,
 )
-a.get_state()
+a._get_current_id()
 a.retrieve()
 print(a)
 

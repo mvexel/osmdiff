@@ -1,11 +1,13 @@
 import pytest
-from osmdiff.osm.osm import OSMObject, Way, Relation, Node
+from osmdiff.osm.osm import Member, OSMObject, Way, Relation, Node
+
 
 def test_osmobject_init_defaults():
     obj = OSMObject()
     assert obj.tags == {}
     assert obj.attribs == {}
     assert obj.bounds is None
+
 
 def test_osmobject_init_with_values():
     tags = {"amenity": "cafe"}
@@ -16,16 +18,19 @@ def test_osmobject_init_with_values():
     assert obj.attribs == attribs
     assert obj.bounds == bounds
 
+
 def test_osmobject_repr():
     obj = OSMObject(attribs={"id": "42"})
     assert "OSMObject 42" in repr(obj)
+
 
 import xml.etree.ElementTree as ET
 import tempfile
 import os
 
+
 def test_osmobject_parse_tags_and_bounds():
-    xml = '''<node id="1" lat="10.0" lon="20.0"><tag k="amenity" v="cafe"/><bounds minlon="0" minlat="1" maxlon="2" maxlat="3"/></node>'''
+    xml = """<node id="1" lat="10.0" lon="20.0"><tag k="amenity" v="cafe"/><bounds minlon="0" minlat="1" maxlon="2" maxlat="3"/></node>"""
     elem = ET.fromstring(xml)
     obj = OSMObject()
     obj._parse_tags(elem)
@@ -33,14 +38,16 @@ def test_osmobject_parse_tags_and_bounds():
     obj._parse_bounds(elem)
     assert obj.bounds == ["0", "1", "2", "3"]
 
+
 def test_osmobject_to_dict_and_json():
-    obj = OSMObject(tags={"foo": "bar"}, attribs={"id": "1"}, bounds=[0,1,2,3])
+    obj = OSMObject(tags={"foo": "bar"}, attribs={"id": "1"}, bounds=[0, 1, 2, 3])
     d = obj.to_dict()
     assert d["tags"] == {"foo": "bar"}
     assert d["id"] == "1"
-    assert d["bounds"] == [0,1,2,3]
+    assert d["bounds"] == [0, 1, 2, 3]
     j = obj.to_json()
     assert '"foo": "bar"' in j
+
 
 def test_osmobject_from_file(tmp_path):
     xml = '<node id="1" lat="10.0" lon="20.0"/>'
@@ -50,6 +57,7 @@ def test_osmobject_from_file(tmp_path):
     assert isinstance(obj, OSMObject)
     assert obj.attribs["id"] == "1"
 
+
 def test_osmobject_init_with_values():
     tags = {"amenity": "cafe"}
     attribs = {"id": "123", "version": "1"}
@@ -58,6 +66,7 @@ def test_osmobject_init_with_values():
     assert obj.tags == tags
     assert obj.attribs == attribs
     assert obj.bounds == bounds
+
 
 def test_osmobject_repr():
     obj = OSMObject(attribs={"id": "42"})
@@ -68,6 +77,7 @@ def test_osmobject_repr():
     rel = Relation(attribs={"id": "7"})
     rel.members = [1, 2]
     assert "Relation 7 (2 members)" in repr(rel)
+
 
 def test_way_length():
     """Test Way.length() method."""
@@ -80,6 +90,7 @@ def test_way_length():
     # Just test it returns a float - actual calculation is approximate
     assert isinstance(way.length(), float)
 
+
 def test_way_is_closed():
     way = Way()
     way.nodes = [1, 2, 1]
@@ -87,16 +98,18 @@ def test_way_is_closed():
     way.nodes = [1, 2, 3]
     assert way.is_closed() is False
 
+
 def test_node_geo_interface_and_equality():
     """Test Node geo interface and equality."""
     node1 = Node(attribs={"lon": "1", "lat": "2"})
     node2 = Node(attribs={"lon": "1", "lat": "2"})
     node3 = Node(attribs={"lon": "3", "lat": "4"})
-    
+
     assert node1.__geo_interface__ == {"type": "Point", "coordinates": [1, 2]}
     assert node1 == node2
     assert node1 != node3
     assert node1 != "not a node"
+
 
 def test_node_invalid_coords():
     """Test Node coordinate validation."""
@@ -109,6 +122,7 @@ def test_node_invalid_coords():
     with pytest.raises(ValueError):
         Node(attribs={"lon": "0", "lat": "-91"})  # Invalid lat
 
+
 def test_way_geo_interface():
     """Test Way geo interface."""
     way = Way()
@@ -119,30 +133,31 @@ def test_way_geo_interface():
     ]
     # Open way should be LineString
     assert way.__geo_interface__ == {
-        "type": "LineString", 
-        "coordinates": [[0, 0], [1, 0], [1, 1]]
+        "type": "LineString",
+        "coordinates": [[0, 0], [1, 0], [1, 1]],
     }
-    
+
     # Closed way should be Polygon
     way.nodes.append(Node(attribs={"lon": "0", "lat": "0"}))
     assert way.__geo_interface__ == {
         "type": "Polygon",
-        "coordinates": [[[0, 0], [1, 0], [1, 1], [0, 0]]]
+        "coordinates": [[[0, 0], [1, 0], [1, 1], [0, 0]]],
     }
+
 
 def test_relation_geo_interface():
     """Test Relation geo interface."""
     relation = Relation()
     relation.members = [
         Node(attribs={"lon": "0", "lat": "0"}),
-        Way(nodes=[Node(attribs={"lon": "1", "lat": "0"})])
+        Way(nodes=[Node(attribs={"lon": "1", "lat": "0"})]),
     ]
     assert relation.__geo_interface__ == {
         "type": "GeometryCollection",
         "geometries": [
             {"type": "Point", "coordinates": [0, 0]},
-            {"type": "LineString", "coordinates": [[1, 0]]}
-        ]
+            {"type": "LineString", "coordinates": [[1, 0]]},
+        ],
     }
     node1 = Node(attribs={"lat": 10.0, "lon": 20.0})
     node2 = Node(attribs={"lat": 10.0, "lon": 20.0})
@@ -183,7 +198,8 @@ def test_relation_init_defaults():
     assert relation.attribs == {}
     assert relation.bounds is None
     assert relation.members == []
-    
+
+
 def test_relation_init_with_values():
     tags = {"amenity": "cafe"}
     attribs = {"id": "123", "version": "1"}
@@ -196,22 +212,16 @@ def test_relation_init_with_values():
     assert relation.bounds == bounds
     assert relation.members == members
 
+
 def test_member_class():
     """Test Member class methods."""
     member = Member()
-    elem = ElementTree.Element("member", {
-        "type": "node", 
-        "ref": "123", 
-        "role": "point"
-    })
+    elem = ET.ElementTree.Element(
+        "member", {"type": "node", "ref": "123", "role": "point"}
+    )
     member._parse_attributes(elem)
     assert member.__geo_interface__ == {
         "type": "Feature",
         "geometry": None,
-        "properties": {
-            "type": "node",
-            "ref": 123,
-            "role": "point"
-        }
+        "properties": {"type": "node", "ref": 123, "role": "point"},
     }
-    

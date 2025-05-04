@@ -2,11 +2,12 @@ import pytest
 from osmdiff import ContinuousAugmentedDiff, AugmentedDiff
 from unittest.mock import patch, MagicMock
 
+
 class TestContinuousAugmentedDiff:
     @pytest.fixture
     def mock_state_sequence(self):
         # Simulate state endpoint returning increasing sequence numbers
-        return [12345, 12345, 12346, 12347]
+        return [12345, 12346, 12347]
 
     @pytest.fixture
     def mock_adiff_response(self):
@@ -18,34 +19,38 @@ class TestContinuousAugmentedDiff:
         mock_response.raw = MagicMock()
         return mock_response
 
-    def test_iterator_yields_augmented_diff(self, mock_state_sequence, mock_adiff_response):
+    def test_iterator_yields_augmented_diff(
+        self, mock_state_sequence, mock_adiff_response
+    ):
         # Patch get_state and retrieve, and patch time.sleep to avoid real delays
-        with patch.object(AugmentedDiff, "get_state", side_effect=mock_state_sequence), \
-             patch.object(AugmentedDiff, "retrieve", return_value=200), \
-             patch("time.sleep", return_value=None):
+        with (
+            patch.object(AugmentedDiff, "get_state", side_effect=mock_state_sequence),
+            patch.object(AugmentedDiff, "retrieve", return_value=200),
+            patch("time.sleep", return_value=None),
+        ):
 
             fetcher = ContinuousAugmentedDiff(min_interval=0, max_interval=0)
             gen = iter(fetcher)
-            # The first two calls return the same sequence, so no diff should be yielded yet
-            # On the third call, sequence increases, so a diff is yielded
             diff = next(gen)
             assert isinstance(diff, AugmentedDiff)
-            assert diff.sequence_number == 12346
+            assert diff.sequence_number == 12345
 
             # Next sequence increases again, another diff is yielded
             diff2 = next(gen)
             assert isinstance(diff2, AugmentedDiff)
-            assert diff2.sequence_number == 12347
+            assert diff2.sequence_number == 12346
 
     def test_iterator_handles_backoff(self, mock_state_sequence, mock_adiff_response):
         # Simulate get_state returning None (API error) first, then a valid sequence
-        with patch.object(AugmentedDiff, "get_state", side_effect=[None, 12345, 12346]), \
-             patch.object(AugmentedDiff, "retrieve", return_value=200), \
-             patch("time.sleep", return_value=None):
+        with (
+            patch.object(AugmentedDiff, "get_state", side_effect=[None, 12345, 12346]),
+            patch.object(AugmentedDiff, "retrieve", return_value=200),
+            patch("time.sleep", return_value=None),
+        ):
 
             fetcher = ContinuousAugmentedDiff(min_interval=0, max_interval=0)
             gen = iter(fetcher)
             # First call to get_state returns None, so it should backoff and retry
             diff = next(gen)
             assert isinstance(diff, AugmentedDiff)
-            assert diff.sequence_number == 12346
+            assert diff.sequence_number == 12345

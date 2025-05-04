@@ -1,8 +1,6 @@
 import logging
 import time
-from datetime import datetime, timezone
-from posixpath import join as urljoin
-from textwrap import dedent
+from datetime import datetime
 from typing import Optional
 from xml.etree import ElementTree
 
@@ -11,8 +9,8 @@ from dateutil import parser
 
 from osmdiff.settings import DEFAULT_OVERPASS_URL
 
-from osmdiff.config import API_CONFIG, DEFAULT_HEADERS
-from osmdiff.osm import OSMObject
+from .config import API_CONFIG, DEFAULT_HEADERS
+from .osm import OSMObject
 
 
 class AugmentedDiff:
@@ -83,30 +81,28 @@ class AugmentedDiff:
                     self.maxlat = maxlat
                 else:
                     raise Exception("invalid bbox.")
+        self._logger = logging.getLogger(__name__)
 
     @classmethod
-    def _get_current_id(cls) -> int:
-        """Compute the latest adiff identifier.
+    def get_state(
+        cls, base_url: Optional[str] = None, timeout: Optional[int] = None
+    ) -> Optional[dict]:
+        """Get the current sequence number from the Overpass API.
+
+        Args:
+            base_url: Override default Overpass API URL (deprecated)
+            timeout: Optional override for request timeout
 
         Returns:
-            Integer representing the current (latest) adiff ID
+            int: Sequence number
         """
-        return (
-            int(datetime(2017, 1, 16, 15, 35, 17, tzinfo=timezone.utc).timestamp()) + 59
-        ) // 60 - 22457216
-
-    def _build_adiff_url(self):
-        url = "{base}/augmented_diff?id={sequence_number}".format(
-            base=self.base_url, sequence_number=self.sequence_number
+        state_url = API_CONFIG["overpass"]["state_url"]
+        response = requests.get(
+            state_url, timeout=timeout or 5, headers=DEFAULT_HEADERS
         )
-        if self.minlon and self.minlat and self.maxlon and self.maxlat:
-            url += "&bbox={minlon},{minlat},{maxlon},{maxlat}".format(
-                minlon=self.minlon,
-                minlat=self.minlat,
-                maxlon=self.maxlon,
-                maxlat=self.maxlat,
-            )
-        return url
+        response.raise_for_status()
+        return_dict = {"sequence_number": int(response.text), "timestamp": None}
+        return return_dict
 
     def _build_action(self, elem):
         """Parse an action element from an augmented diff.
@@ -190,7 +186,9 @@ class AugmentedDiff:
         if clear_cache:
             self.create, self.modify, self.delete = ([], [], [])
 
-        url = self._build_adiff_url()
+        url = self.base_url.format(sequence_number=self.sequence_number)
+
+        self._logger.info(f"Retrieving diff {self.sequence_number} from {url}")
 
         # Store current data before making request
         prev_create = self.create.copy()
@@ -297,13 +295,10 @@ class AugmentedDiff:
         return {"create": self.create, "modify": self.modify, "delete": self.delete}
 
     def __repr__(self):
-        return dedent(
-            """AugmentedDiff ({create} created, {modify} modified,
-        {delete} deleted)""".format(
-                create=len(self.create),
-                modify=len(self.modify),
-                delete=len(self.delete),
-            )
+        return """AugmentedDiff ({create} created, {modify} modified, {delete} deleted)""".format(
+            create=len(self.create),
+            modify=len(self.modify),
+            delete=len(self.delete),
         )
 
     def __enter__(self):
@@ -379,22 +374,15 @@ class ContinuousAugmentedDiff:
         while True:
             self._wait_for_next_check()
 
-            # Get current state
-            new_sequence = AugmentedDiff._get_current_id()
+            # check if we have a newer sequence on the remote
+            newest_remote = AugmentedDiff.get_state(timeout=self.timeout)
 
-            if new_sequence is None:
-                self._logger.warning("Failed to get state, backing off")
-                self._backoff()
-                continue
-
-            # Initialize sequence number on first run and fetch first diff
+            # if we don't have a local sequence number yet, set it
             if self._current_sequence is None:
-                self._current_sequence = new_sequence - 1  # Start from previous sequence
-                continue
+                self._current_sequence = newest_remote
 
-            # Check if new diff is available
-            if new_sequence <= self._current_sequence:
-                self._backoff()
+            # if we do, proceed ony if the remote is newer
+            elif self._current_sequence >= newest_remote:
                 continue
 
             # Create diff object for new sequence
@@ -403,7 +391,7 @@ class ContinuousAugmentedDiff:
                 minlat=self.bbox[1],
                 maxlon=self.bbox[2],
                 maxlat=self.bbox[3],
-                sequence_number=self._current_sequence + 1,
+                sequence_number=self._current_sequence,
                 base_url=self.base_url,
                 timeout=self.timeout,
             )
