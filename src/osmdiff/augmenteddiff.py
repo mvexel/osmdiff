@@ -65,9 +65,9 @@ class AugmentedDiff:
         self.timestamp = timestamp
         self._remarks = []
         self._sequence_number = None
-        self.create = []
-        self.modify = []
-        self.delete = []
+        self._create = []
+        self._modify = []
+        self._delete = []
         if file:
             with open(file, "r") as file_handle:
                 self._parse_stream(file_handle)
@@ -115,7 +115,7 @@ class AugmentedDiff:
         if action_type == "create":
             for child in elem:
                 osm_obj = OSMObject.from_xml(child)
-                self.create.append(osm_obj)
+                self._create.append(osm_obj)
         elif action_type == "modify":
             old = elem.find("old")
             new = elem.find("new")
@@ -127,7 +127,7 @@ class AugmentedDiff:
                 for child in new:
                     osm_obj_new = OSMObject.from_xml(child)
                 if osm_obj_old and osm_obj_new:
-                    self.modify.append({"old": osm_obj_old, "new": osm_obj_new})
+                    self._modify.append({"old": osm_obj_old, "new": osm_obj_new})
         elif action_type == "delete":
             old = elem.find("old")
             new = elem.find("new")
@@ -146,7 +146,7 @@ class AugmentedDiff:
                     "new": osm_obj_new,
                     "meta": elem.attrib.copy(),
                 }
-                self.delete.append(deletion_info)
+                self._delete.append(deletion_info)
 
     def _parse_stream(self, stream):
         for event, elem in ElementTree.iterparse(stream):
@@ -184,16 +184,16 @@ class AugmentedDiff:
             raise Exception("invalid sequence number")
 
         if clear_cache:
-            self.create, self.modify, self.delete = ([], [], [])
+            self._create, self._modify, self._delete = ([], [], [])
 
         url = self.base_url.format(sequence_number=self.sequence_number)
 
         self._logger.info(f"Retrieving diff {self.sequence_number} from {url}")
 
         # Store current data before making request
-        prev_create = self.create.copy()
-        prev_modify = self.modify.copy()
-        prev_delete = self.delete.copy()
+        prev_create = self._create.copy()
+        prev_modify = self._modify.copy()
+        prev_delete = self._delete.copy()
 
         # Use a longer timeout if none specified
         request_timeout = (
@@ -216,15 +216,15 @@ class AugmentedDiff:
                 r.raw.decode_content = True
 
                 # Clear current lists but keep previous data
-                self.create, self.modify, self.delete = ([], [], [])
+                self._create, self._modify, self._delete = ([], [], [])
 
                 # Parse new data
                 self._parse_stream(r.raw)
 
                 # Merge with previous data
-                self.create = prev_create + self.create
-                self.modify = prev_modify + self.modify
-                self.delete = prev_delete + self.delete
+                self._create = prev_create + self._create
+                self._modify = prev_modify + self._modify
+                self._delete = prev_delete + self._delete
 
                 # Automatically increment sequence number after successful retrieval
                 if auto_increment:
@@ -241,6 +241,33 @@ class AugmentedDiff:
                 continue
 
         return 0  # Should never reach here due to raise in except block
+
+    @property
+    def create(self) -> list:
+        """Get the list of created objects from the augmented diff."""
+        return self._create
+
+    @create.setter
+    def create(self, value: list) -> None:
+        self._create = value
+
+    @property
+    def modify(self) -> list:
+        """Get the list of modified objects from the augmented diff."""
+        return self._modify
+
+    @modify.setter
+    def modify(self, value: list) -> None:
+        self._modify = value
+
+    @property
+    def delete(self) -> list:
+        """Get the list of deleted objects from the augmented diff."""
+        return self._delete
+
+    @delete.setter
+    def delete(self, value: list) -> None:
+        self._delete = value
 
     @property
     def remarks(self) -> list:
@@ -292,22 +319,22 @@ class AugmentedDiff:
     @property
     def actions(self):
         """Get all actions combined in a single list."""
-        return {"create": self.create, "modify": self.modify, "delete": self.delete}
+        return {"create": self._create, "modify": self._modify, "delete": self._delete}
 
     def __repr__(self):
         return """AugmentedDiff ({create} created, {modify} modified, {delete} deleted)""".format(
-            create=len(self.create),
-            modify=len(self.modify),
-            delete=len(self.delete),
+            create=len(self._create),
+            modify=len(self._modify),
+            delete=len(self._delete),
         )
 
     def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self.create.clear()
-        self.modify.clear()
-        self.delete.clear()
+        self._create.clear()
+        self._modify.clear()
+        self._delete.clear()
 
 
 class ContinuousAugmentedDiff:
