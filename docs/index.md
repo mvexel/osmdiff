@@ -12,7 +12,3 @@ OSMDiff provides Python tools for working with OpenStreetMap change data:
 - [Getting Started](/getting-started) - First steps with OSMDiff
 - [API Reference](/api/augmenteddiff) - Detailed documentation
 - [Examples](/examples) - More advanced usage patterns
-
-## About OpenStreetMap
-
-OpenStreetMap is the free, editable map of the world, created and maintained by volunteers. OSMDiff helps you work with the continuous stream of updates to this map.
