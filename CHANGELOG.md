@@ -1,5 +1,22 @@
 # Changelog
 
+## v0.4.6 (2025-05-04)
+
+### ✅ Testing Improvements
+- Added comprehensive tests for OSM object geo interfaces (Node, Way, Relation)
+- Added coordinate validation tests for Node class
+- Added tests for Member class parsing and geo interface
+- Improved test coverage for Way.length() method
+- Added equality comparison tests for Node objects
+
+### 🐛 Bug Fixes
+- Fixed coordinate validation in Node class to properly handle edge cases
+- Improved error messages for invalid coordinates
+
+### 📖 Documentation
+- Added more detailed docstrings for geo interface methods
+- Improved examples in OSM object class documentation
+
 ## v0.4.5 (2025-05-03)
 
 ### 🚀 Features
