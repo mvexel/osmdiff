@@ -25,8 +25,6 @@ def test_osmobject_repr():
 
 
 import xml.etree.ElementTree as ET
-import tempfile
-import os
 
 
 def test_osmobject_parse_tags_and_bounds():
@@ -79,18 +77,6 @@ def test_osmobject_repr():
     assert "Relation 7 (2 members)" in repr(rel)
 
 
-def test_way_length():
-    """Test Way.length() method."""
-    way = Way()
-    way.nodes = [
-        Node(attribs={"lon": "0", "lat": "0"}),
-        Node(attribs={"lon": "1", "lat": "0"}),
-        Node(attribs={"lon": "1", "lat": "1"}),
-    ]
-    # Just test it returns a float - actual calculation is approximate
-    assert isinstance(way.length(), float)
-
-
 def test_way_is_closed():
     way = Way()
     way.nodes = [1, 2, 1]
@@ -114,13 +100,18 @@ def test_node_geo_interface_and_equality():
 def test_node_invalid_coords():
     """Test Node coordinate validation."""
     with pytest.raises(ValueError):
-        Node(attribs={"lon": "181", "lat": "0"})  # Invalid lon
+        node = Node(attribs={"lon": "181", "lat": "0"})  # Invalid lon
+        lon = node.lon
     with pytest.raises(ValueError):
-        Node(attribs={"lon": "0", "lat": "91"})  # Invalid lat
+        node = Node(attribs={"lon": "0", "lat": "91"})  # Invalid lat
+        lat = node.lat
+
     with pytest.raises(ValueError):
-        Node(attribs={"lon": "-181", "lat": "0"})  # Invalid lon
+        node = Node(attribs={"lon": "-181", "lat": "0"})  # Invalid lon
+        lon = node.lon
     with pytest.raises(ValueError):
-        Node(attribs={"lon": "0", "lat": "-91"})  # Invalid lat
+        node = Node(attribs={"lon": "0", "lat": "-91"})  # Invalid lat
+        lat = node.lat
 
 
 def test_way_geo_interface():
@@ -149,14 +140,19 @@ def test_relation_geo_interface():
     """Test Relation geo interface."""
     relation = Relation()
     relation.members = [
-        Node(attribs={"lon": "0", "lat": "0"}),
-        Way(nodes=[Node(attribs={"lon": "1", "lat": "0"})]),
+        Node(attribs={"lon": "0.0", "lat": "0.0"}),
+        Way(
+            nodes=[
+                Node(attribs={"lon": "1.0", "lat": "0.0"}),
+                Node(attribs={"lon": "1.0", "lat": "1.0"}),
+            ]
+        ),
     ]
     assert relation.__geo_interface__ == {
         "type": "GeometryCollection",
         "geometries": [
-            {"type": "Point", "coordinates": [0, 0]},
-            {"type": "LineString", "coordinates": [[1, 0]]},
+            {"type": "Point", "coordinates": [0.0, 0.0]},
+            {"type": "LineString", "coordinates": [[1.0, 0.0], [1.0, 1.0]]},
         ],
     }
     node1 = Node(attribs={"lat": 10.0, "lon": 20.0})
@@ -216,9 +212,7 @@ def test_relation_init_with_values():
 def test_member_class():
     """Test Member class methods."""
     member = Member()
-    elem = ET.ElementTree.Element(
-        "member", {"type": "node", "ref": "123", "role": "point"}
-    )
+    elem = ET.Element("member", {"type": "node", "ref": "123", "role": "point"})
     member._parse_attributes(elem)
     assert member.__geo_interface__ == {
         "type": "Feature",

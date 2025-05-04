@@ -9,4 +9,4 @@ from .augmenteddiff import AugmentedDiff, ContinuousAugmentedDiff
 from .osm import Node, Relation, Way
 from .osmchange import OSMChange
 
-__version__ = "0.4.5"
+__version__ = "0.4.6"

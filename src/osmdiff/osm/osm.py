@@ -312,12 +312,13 @@ class Way(OSMObject):
         tags: Dict[str, str] = None,
         attribs: Dict[str, str] = None,
         bounds: List[float] = None,
+        nodes: List[Node] = None,
     ) -> None:
         """Initialize a Way object."""
-        tags = tags or {}
-        attribs = attribs or {}
+        self.tags = tags or {}
+        self.attribs = attribs or {}
+        self.nodes = nodes or []
         super().__init__(tags, attribs, bounds)
-        self.nodes = []
 
     def is_closed(self) -> bool:
         """
@@ -333,7 +334,7 @@ class Way(OSMObject):
         Calculate approximate length in meters.
 
         Returns:
-            float: Length of way in meters
+            float: Length of way in meters (not implemented)
         """
         # Implementation using haversine formula
         pass
