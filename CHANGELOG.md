@@ -2,6 +2,8 @@
 
 ## v0.4.6 (2025-05-04)
 
+**This version fixes some critical bugs in 0.4.5, existing users should upgrade immediately**
+
 ### ✅ Testing Improvements
 - Added comprehensive tests for OSM object geo interfaces (Node, Way, Relation)
 - Added coordinate validation tests for Node class
@@ -10,6 +12,9 @@
 - Added equality comparison tests for Node objects
 
 ### 🐛 Bug Fixes
+- Fixed critical bugs in `AugmentedDiff` and `ContinuousAugmentedDiff`
+    - state fetching
+    - iteration
 - Fixed coordinate validation in Node class to properly handle edge cases
 - Improved error messages for invalid coordinates
 
