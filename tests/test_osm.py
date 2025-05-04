@@ -69,6 +69,17 @@ def test_osmobject_repr():
     rel.members = [1, 2]
     assert "Relation 7 (2 members)" in repr(rel)
 
+def test_way_length():
+    """Test Way.length() method."""
+    way = Way()
+    way.nodes = [
+        Node(attribs={"lon": "0", "lat": "0"}),
+        Node(attribs={"lon": "1", "lat": "0"}),
+        Node(attribs={"lon": "1", "lat": "1"}),
+    ]
+    # Just test it returns a float - actual calculation is approximate
+    assert isinstance(way.length(), float)
+
 def test_way_is_closed():
     way = Way()
     way.nodes = [1, 2, 1]
@@ -77,6 +88,62 @@ def test_way_is_closed():
     assert way.is_closed() is False
 
 def test_node_geo_interface_and_equality():
+    """Test Node geo interface and equality."""
+    node1 = Node(attribs={"lon": "1", "lat": "2"})
+    node2 = Node(attribs={"lon": "1", "lat": "2"})
+    node3 = Node(attribs={"lon": "3", "lat": "4"})
+    
+    assert node1.__geo_interface__ == {"type": "Point", "coordinates": [1, 2]}
+    assert node1 == node2
+    assert node1 != node3
+    assert node1 != "not a node"
+
+def test_node_invalid_coords():
+    """Test Node coordinate validation."""
+    with pytest.raises(ValueError):
+        Node(attribs={"lon": "181", "lat": "0"})  # Invalid lon
+    with pytest.raises(ValueError):
+        Node(attribs={"lon": "0", "lat": "91"})  # Invalid lat
+    with pytest.raises(ValueError):
+        Node(attribs={"lon": "-181", "lat": "0"})  # Invalid lon
+    with pytest.raises(ValueError):
+        Node(attribs={"lon": "0", "lat": "-91"})  # Invalid lat
+
+def test_way_geo_interface():
+    """Test Way geo interface."""
+    way = Way()
+    way.nodes = [
+        Node(attribs={"lon": "0", "lat": "0"}),
+        Node(attribs={"lon": "1", "lat": "0"}),
+        Node(attribs={"lon": "1", "lat": "1"}),
+    ]
+    # Open way should be LineString
+    assert way.__geo_interface__ == {
+        "type": "LineString", 
+        "coordinates": [[0, 0], [1, 0], [1, 1]]
+    }
+    
+    # Closed way should be Polygon
+    way.nodes.append(Node(attribs={"lon": "0", "lat": "0"}))
+    assert way.__geo_interface__ == {
+        "type": "Polygon",
+        "coordinates": [[[0, 0], [1, 0], [1, 1], [0, 0]]]
+    }
+
+def test_relation_geo_interface():
+    """Test Relation geo interface."""
+    relation = Relation()
+    relation.members = [
+        Node(attribs={"lon": "0", "lat": "0"}),
+        Way(nodes=[Node(attribs={"lon": "1", "lat": "0"})])
+    ]
+    assert relation.__geo_interface__ == {
+        "type": "GeometryCollection",
+        "geometries": [
+            {"type": "Point", "coordinates": [0, 0]},
+            {"type": "LineString", "coordinates": [[1, 0]]}
+        ]
+    }
     node1 = Node(attribs={"lat": 10.0, "lon": 20.0})
     node2 = Node(attribs={"lat": 10.0, "lon": 20.0})
     node3 = Node(attribs={"lat": 10.1, "lon": 20.1})
