@@ -26,6 +26,11 @@ async def root():
     return {"message": "Hello World"}
 
 
+@app.get("/items/{item_id}")
+async def read_item(item_id: int, q: Optional[str] = None):
+    return {"item_id": item_id, "q": q}
+
+
 @app.get("/adiff/{sequence_number}")
 async def get_augmented_diff(sequence_number: int):
     adiff = AugmentedDiff(sequence_number=sequence_number)
