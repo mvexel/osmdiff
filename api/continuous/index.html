@@ -1,0 +1,1111 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../augmenteddiff/">
+      
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+    
+    
+      
+        <title>ContinuousAugmentedDiff - OSMDiff</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.342714a4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#continuousaugmenteddiff" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="OSMDiff" class="md-header__button md-logo" aria-label="OSMDiff" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            OSMDiff
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              ContinuousAugmentedDiff
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="OSMDiff" class="md-nav__button md-logo" aria-label="OSMDiff" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    OSMDiff
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Examples
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    API Reference
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            API Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../osm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    OSM
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../osmchange/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    OSMChange
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../augmenteddiff/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    AugmentedDiff
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    ContinuousAugmentedDiff
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    ContinuousAugmentedDiff
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#features" class="md-nav__link">
+    <span class="md-ellipsis">
+      Features
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#basic-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic Usage
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Advanced Configuration
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      API Reference
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#osmdiff.augmenteddiff.ContinuousAugmentedDiff" class="md-nav__link">
+    <span class="md-ellipsis">
+      ContinuousAugmentedDiff
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#osmdiff.augmenteddiff.ContinuousAugmentedDiff.__iter__" class="md-nav__link">
+    <span class="md-ellipsis">
+      __iter__
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#osmdiff.augmenteddiff.ContinuousAugmentedDiff.__next__" class="md-nav__link">
+    <span class="md-ellipsis">
+      __next__
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      See Also
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#features" class="md-nav__link">
+    <span class="md-ellipsis">
+      Features
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#basic-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic Usage
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Advanced Configuration
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      API Reference
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#osmdiff.augmenteddiff.ContinuousAugmentedDiff" class="md-nav__link">
+    <span class="md-ellipsis">
+      ContinuousAugmentedDiff
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#osmdiff.augmenteddiff.ContinuousAugmentedDiff.__iter__" class="md-nav__link">
+    <span class="md-ellipsis">
+      __iter__
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#osmdiff.augmenteddiff.ContinuousAugmentedDiff.__next__" class="md-nav__link">
+    <span class="md-ellipsis">
+      __next__
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      See Also
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="continuousaugmenteddiff">ContinuousAugmentedDiff<a class="headerlink" href="#continuousaugmenteddiff" title="Permanent link">#</a></h1>
+<p>Iterator for continuous monitoring of OpenStreetMap changes using augmented diffs.</p>
+<p>Builds on <a href="../augmenteddiff/">AugmentedDiff</a> to provide automatic polling with backoff.</p>
+<h2 id="features">Features<a class="headerlink" href="#features" title="Permanent link">#</a></h2>
+<ul>
+<li>Continuous monitoring</li>
+<li>Automatic sequence number tracking</li>
+<li>Exponential backoff during errors</li>
+<li>Configurable polling intervals</li>
+<li>Bounding box filtering</li>
+</ul>
+<h2 id="basic-usage">Basic Usage<a class="headerlink" href="#basic-usage" title="Permanent link">#</a></h2>
+<pre><code class="language-python">from osmdiff import ContinuousAugmentedDiff
+
+# Monitor London area
+monitor = ContinuousAugmentedDiff(
+    minlon=-0.489,
+    minlat=51.28,
+    maxlon=0.236,
+    maxlat=51.686
+)
+
+for changes in monitor:  # Runs indefinitely
+    print(f&quot;Changeset {changes.sequence_number}:&quot;)
+    print(f&quot;  New: {len(changes.create)}&quot;)
+    print(f&quot;  Modified: {len(changes.modify)}&quot;)
+</code></pre>
+<h2 id="advanced-configuration">Advanced Configuration<a class="headerlink" href="#advanced-configuration" title="Permanent link">#</a></h2>
+<pre><code class="language-python">monitor = ContinuousAugmentedDiff(
+    minlon=-0.489,
+    minlat=51.28,
+    maxlon=0.236,
+    maxlat=51.686,
+    min_interval=60,  # Minimum 1 minute between checks
+    max_interval=300  # Maximum 5 minutes during backoff
+)
+</code></pre>
+<h2 id="api-reference">API Reference<a class="headerlink" href="#api-reference" title="Permanent link">#</a></h2>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<a id="osmdiff.augmenteddiff.ContinuousAugmentedDiff"></a>
+    <div class="doc doc-contents first">
+
+
+        <p>Iterator for continuously fetching augmented diffs with backoff.</p>
+<p>Yields AugmentedDiff objects as new diffs become available.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>minlon</code>
+            </td>
+            <td>
+                  <code><span title="typing.Optional">Optional</span>[<span title="float">float</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Minimum longitude of bounding box</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>minlat</code>
+            </td>
+            <td>
+                  <code><span title="typing.Optional">Optional</span>[<span title="float">float</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Minimum latitude of bounding box</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>maxlon</code>
+            </td>
+            <td>
+                  <code><span title="typing.Optional">Optional</span>[<span title="float">float</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Maximum longitude of bounding box</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>maxlat</code>
+            </td>
+            <td>
+                  <code><span title="typing.Optional">Optional</span>[<span title="float">float</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Maximum latitude of bounding box</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>base_url</code>
+            </td>
+            <td>
+                  <code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Override default Overpass API URL</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>timeout</code>
+            </td>
+            <td>
+                  <code><span title="typing.Optional">Optional</span>[<span title="int">int</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Request timeout in seconds</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>min_interval</code>
+            </td>
+            <td>
+                  <code><span title="int">int</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Minimum seconds between checks (default: 30)</p>
+              </div>
+            </td>
+            <td>
+                  <code>30</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>max_interval</code>
+            </td>
+            <td>
+                  <code><span title="int">int</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Maximum seconds between checks (default: 120)</p>
+              </div>
+            </td>
+            <td>
+                  <code>120</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+
+
+
+
+
+                  <details class="quote">
+                    <summary>Source code in <code>src/osmdiff/augmenteddiff.py</code></summary>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-356">356</a></span>
+<span class="normal"><a href="#__codelineno-0-357">357</a></span>
+<span class="normal"><a href="#__codelineno-0-358">358</a></span>
+<span class="normal"><a href="#__codelineno-0-359">359</a></span>
+<span class="normal"><a href="#__codelineno-0-360">360</a></span>
+<span class="normal"><a href="#__codelineno-0-361">361</a></span>
+<span class="normal"><a href="#__codelineno-0-362">362</a></span>
+<span class="normal"><a href="#__codelineno-0-363">363</a></span>
+<span class="normal"><a href="#__codelineno-0-364">364</a></span>
+<span class="normal"><a href="#__codelineno-0-365">365</a></span>
+<span class="normal"><a href="#__codelineno-0-366">366</a></span>
+<span class="normal"><a href="#__codelineno-0-367">367</a></span>
+<span class="normal"><a href="#__codelineno-0-368">368</a></span>
+<span class="normal"><a href="#__codelineno-0-369">369</a></span>
+<span class="normal"><a href="#__codelineno-0-370">370</a></span>
+<span class="normal"><a href="#__codelineno-0-371">371</a></span>
+<span class="normal"><a href="#__codelineno-0-372">372</a></span>
+<span class="normal"><a href="#__codelineno-0-373">373</a></span>
+<span class="normal"><a href="#__codelineno-0-374">374</a></span>
+<span class="normal"><a href="#__codelineno-0-375">375</a></span>
+<span class="normal"><a href="#__codelineno-0-376">376</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-356" name="__codelineno-0-356"></a><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+<a id="__codelineno-0-357" name="__codelineno-0-357"></a>    <span class="bp">self</span><span class="p">,</span>
+<a id="__codelineno-0-358" name="__codelineno-0-358"></a>    <span class="n">minlon</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-359" name="__codelineno-0-359"></a>    <span class="n">minlat</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-360" name="__codelineno-0-360"></a>    <span class="n">maxlon</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-361" name="__codelineno-0-361"></a>    <span class="n">maxlat</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-362" name="__codelineno-0-362"></a>    <span class="n">base_url</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-363" name="__codelineno-0-363"></a>    <span class="n">timeout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-364" name="__codelineno-0-364"></a>    <span class="n">min_interval</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span>
+<a id="__codelineno-0-365" name="__codelineno-0-365"></a>    <span class="n">max_interval</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">120</span><span class="p">,</span>
+<a id="__codelineno-0-366" name="__codelineno-0-366"></a><span class="p">):</span>
+<a id="__codelineno-0-367" name="__codelineno-0-367"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">bbox</span> <span class="o">=</span> <span class="p">(</span><span class="n">minlon</span><span class="p">,</span> <span class="n">minlat</span><span class="p">,</span> <span class="n">maxlon</span><span class="p">,</span> <span class="n">maxlat</span><span class="p">)</span>
+<a id="__codelineno-0-368" name="__codelineno-0-368"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">=</span> <span class="n">base_url</span>
+<a id="__codelineno-0-369" name="__codelineno-0-369"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="n">timeout</span>
+<a id="__codelineno-0-370" name="__codelineno-0-370"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">min_interval</span> <span class="o">=</span> <span class="n">min_interval</span>
+<a id="__codelineno-0-371" name="__codelineno-0-371"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">max_interval</span> <span class="o">=</span> <span class="n">max_interval</span>
+<a id="__codelineno-0-372" name="__codelineno-0-372"></a>
+<a id="__codelineno-0-373" name="__codelineno-0-373"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">_current_sequence</span> <span class="o">=</span> <span class="kc">None</span>
+<a id="__codelineno-0-374" name="__codelineno-0-374"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">_current_interval</span> <span class="o">=</span> <span class="n">min_interval</span>
+<a id="__codelineno-0-375" name="__codelineno-0-375"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">_last_check</span> <span class="o">=</span> <span class="kc">None</span>
+<a id="__codelineno-0-376" name="__codelineno-0-376"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+                  </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="osmdiff.augmenteddiff.ContinuousAugmentedDiff.__iter__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__iter__</span><span class="p">()</span></code>
+
+<a href="#osmdiff.augmenteddiff.ContinuousAugmentedDiff.__iter__" class="headerlink" title="Permanent link">#</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="quote">
+              <summary>Source code in <code>src/osmdiff/augmenteddiff.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-397">397</a></span>
+<span class="normal"><a href="#__codelineno-0-398">398</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-397" name="__codelineno-0-397"></a><span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-0-398" name="__codelineno-0-398"></a>    <span class="k">return</span> <span class="bp">self</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="osmdiff.augmenteddiff.ContinuousAugmentedDiff.__next__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__next__</span><span class="p">()</span></code>
+
+<a href="#osmdiff.augmenteddiff.ContinuousAugmentedDiff.__next__" class="headerlink" title="Permanent link">#</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+
+            <details class="quote">
+              <summary>Source code in <code>src/osmdiff/augmenteddiff.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-400">400</a></span>
+<span class="normal"><a href="#__codelineno-0-401">401</a></span>
+<span class="normal"><a href="#__codelineno-0-402">402</a></span>
+<span class="normal"><a href="#__codelineno-0-403">403</a></span>
+<span class="normal"><a href="#__codelineno-0-404">404</a></span>
+<span class="normal"><a href="#__codelineno-0-405">405</a></span>
+<span class="normal"><a href="#__codelineno-0-406">406</a></span>
+<span class="normal"><a href="#__codelineno-0-407">407</a></span>
+<span class="normal"><a href="#__codelineno-0-408">408</a></span>
+<span class="normal"><a href="#__codelineno-0-409">409</a></span>
+<span class="normal"><a href="#__codelineno-0-410">410</a></span>
+<span class="normal"><a href="#__codelineno-0-411">411</a></span>
+<span class="normal"><a href="#__codelineno-0-412">412</a></span>
+<span class="normal"><a href="#__codelineno-0-413">413</a></span>
+<span class="normal"><a href="#__codelineno-0-414">414</a></span>
+<span class="normal"><a href="#__codelineno-0-415">415</a></span>
+<span class="normal"><a href="#__codelineno-0-416">416</a></span>
+<span class="normal"><a href="#__codelineno-0-417">417</a></span>
+<span class="normal"><a href="#__codelineno-0-418">418</a></span>
+<span class="normal"><a href="#__codelineno-0-419">419</a></span>
+<span class="normal"><a href="#__codelineno-0-420">420</a></span>
+<span class="normal"><a href="#__codelineno-0-421">421</a></span>
+<span class="normal"><a href="#__codelineno-0-422">422</a></span>
+<span class="normal"><a href="#__codelineno-0-423">423</a></span>
+<span class="normal"><a href="#__codelineno-0-424">424</a></span>
+<span class="normal"><a href="#__codelineno-0-425">425</a></span>
+<span class="normal"><a href="#__codelineno-0-426">426</a></span>
+<span class="normal"><a href="#__codelineno-0-427">427</a></span>
+<span class="normal"><a href="#__codelineno-0-428">428</a></span>
+<span class="normal"><a href="#__codelineno-0-429">429</a></span>
+<span class="normal"><a href="#__codelineno-0-430">430</a></span>
+<span class="normal"><a href="#__codelineno-0-431">431</a></span>
+<span class="normal"><a href="#__codelineno-0-432">432</a></span>
+<span class="normal"><a href="#__codelineno-0-433">433</a></span>
+<span class="normal"><a href="#__codelineno-0-434">434</a></span>
+<span class="normal"><a href="#__codelineno-0-435">435</a></span>
+<span class="normal"><a href="#__codelineno-0-436">436</a></span>
+<span class="normal"><a href="#__codelineno-0-437">437</a></span>
+<span class="normal"><a href="#__codelineno-0-438">438</a></span>
+<span class="normal"><a href="#__codelineno-0-439">439</a></span>
+<span class="normal"><a href="#__codelineno-0-440">440</a></span>
+<span class="normal"><a href="#__codelineno-0-441">441</a></span>
+<span class="normal"><a href="#__codelineno-0-442">442</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-400" name="__codelineno-0-400"></a><span class="k">def</span><span class="w"> </span><span class="fm">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AugmentedDiff</span><span class="p">:</span>
+<a id="__codelineno-0-401" name="__codelineno-0-401"></a>    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+<a id="__codelineno-0-402" name="__codelineno-0-402"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_wait_for_next_check</span><span class="p">()</span>
+<a id="__codelineno-0-403" name="__codelineno-0-403"></a>
+<a id="__codelineno-0-404" name="__codelineno-0-404"></a>        <span class="c1"># check if we have a newer sequence on the remote</span>
+<a id="__codelineno-0-405" name="__codelineno-0-405"></a>        <span class="n">newest_remote</span> <span class="o">=</span> <span class="n">AugmentedDiff</span><span class="o">.</span><span class="n">get_state</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">)</span>
+<a id="__codelineno-0-406" name="__codelineno-0-406"></a>
+<a id="__codelineno-0-407" name="__codelineno-0-407"></a>        <span class="c1"># if we don&#39;t have a local sequence number yet, set it</span>
+<a id="__codelineno-0-408" name="__codelineno-0-408"></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_sequence</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-409" name="__codelineno-0-409"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_current_sequence</span> <span class="o">=</span> <span class="n">newest_remote</span>
+<a id="__codelineno-0-410" name="__codelineno-0-410"></a>
+<a id="__codelineno-0-411" name="__codelineno-0-411"></a>        <span class="c1"># if we do, proceed ony if the remote is newer</span>
+<a id="__codelineno-0-412" name="__codelineno-0-412"></a>        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_sequence</span> <span class="o">&gt;=</span> <span class="n">newest_remote</span><span class="p">:</span>
+<a id="__codelineno-0-413" name="__codelineno-0-413"></a>            <span class="k">continue</span>
+<a id="__codelineno-0-414" name="__codelineno-0-414"></a>
+<a id="__codelineno-0-415" name="__codelineno-0-415"></a>        <span class="c1"># Create diff object for new sequence</span>
+<a id="__codelineno-0-416" name="__codelineno-0-416"></a>        <span class="n">diff</span> <span class="o">=</span> <span class="n">AugmentedDiff</span><span class="p">(</span>
+<a id="__codelineno-0-417" name="__codelineno-0-417"></a>            <span class="n">minlon</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bbox</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+<a id="__codelineno-0-418" name="__codelineno-0-418"></a>            <span class="n">minlat</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bbox</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+<a id="__codelineno-0-419" name="__codelineno-0-419"></a>            <span class="n">maxlon</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bbox</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+<a id="__codelineno-0-420" name="__codelineno-0-420"></a>            <span class="n">maxlat</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bbox</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+<a id="__codelineno-0-421" name="__codelineno-0-421"></a>            <span class="n">sequence_number</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_sequence</span><span class="p">,</span>
+<a id="__codelineno-0-422" name="__codelineno-0-422"></a>            <span class="n">base_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span>
+<a id="__codelineno-0-423" name="__codelineno-0-423"></a>            <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">,</span>
+<a id="__codelineno-0-424" name="__codelineno-0-424"></a>        <span class="p">)</span>
+<a id="__codelineno-0-425" name="__codelineno-0-425"></a>
+<a id="__codelineno-0-426" name="__codelineno-0-426"></a>        <span class="c1"># Try to retrieve the diff</span>
+<a id="__codelineno-0-427" name="__codelineno-0-427"></a>        <span class="k">try</span><span class="p">:</span>
+<a id="__codelineno-0-428" name="__codelineno-0-428"></a>            <span class="n">status</span> <span class="o">=</span> <span class="n">diff</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span><span class="n">auto_increment</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<a id="__codelineno-0-429" name="__codelineno-0-429"></a>            <span class="k">if</span> <span class="n">status</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+<a id="__codelineno-0-430" name="__codelineno-0-430"></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to retrieve diff: HTTP </span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-431" name="__codelineno-0-431"></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_backoff</span><span class="p">()</span>
+<a id="__codelineno-0-432" name="__codelineno-0-432"></a>                <span class="k">continue</span>
+<a id="__codelineno-0-433" name="__codelineno-0-433"></a>
+<a id="__codelineno-0-434" name="__codelineno-0-434"></a>            <span class="c1"># Success! Reset backoff and update sequence</span>
+<a id="__codelineno-0-435" name="__codelineno-0-435"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_reset_backoff</span><span class="p">()</span>
+<a id="__codelineno-0-436" name="__codelineno-0-436"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_current_sequence</span> <span class="o">+=</span> <span class="mi">1</span>
+<a id="__codelineno-0-437" name="__codelineno-0-437"></a>            <span class="k">return</span> <span class="n">diff</span>
+<a id="__codelineno-0-438" name="__codelineno-0-438"></a>
+<a id="__codelineno-0-439" name="__codelineno-0-439"></a>        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+<a id="__codelineno-0-440" name="__codelineno-0-440"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error retrieving diff: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-441" name="__codelineno-0-441"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_backoff</span><span class="p">()</span>
+<a id="__codelineno-0-442" name="__codelineno-0-442"></a>            <span class="k">continue</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div><h2 id="see-also">See Also<a class="headerlink" href="#see-also" title="Permanent link">#</a></h2>
+<ul>
+<li><a href="../augmenteddiff/">AugmentedDiff</a> - For single diff retrieval</li>
+<li><a href="../osmchange/">OSMChange</a> - For standard changesets</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.13a4f30d.min.js"></script>
+      
+    
+  </body>
+</html>
