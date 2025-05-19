@@ -3,7 +3,7 @@
 ## We are on Sourcehut
 If you are reading this notice on Github, please point your bookmarks and git remotes at the `osmdiff` repo [on Sourcehut](https://git.sr.ht/~mvexel/osmdiff) instead. This project will not be updated on Github.
 
-===
+---
 
 A read-only interface to OpenStreetMap change APIs and files. See also [pyosm](https://github.com/iandees/pyosm) which can do similar things. 
 
