@@ -38,8 +38,6 @@ class AugmentedDiff:
     minlat = None
     maxlon = None
     maxlat = None
-    timestamp = None
-    remarks = []
 
     def __init__(
         self,
@@ -296,7 +294,7 @@ class AugmentedDiff:
         self._timestamp = value
 
     @property
-    def sequence_number(self) -> int:
+    def sequence_number(self) -> int | None:
         """Get the sequence number identifying this diff.
 
         Sequence numbers increment monotonically and uniquely identify each diff.

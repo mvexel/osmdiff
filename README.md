@@ -5,7 +5,7 @@ If you are reading this notice on Github, please point your bookmarks and git re
 
 ---
 
-A read-only interface to OpenStreetMap change APIs and files. See also [pyosm](https://github.com/iandees/pyosm) which can do similar things. 
+A read-only interface to OpenStreetMap change APIs and files. See also [pyosm](https://github.com/iandees/pyosm) which can do similar things.
 
 ## Documentation
 
@@ -171,8 +171,7 @@ change = OSMChange(
 
 Join the conversation and get help:
 
-- [GitHub Discussions](https://github.com/mvexel/osmdiff/discussions) - For questions, ideas, and general discussion
-- [OpenStreetMap Community Forum](https://community.openstreetmap.org/) - For broader OSM-related discussions
+- [OpenStreetMap Community Forum](https://community.openstreetmap.org/) - Please mention me (`mvexel`)
 - [OSM Slack](https://osmus.slack.com/) - Join the #dev channel
 
 Please be respectful and follow the [OpenStreetMap Code of Conduct](https://wiki.openstreetmap.org/wiki/Code_of_conduct) in all community interactions.
@@ -180,7 +179,5 @@ Please be respectful and follow the [OpenStreetMap Code of Conduct](https://wiki
 ## Contributing
 
 I welcome your contributions in code, documentation and suggestions for enhancements.
-
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 If you find `osmdiff` useful, or you use it in commercial software, please consider sponsoring this project.

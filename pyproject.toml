@@ -11,22 +11,23 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
 ]
-dependencies = [
-    "python-dateutil>=2.9.0.post0",
-    "requests>=2.32.2",
-]
+dependencies = ["python-dateutil>=2.9.0.post0", "requests>=2.32.2"]
 license = "MIT"
 
 [project.urls]
-"Homepage" = "https://github.com/mvexel/osmdiff"
-"Bug Tracker" = "https://github.com/mvexel/osmdiff/issues"
+"Homepage" = "https://git.sr.ht/~mvexel/osmdiff"
+"Bug Tracker" = "https://todo.sr.ht/~mvexel/tracker?search=label%3Aosmdiff"
 
 [tool.setuptools.dynamic]
-version = {attr = "osmdiff.__version__"}
+version = { attr = "osmdiff.__version__" }
 
 [tool.pytest.ini_options]
 markers = ["integration: mark a test as an integration test"]
 addopts = "--cov=src/osmdiff --cov-report=term-missing --cov-report=html --cov-fail-under=85"
+
+[tool.pyright]
+venvPath = "."
+venv = ".venv"
 
 [dependency-groups]
 dev = [
@@ -38,13 +39,6 @@ dev = [
     "typing-extensions>=4.12.2",
 ]
 
-test = [
-    "pytest>=7.0.0",
-    "pytest-cov>=3.0.0",
-    "requests-mock>=1.9.3",
-]
+test = ["pytest>=7.0.0", "pytest-cov>=3.0.0", "requests-mock>=1.9.3"]
 
-examples = [
-    "fastapi>=0.115.12",
-    "uvicorn>=0.34.2"
-]
+examples = ["fastapi>=0.115.12", "uvicorn>=0.34.2", "shapely>=2.1.1"]

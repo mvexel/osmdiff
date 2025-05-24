@@ -107,7 +107,7 @@ class OSMObject:
         self,
         tags: Dict[str, str] = {},
         attribs: Dict[str, str] = {},
-        bounds: List[float] = None,
+        bounds: List[float] = [],
     ) -> None:
         """Initialize an empty OSM object."""
         self.tags = tags or {}
@@ -183,6 +183,7 @@ class OSMObject:
         if osmtype not in ("node", "nd", "way", "relation"):
             raise TypeError(f"Unknown OSM element type: {osmtype}")
 
+        o = OSMObject()
         if osmtype in ("node", "nd"):
             o = Node()
         elif osmtype == "way":
@@ -249,7 +250,7 @@ class Node(OSMObject):
         self,
         tags: Dict[str, str] = {},
         attribs: Dict[str, str] = {},
-        bounds: List[float] = None,
+        bounds: List[float] = [],
     ) -> None:
         super().__init__(tags, attribs, bounds)
 
@@ -310,10 +311,10 @@ class Way(OSMObject):
 
     def __init__(
         self,
-        tags: Dict[str, str] = None,
-        attribs: Dict[str, str] = None,
-        bounds: List[float] = None,
-        nodes: List[Node] = None,
+        tags: Dict[str, str] = {},
+        attribs: Dict[str, str] = {},
+        bounds: List[float] = [],
+        nodes: List[Node] = [],
     ) -> None:
         """Initialize a Way object."""
         self.tags = tags or {}
@@ -330,7 +331,7 @@ class Way(OSMObject):
         """
         return bool(self.nodes and self.nodes[0] == self.nodes[-1])
 
-    def length(self) -> float:
+    def length(self) -> None:
         """
         Calculate approximate length in meters.
 
@@ -387,9 +388,9 @@ class Relation(OSMObject):
 
     def __init__(
         self,
-        tags: Dict[str, str] = None,
-        attribs: Dict[str, str] = None,
-        bounds: List[float] = None,
+        tags: Dict[str, str] = {},
+        attribs: Dict[str, str] = {},
+        bounds: List[float] = [],
     ) -> None:
         """Initialize a Relation object."""
         tags = tags or {}
