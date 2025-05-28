@@ -1,7 +1,7 @@
 # osmdiff
 
-## We are on Sourcehut
-If you are reading this notice on Github, please point your bookmarks and git remotes at the `osmdiff` repo [on Sourcehut](https://git.sr.ht/~mvexel/osmdiff) instead. This project will not be updated on Github.
+## We are on Codeberg!
+If you are reading this notice on Github, please point your bookmarks and git remotes at the `osmdiff` repo [on Codeberg](https://codeberg.org/mvexel/osmdiff) instead. This project will not be updated on Github.
 
 ---
 
