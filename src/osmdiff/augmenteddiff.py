@@ -185,6 +185,8 @@ class AugmentedDiff:
             self._create, self._modify, self._delete = ([], [], [])
 
         url = self.base_url.format(sequence_number=self.sequence_number)
+        if self.minlon and self.minlat and self.maxlon and self.maxlat:
+            url += f"&bbox={self.minlon},{self.minlat},{self.maxlon},{self.maxlat}"
 
         self._logger.info(f"Retrieving diff {self.sequence_number} from {url}")
 
