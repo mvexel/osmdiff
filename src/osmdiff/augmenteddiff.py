@@ -1,7 +1,7 @@
 import logging
 import time
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Union
 from xml.etree import ElementTree
 
 import requests
@@ -294,7 +294,7 @@ class AugmentedDiff:
         self._timestamp = value
 
     @property
-    def sequence_number(self) -> int | None:
+    def sequence_number(self) -> Union[int, None]:
         """Get the sequence number identifying this diff.
 
         Sequence numbers increment monotonically and uniquely identify each diff.
