@@ -102,6 +102,85 @@ class AugmentedDiff:
         return_dict = {"sequence_number": int(response.text), "timestamp": None}
         return return_dict
 
+    def _is_in_bbox(self, osm_obj: OSMObject) -> bool:
+        """Check if object is within configured bounding box.
+        
+        Args:
+            osm_obj: The OSM object to check
+            
+        Returns:
+            bool: True if object is within bbox or no bbox constraints
+        """
+        if not (self.minlon and self.minlat and self.maxlon and self.maxlat):
+            return True  # No bbox constraints
+        
+        if isinstance(osm_obj, Node):
+            lon = float(osm_obj.lon)
+            lat = float(osm_obj.lat)
+            return (float(self.minlon) <= lon <= float(self.maxlon) and \
+                   (float(self.minlat) <= lat <= float(self.maxlat))
+        
+        if isinstance(osm_obj, (Way, Relation)):
+            # For ways/relations, check if any node is within bbox
+            bounds = osm_obj.bounds
+            if not bounds:
+                return False
+            minlon, minlat, maxlon, maxlat = bounds
+            return not (float(maxlon) < float(self.minlon) or \
+                      float(minlon) > float(self.maxlon) or \
+                      float(maxlat) < float(self.minlat) or \
+                      float(minlat) > float(self.maxlat))
+        return True
+
+    def _handle_create_action(self, elem):
+        """Handle create action elements."""
+        for child in elem:
+            osm_obj = OSMObject.from_xml(child)
+            if self._is_in_bbox(osm_obj):
+                self._create.append(osm_obj)
+
+    def _handle_modify_action(self, elem):
+        """Handle modify action elements."""
+        old = elem.find("old")
+        new = elem.find("new")
+        if old is None or new is None:
+            return
+            
+        osm_obj_old = None
+        osm_obj_new = None
+        for child in old:
+            osm_obj_old = OSMObject.from_xml(child)
+        for child in new:
+            osm_obj_new = OSMObject.from_xml(child)
+            
+        if osm_obj_old and osm_obj_new and \
+           (self._is_in_bbox(osm_obj_old) or self._is_in_bbox(osm_obj_new)):
+            self._modify.append({"old": osm_obj_old, "new": osm_obj_new})
+
+    def _handle_delete_action(self, elem):
+        """Handle delete action elements."""
+        old = elem.find("old")
+        new = elem.find("new")
+        osm_obj_old = None
+        osm_obj_new = None
+        
+        if old is not None:
+            for child in old:
+                osm_obj_old = OSMObject.from_xml(child)
+        if new is not None:
+            for child in new:
+                osm_obj_new = OSMObject.from_xml(child)
+                
+        if (osm_obj_old is not None or osm_obj_new is not None) and \
+           ((osm_obj_old and self._is_in_bbox(osm_obj_old)) or \
+           (osm_obj_new and self._is_in_bbox(osm_obj_new))):
+            deletion_info = {
+                "old": osm_obj_old,
+                "new": osm_obj_new,
+                "meta": elem.attrib.copy(),
+            }
+            self._delete.append(deletion_info)
+
     def _build_action(self, elem):
         """Parse an action element from an augmented diff.
 
@@ -109,74 +188,13 @@ class AugmentedDiff:
         Within each type, elements are ordered by ID.
         """
         action_type = elem.attrib["type"]
-
-        def is_in_bbox(osm_obj: OSMObject) -> bool:
-            """Check if object is within configured bounding box.
-            
-            Args:
-                osm_obj: The OSM object to check
-                
-            Returns:
-                bool: True if object is within bbox or no bbox constraints
-            """
-            if not (self.minlon and self.minlat and self.maxlon and self.maxlat):
-                return True  # No bbox constraints
-            
-            if isinstance(osm_obj, Node):
-                lon = float(osm_obj.lon)
-                lat = float(osm_obj.lat)
-                return (float(self.minlon) <= lon <= float(self.maxlon) and 
-                        float(self.minlat) <= lat <= float(self.maxlat))
-            
-            if isinstance(osm_obj, (Way, Relation)):
-                # For ways/relations, check if any node is within bbox
-                bounds = osm_obj.bounds
-                if not bounds:
-                    return False
-                minlon, minlat, maxlon, maxlat = bounds
-                return not (float(maxlon) < float(self.minlon) or 
-                          float(minlon) > float(self.maxlon) or
-                          float(maxlat) < float(self.minlat) or 
-                          float(minlat) > float(self.maxlat))
-            return True
-
+        
         if action_type == "create":
-            for child in elem:
-                osm_obj = OSMObject.from_xml(child)
-                if is_in_bbox(osm_obj):
-                    self._create.append(osm_obj)
+            self._handle_create_action(elem)
         elif action_type == "modify":
-            old = elem.find("old")
-            new = elem.find("new")
-            if old is not None and new is not None:
-                osm_obj_old = None
-                osm_obj_new = None
-                for child in old:
-                    osm_obj_old = OSMObject.from_xml(child)
-                for child in new:
-                    osm_obj_new = OSMObject.from_xml(child)
-                if osm_obj_old and osm_obj_new and (is_in_bbox(osm_obj_old) or is_in_bbox(osm_obj_new)):
-                    self._modify.append({"old": osm_obj_old, "new": osm_obj_new})
+            self._handle_modify_action(elem)
         elif action_type == "delete":
-            old = elem.find("old")
-            new = elem.find("new")
-            osm_obj_old = None
-            osm_obj_new = None
-            if old is not None:
-                for child in old:
-                    osm_obj_old = OSMObject.from_xml(child)
-            if new is not None:
-                for child in new:
-                    osm_obj_new = OSMObject.from_xml(child)
-            if (osm_obj_old is not None or osm_obj_new is not None) and \
-               ((osm_obj_old and is_in_bbox(osm_obj_old)) or (osm_obj_new and is_in_bbox(osm_obj_new))):
-                # Store both old and new, and optionally meta info
-                deletion_info = {
-                    "old": osm_obj_old,
-                    "new": osm_obj_new,
-                    "meta": elem.attrib.copy(),
-                }
-                self._delete.append(deletion_info)
+            self._handle_delete_action(elem)
 
     def _parse_stream(self, stream):
         for event, elem in ElementTree.iterparse(stream):
