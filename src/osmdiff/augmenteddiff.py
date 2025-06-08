@@ -10,7 +10,7 @@ from dateutil import parser
 from osmdiff.settings import DEFAULT_OVERPASS_URL
 
 from .config import API_CONFIG, DEFAULT_HEADERS
-from .osm import OSMObject
+from .osm import OSMObject, Node, Way, Relation
 
 
 class AugmentedDiff:
@@ -110,10 +110,30 @@ class AugmentedDiff:
         """
         action_type = elem.attrib["type"]
 
+        def is_in_bbox(osm_obj):
+            """Check if object is within configured bounding box."""
+            if not (self.minlon and self.minlat and self.maxlon and self.maxlat):
+                return True  # No bbox constraints
+            
+            if isinstance(osm_obj, Node):
+                return (self.minlon <= osm_obj.lon <= self.maxlon and 
+                        self.minlat <= osm_obj.lat <= self.maxlat)
+            
+            if isinstance(osm_obj, (Way, Relation)):
+                # For ways/relations, check if any node is within bbox
+                bounds = osm_obj.bounds
+                if not bounds:
+                    return False
+                minlon, minlat, maxlon, maxlat = bounds
+                return not (maxlon < self.minlon or minlon > self.maxlon or
+                          maxlat < self.minlat or minlat > self.maxlat)
+            return True
+
         if action_type == "create":
             for child in elem:
                 osm_obj = OSMObject.from_xml(child)
-                self._create.append(osm_obj)
+                if is_in_bbox(osm_obj):
+                    self._create.append(osm_obj)
         elif action_type == "modify":
             old = elem.find("old")
             new = elem.find("new")
@@ -124,7 +144,7 @@ class AugmentedDiff:
                     osm_obj_old = OSMObject.from_xml(child)
                 for child in new:
                     osm_obj_new = OSMObject.from_xml(child)
-                if osm_obj_old and osm_obj_new:
+                if osm_obj_old and osm_obj_new and (is_in_bbox(osm_obj_old) or is_in_bbox(osm_obj_new)):
                     self._modify.append({"old": osm_obj_old, "new": osm_obj_new})
         elif action_type == "delete":
             old = elem.find("old")
@@ -137,7 +157,8 @@ class AugmentedDiff:
             if new is not None:
                 for child in new:
                     osm_obj_new = OSMObject.from_xml(child)
-            if osm_obj_old is not None or osm_obj_new is not None:
+            if (osm_obj_old is not None or osm_obj_new is not None) and \
+               ((osm_obj_old and is_in_bbox(osm_obj_old)) or (osm_obj_new and is_in_bbox(osm_obj_new))):
                 # Store both old and new, and optionally meta info
                 deletion_info = {
                     "old": osm_obj_old,
