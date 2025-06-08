@@ -117,8 +117,8 @@ class AugmentedDiff:
         if isinstance(osm_obj, Node):
             lon = float(osm_obj.lon)
             lat = float(osm_obj.lat)
-            return (float(self.minlon) <= lon <= float(self.maxlon) and \
-                   (float(self.minlat) <= lat <= float(self.maxlat))
+            return (float(self.minlon) <= lon <= float(self.maxlon) and 
+                   float(self.minlat) <= lat <= float(self.maxlat))
         
         if isinstance(osm_obj, (Way, Relation)):
             # For ways/relations, check if any node is within bbox
