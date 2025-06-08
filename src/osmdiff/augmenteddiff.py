@@ -151,8 +151,10 @@ class AugmentedDiff:
             if elem.tag == "remark":
                 self._remarks.append(elem.text)
             if elem.tag == "meta":
-                timestamp = parser.parse(elem.attrib.get("osm_base"))
-                self.timestamp = timestamp
+                timestamp_str = elem.attrib.get("osm_base")
+                if timestamp_str:
+                    timestamp = parser.parse(timestamp_str)
+                    self.timestamp = timestamp
             if elem.tag == "action":
                 self._build_action(elem)
 
