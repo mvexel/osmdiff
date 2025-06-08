@@ -123,8 +123,10 @@ class AugmentedDiff:
                 return True  # No bbox constraints
             
             if isinstance(osm_obj, Node):
-                return (self.minlon <= osm_obj.lon <= self.maxlon and 
-                        self.minlat <= osm_obj.lat <= self.maxlat)
+                lon = float(osm_obj.lon)
+                lat = float(osm_obj.lat)
+                return (float(self.minlon) <= lon <= float(self.maxlon) and 
+                        float(self.minlat) <= lat <= float(self.maxlat))
             
             if isinstance(osm_obj, (Way, Relation)):
                 # For ways/relations, check if any node is within bbox
@@ -132,8 +134,10 @@ class AugmentedDiff:
                 if not bounds:
                     return False
                 minlon, minlat, maxlon, maxlat = bounds
-                return not (maxlon < self.minlon or minlon > self.maxlon or
-                          maxlat < self.minlat or minlat > self.maxlat)
+                return not (float(maxlon) < float(self.minlon) or 
+                          float(minlon) > float(self.maxlon) or
+                          float(maxlat) < float(self.minlat) or 
+                          float(minlat) > float(self.maxlat))
             return True
 
         if action_type == "create":
