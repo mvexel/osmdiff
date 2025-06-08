@@ -1,7 +1,7 @@
 import logging
 import time
 from datetime import datetime
-from typing import Optional, Union
+from typing import Optional
 from xml.etree import ElementTree
 
 import requests
