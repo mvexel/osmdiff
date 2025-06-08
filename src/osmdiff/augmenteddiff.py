@@ -84,15 +84,15 @@ class AugmentedDiff:
     @classmethod
     def get_state(
         cls, base_url: Optional[str] = None, timeout: Optional[int] = None
-    ) -> Optional[dict]:
-        """Get the current sequence number from the Overpass API.
+    ) -> dict:
+        """Get the current state from the Overpass API.
 
         Args:
             base_url: Override default Overpass API URL (deprecated)
             timeout: Optional override for request timeout
 
         Returns:
-            int: Sequence number
+            dict: Contains 'sequence_number' (int) and 'timestamp' (datetime or None)
         """
         state_url = API_CONFIG["overpass"]["state_url"]
         response = requests.get(
@@ -363,14 +363,15 @@ class ContinuousAugmentedDiff:
         timeout: Optional[int] = None,
         min_interval: int = 30,
         max_interval: int = 120,
-    ):
+    ) -> None:
+        """Initialize the continuous diff fetcher."""
         self.bbox = (minlon, minlat, maxlon, maxlat)
         self.base_url = base_url
         self.timeout = timeout
         self.min_interval = min_interval
         self.max_interval = max_interval
 
-        self._current_sequence = None
+        self._current_sequence: Optional[int] = None
         self._current_interval = min_interval
         self._last_check = None
         self._logger = logging.getLogger(__name__)
@@ -402,14 +403,15 @@ class ContinuousAugmentedDiff:
             self._wait_for_next_check()
 
             # check if we have a newer sequence on the remote
-            newest_remote = AugmentedDiff.get_state(timeout=self.timeout)
+            state = AugmentedDiff.get_state(timeout=self.timeout)
+            newest_remote_seq = state["sequence_number"]
 
             # if we don't have a local sequence number yet, set it
             if self._current_sequence is None:
-                self._current_sequence = newest_remote
+                self._current_sequence = newest_remote_seq
 
-            # if we do, proceed ony if the remote is newer
-            elif self._current_sequence >= newest_remote:
+            # if we do, proceed only if the remote is newer
+            elif self._current_sequence >= newest_remote_seq:
                 continue
 
             # Create diff object for new sequence
