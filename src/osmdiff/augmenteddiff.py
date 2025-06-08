@@ -296,7 +296,7 @@ class AugmentedDiff:
         self._timestamp = value
 
     @property
-    def sequence_number(self) -> Union[int, None]:
+    def sequence_number(self) -> Optional[int]:
         """Get the sequence number identifying this diff.
 
         Sequence numbers increment monotonically and uniquely identify each diff.
@@ -304,7 +304,7 @@ class AugmentedDiff:
         return self._sequence_number
 
     @sequence_number.setter
-    def sequence_number(self, value: int) -> None:
+    def sequence_number(self, value: Optional[int]) -> None:
         try:
             # value can be none
             if value is None:
