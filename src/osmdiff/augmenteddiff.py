@@ -437,7 +437,8 @@ class ContinuousAugmentedDiff:
 
                 # Success! Reset backoff and update sequence
                 self._reset_backoff()
-                self._current_sequence += 1
+                if self._current_sequence is not None:
+                    self._current_sequence += 1
                 return diff
 
             except Exception as e:
