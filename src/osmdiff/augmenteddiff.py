@@ -110,8 +110,15 @@ class AugmentedDiff:
         """
         action_type = elem.attrib["type"]
 
-        def is_in_bbox(osm_obj):
-            """Check if object is within configured bounding box."""
+        def is_in_bbox(osm_obj: OSMObject) -> bool:
+            """Check if object is within configured bounding box.
+            
+            Args:
+                osm_obj: The OSM object to check
+                
+            Returns:
+                bool: True if object is within bbox or no bbox constraints
+            """
             if not (self.minlon and self.minlat and self.maxlon and self.maxlat):
                 return True  # No bbox constraints
             
