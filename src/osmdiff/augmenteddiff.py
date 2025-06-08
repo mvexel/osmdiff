@@ -60,7 +60,7 @@ class AugmentedDiff:
         self.minlat = minlat
         self.maxlon = maxlon
         self.maxlat = maxlat
-        self.timestamp = timestamp
+        self._timestamp: Optional[datetime] = timestamp
         self._remarks = []
         self._sequence_number = None
         self._create = []
@@ -278,20 +278,20 @@ class AugmentedDiff:
         return self._remarks
 
     @property
-    def timestamp(self) -> datetime:
+    def timestamp(self) -> Optional[datetime]:
         """Get the timestamp of when the changes in this diff were made.
 
         Returns:
-            datetime: The timestamp parsed from the diff metadata
+            Optional[datetime]: The timestamp parsed from the diff metadata, or None if not set
         """
         return self._timestamp
 
     @timestamp.setter
-    def timestamp(self, value: datetime) -> None:
+    def timestamp(self, value: Optional[datetime]) -> None:
         """Set the timestamp for this diff.
 
         Args:
-            value: The new timestamp to set
+            value: The new timestamp to set (can be None)
         """
         self._timestamp = value
 
