@@ -237,7 +237,7 @@ class AugmentedDiff:
             except (
                 requests.exceptions.ReadTimeout,
                 requests.exceptions.ConnectionError,
-            ) as e:
+            ):
                 if attempt == max_retries - 1:  # Last attempt
                     raise
                 continue
